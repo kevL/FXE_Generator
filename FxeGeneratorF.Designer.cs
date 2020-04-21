@@ -1,0 +1,503 @@
+﻿using System.ComponentModel;
+using System.Windows.Forms;
+
+
+namespace lipsync_editor
+{
+	partial class FxeGeneratorF
+	{
+		/// <summary>
+		/// (un)Required designer variable.
+		/// </summary>
+		IContainer components = null;
+
+		/// <summary>
+		/// Clean up any resources being used.
+		/// </summary>
+		/// <param name="disposing">true if managed resources should be disposed</param>
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing && components != null)
+				components.Dispose();
+
+			base.Dispose(disposing);
+		}
+
+
+		Label la_version;
+
+		Button bu_open;
+		Button bu_generate;
+		Button bu_makefxe;
+
+		TextBox tb_wavefile;
+		Button bu_play;
+
+		Label la_headmodel;
+		ComboBox co_headmodel;
+
+		Label la_text;
+		TextBox tb_text;
+		Label la_expected;
+		TextBox tb_expected;
+
+		TextBox tb_def_words;
+		Label la_def_words;
+		Label la_def_phons;
+		TextBox tb_def_phons;
+
+		Label la_enh_words;
+		TextBox tb_enh_words;
+		Label la_enh_phons;
+		TextBox tb_enh_phons;
+
+		Label la_def_word_pct;
+		Label la_def_phon_pct;
+		Label la_enh_word_pct;
+		Label la_enh_phon_pct;
+
+		Label la_phons;
+		DataGridView dg_phons;
+		Label la_blocks;
+		DataGridView dg_blocks;
+
+
+		#region Windows Form Designer generated code
+		/// <summary>
+		/// Required method for Designer support - do not modify
+		/// the contents of this method with the code editor.
+		/// </summary>
+		private void InitializeComponent()
+		{
+			this.tb_def_words = new System.Windows.Forms.TextBox();
+			this.la_def_words = new System.Windows.Forms.Label();
+			this.tb_wavefile = new System.Windows.Forms.TextBox();
+			this.bu_open = new System.Windows.Forms.Button();
+			this.bu_generate = new System.Windows.Forms.Button();
+			this.tb_def_phons = new System.Windows.Forms.TextBox();
+			this.la_def_phons = new System.Windows.Forms.Label();
+			this.tb_text = new System.Windows.Forms.TextBox();
+			this.dg_phons = new System.Windows.Forms.DataGridView();
+			this.la_text = new System.Windows.Forms.Label();
+			this.la_expected = new System.Windows.Forms.Label();
+			this.tb_expected = new System.Windows.Forms.TextBox();
+			this.la_enh_phons = new System.Windows.Forms.Label();
+			this.tb_enh_phons = new System.Windows.Forms.TextBox();
+			this.la_enh_words = new System.Windows.Forms.Label();
+			this.tb_enh_words = new System.Windows.Forms.TextBox();
+			this.la_def_word_pct = new System.Windows.Forms.Label();
+			this.la_def_phon_pct = new System.Windows.Forms.Label();
+			this.la_enh_word_pct = new System.Windows.Forms.Label();
+			this.la_enh_phon_pct = new System.Windows.Forms.Label();
+			this.la_phons = new System.Windows.Forms.Label();
+			this.dg_blocks = new System.Windows.Forms.DataGridView();
+			this.bu_makefxe = new System.Windows.Forms.Button();
+			this.co_headmodel = new System.Windows.Forms.ComboBox();
+			this.la_headmodel = new System.Windows.Forms.Label();
+			this.bu_play = new System.Windows.Forms.Button();
+			this.la_blocks = new System.Windows.Forms.Label();
+			this.la_version = new System.Windows.Forms.Label();
+			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).BeginInit();
+			this.SuspendLayout();
+			// 
+			// tb_def_words
+			// 
+			this.tb_def_words.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_def_words.Enabled = false;
+			this.tb_def_words.Location = new System.Drawing.Point(5, 225);
+			this.tb_def_words.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_def_words.Multiline = true;
+			this.tb_def_words.Name = "tb_def_words";
+			this.tb_def_words.Size = new System.Drawing.Size(460, 40);
+			this.tb_def_words.TabIndex = 14;
+			// 
+			// la_def_words
+			// 
+			this.la_def_words.Location = new System.Drawing.Point(5, 210);
+			this.la_def_words.Margin = new System.Windows.Forms.Padding(0);
+			this.la_def_words.Name = "la_def_words";
+			this.la_def_words.Size = new System.Drawing.Size(305, 15);
+			this.la_def_words.TabIndex = 12;
+			this.la_def_words.Text = "Text - recognized";
+			this.la_def_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tb_wavefile
+			// 
+			this.tb_wavefile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_wavefile.Location = new System.Drawing.Point(85, 7);
+			this.tb_wavefile.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_wavefile.Name = "tb_wavefile";
+			this.tb_wavefile.ReadOnly = true;
+			this.tb_wavefile.Size = new System.Drawing.Size(885, 22);
+			this.tb_wavefile.TabIndex = 1;
+			// 
+			// bu_open
+			// 
+			this.bu_open.Location = new System.Drawing.Point(5, 5);
+			this.bu_open.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_open.Name = "bu_open";
+			this.bu_open.Size = new System.Drawing.Size(75, 26);
+			this.bu_open.TabIndex = 0;
+			this.bu_open.Text = "get";
+			this.bu_open.UseVisualStyleBackColor = true;
+			this.bu_open.Click += new System.EventHandler(this.btnOpen_Click);
+			// 
+			// bu_generate
+			// 
+			this.bu_generate.Enabled = false;
+			this.bu_generate.Location = new System.Drawing.Point(90, 35);
+			this.bu_generate.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_generate.Name = "bu_generate";
+			this.bu_generate.Size = new System.Drawing.Size(75, 25);
+			this.bu_generate.TabIndex = 4;
+			this.bu_generate.Text = "generate";
+			this.bu_generate.UseVisualStyleBackColor = true;
+			this.bu_generate.Click += new System.EventHandler(this.btnGenerate_Click);
+			// 
+			// tb_def_phons
+			// 
+			this.tb_def_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_def_phons.Enabled = false;
+			this.tb_def_phons.Location = new System.Drawing.Point(5, 285);
+			this.tb_def_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_def_phons.Multiline = true;
+			this.tb_def_phons.Name = "tb_def_phons";
+			this.tb_def_phons.Size = new System.Drawing.Size(460, 55);
+			this.tb_def_phons.TabIndex = 17;
+			// 
+			// la_def_phons
+			// 
+			this.la_def_phons.Location = new System.Drawing.Point(5, 270);
+			this.la_def_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.la_def_phons.Name = "la_def_phons";
+			this.la_def_phons.Size = new System.Drawing.Size(305, 15);
+			this.la_def_phons.TabIndex = 15;
+			this.la_def_phons.Text = "Text - phonemes";
+			this.la_def_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tb_text
+			// 
+			this.tb_text.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_text.Location = new System.Drawing.Point(5, 80);
+			this.tb_text.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_text.Multiline = true;
+			this.tb_text.Name = "tb_text";
+			this.tb_text.Size = new System.Drawing.Size(460, 45);
+			this.tb_text.TabIndex = 9;
+			// 
+			// dg_phons
+			// 
+			this.dg_phons.AllowUserToAddRows = false;
+			this.dg_phons.AllowUserToDeleteRows = false;
+			this.dg_phons.AllowUserToResizeColumns = false;
+			this.dg_phons.AllowUserToResizeRows = false;
+			this.dg_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.dg_phons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dg_phons.Location = new System.Drawing.Point(475, 60);
+			this.dg_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.dg_phons.Name = "dg_phons";
+			this.dg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.dg_phons.Size = new System.Drawing.Size(280, 425);
+			this.dg_phons.TabIndex = 25;
+			// 
+			// la_text
+			// 
+			this.la_text.Location = new System.Drawing.Point(5, 65);
+			this.la_text.Margin = new System.Windows.Forms.Padding(0);
+			this.la_text.Name = "la_text";
+			this.la_text.Size = new System.Drawing.Size(460, 15);
+			this.la_text.TabIndex = 8;
+			this.la_text.Text = "Text - typed";
+			this.la_text.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// la_expected
+			// 
+			this.la_expected.Location = new System.Drawing.Point(5, 130);
+			this.la_expected.Margin = new System.Windows.Forms.Padding(0);
+			this.la_expected.Name = "la_expected";
+			this.la_expected.Size = new System.Drawing.Size(460, 15);
+			this.la_expected.TabIndex = 10;
+			this.la_expected.Text = "Text - text to speech phonemes";
+			this.la_expected.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tb_expected
+			// 
+			this.tb_expected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_expected.Enabled = false;
+			this.tb_expected.Location = new System.Drawing.Point(5, 145);
+			this.tb_expected.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_expected.Multiline = true;
+			this.tb_expected.Name = "tb_expected";
+			this.tb_expected.Size = new System.Drawing.Size(460, 55);
+			this.tb_expected.TabIndex = 11;
+			// 
+			// la_enh_phons
+			// 
+			this.la_enh_phons.Location = new System.Drawing.Point(5, 410);
+			this.la_enh_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.la_enh_phons.Name = "la_enh_phons";
+			this.la_enh_phons.Size = new System.Drawing.Size(305, 15);
+			this.la_enh_phons.TabIndex = 21;
+			this.la_enh_phons.Text = "Text - phonemes w/ typed";
+			this.la_enh_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tb_enh_phons
+			// 
+			this.tb_enh_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_enh_phons.Enabled = false;
+			this.tb_enh_phons.Location = new System.Drawing.Point(5, 425);
+			this.tb_enh_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_enh_phons.Multiline = true;
+			this.tb_enh_phons.Name = "tb_enh_phons";
+			this.tb_enh_phons.Size = new System.Drawing.Size(460, 55);
+			this.tb_enh_phons.TabIndex = 23;
+			// 
+			// la_enh_words
+			// 
+			this.la_enh_words.Location = new System.Drawing.Point(5, 350);
+			this.la_enh_words.Margin = new System.Windows.Forms.Padding(0);
+			this.la_enh_words.Name = "la_enh_words";
+			this.la_enh_words.Size = new System.Drawing.Size(305, 15);
+			this.la_enh_words.TabIndex = 18;
+			this.la_enh_words.Text = "Text - recognized w/ typed";
+			this.la_enh_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tb_enh_words
+			// 
+			this.tb_enh_words.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.tb_enh_words.Enabled = false;
+			this.tb_enh_words.Location = new System.Drawing.Point(5, 365);
+			this.tb_enh_words.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_enh_words.Multiline = true;
+			this.tb_enh_words.Name = "tb_enh_words";
+			this.tb_enh_words.Size = new System.Drawing.Size(460, 40);
+			this.tb_enh_words.TabIndex = 20;
+			// 
+			// la_def_word_pct
+			// 
+			this.la_def_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_def_word_pct.Location = new System.Drawing.Point(410, 210);
+			this.la_def_word_pct.Margin = new System.Windows.Forms.Padding(0);
+			this.la_def_word_pct.Name = "la_def_word_pct";
+			this.la_def_word_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_def_word_pct.TabIndex = 13;
+			this.la_def_word_pct.Text = "pct";
+			this.la_def_word_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// la_def_phon_pct
+			// 
+			this.la_def_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_def_phon_pct.Location = new System.Drawing.Point(410, 270);
+			this.la_def_phon_pct.Margin = new System.Windows.Forms.Padding(0);
+			this.la_def_phon_pct.Name = "la_def_phon_pct";
+			this.la_def_phon_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_def_phon_pct.TabIndex = 16;
+			this.la_def_phon_pct.Text = "pct";
+			this.la_def_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// la_enh_word_pct
+			// 
+			this.la_enh_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_enh_word_pct.Location = new System.Drawing.Point(410, 350);
+			this.la_enh_word_pct.Margin = new System.Windows.Forms.Padding(0);
+			this.la_enh_word_pct.Name = "la_enh_word_pct";
+			this.la_enh_word_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_enh_word_pct.TabIndex = 19;
+			this.la_enh_word_pct.Text = "pct";
+			this.la_enh_word_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// la_enh_phon_pct
+			// 
+			this.la_enh_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_enh_phon_pct.Location = new System.Drawing.Point(410, 410);
+			this.la_enh_phon_pct.Margin = new System.Windows.Forms.Padding(0);
+			this.la_enh_phon_pct.Name = "la_enh_phon_pct";
+			this.la_enh_phon_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_enh_phon_pct.TabIndex = 22;
+			this.la_enh_phon_pct.Text = "pct";
+			this.la_enh_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// la_phons
+			// 
+			this.la_phons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_phons.Location = new System.Drawing.Point(475, 40);
+			this.la_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.la_phons.Name = "la_phons";
+			this.la_phons.Size = new System.Drawing.Size(280, 15);
+			this.la_phons.TabIndex = 24;
+			this.la_phons.Text = "PHONEMES";
+			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// dg_blocks
+			// 
+			this.dg_blocks.AllowUserToAddRows = false;
+			this.dg_blocks.AllowUserToDeleteRows = false;
+			this.dg_blocks.AllowUserToResizeColumns = false;
+			this.dg_blocks.AllowUserToResizeRows = false;
+			this.dg_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.dg_blocks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+			this.dg_blocks.Location = new System.Drawing.Point(765, 60);
+			this.dg_blocks.Margin = new System.Windows.Forms.Padding(0);
+			this.dg_blocks.Name = "dg_blocks";
+			this.dg_blocks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.dg_blocks.Size = new System.Drawing.Size(280, 425);
+			this.dg_blocks.TabIndex = 27;
+			// 
+			// bu_makefxe
+			// 
+			this.bu_makefxe.Enabled = false;
+			this.bu_makefxe.Location = new System.Drawing.Point(390, 35);
+			this.bu_makefxe.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_makefxe.Name = "bu_makefxe";
+			this.bu_makefxe.Size = new System.Drawing.Size(75, 25);
+			this.bu_makefxe.TabIndex = 7;
+			this.bu_makefxe.Text = "Make FXE";
+			this.bu_makefxe.UseVisualStyleBackColor = true;
+			this.bu_makefxe.Click += new System.EventHandler(this.btnMakeFxe_Click);
+			// 
+			// co_headmodel
+			// 
+			this.co_headmodel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.co_headmodel.Enabled = false;
+			this.co_headmodel.FormattingEnabled = true;
+			this.co_headmodel.Items.AddRange(new object[] {
+			"P_HHF",
+			"P_HHM",
+			"P_GGF",
+			"P_GGM",
+			"P_HTF",
+			"P_EEF",
+			"P_EEM",
+			"P_DDF",
+			"P_DDM",
+			"P_OOF",
+			"P_OOM",
+			"c_bugbear",
+			"c_devil",
+			"c_dogleg",
+			"c_dragon",
+			"c_ghoul",
+			"c_giantfire",
+			"c_giantfrost",
+			"c_hag",
+			"c_heavy",
+			"c_hezrou",
+			"c_imp",
+			"c_ogre",
+			"c_orc",
+			"c_small",
+			"c_succubus",
+			"c_troll",
+			"c_uthraki",
+			"c_werewolf",
+			"c_wingleg",
+			"c_zombie",
+			"n_okku",
+			"N_SReaver"});
+			this.co_headmodel.Location = new System.Drawing.Point(250, 36);
+			this.co_headmodel.Margin = new System.Windows.Forms.Padding(0);
+			this.co_headmodel.Name = "co_headmodel";
+			this.co_headmodel.Size = new System.Drawing.Size(130, 23);
+			this.co_headmodel.TabIndex = 6;
+			// 
+			// la_headmodel
+			// 
+			this.la_headmodel.Location = new System.Drawing.Point(175, 40);
+			this.la_headmodel.Margin = new System.Windows.Forms.Padding(0);
+			this.la_headmodel.Name = "la_headmodel";
+			this.la_headmodel.Size = new System.Drawing.Size(70, 15);
+			this.la_headmodel.TabIndex = 5;
+			this.la_headmodel.Text = "Head Model";
+			this.la_headmodel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// bu_play
+			// 
+			this.bu_play.Enabled = false;
+			this.bu_play.Location = new System.Drawing.Point(5, 35);
+			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_play.Name = "bu_play";
+			this.bu_play.Size = new System.Drawing.Size(75, 25);
+			this.bu_play.TabIndex = 3;
+			this.bu_play.Text = "play";
+			this.bu_play.UseVisualStyleBackColor = true;
+			this.bu_play.Click += new System.EventHandler(this.btnPlay_Click);
+			// 
+			// la_blocks
+			// 
+			this.la_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_blocks.Location = new System.Drawing.Point(765, 40);
+			this.la_blocks.Margin = new System.Windows.Forms.Padding(0);
+			this.la_blocks.Name = "la_blocks";
+			this.la_blocks.Size = new System.Drawing.Size(280, 15);
+			this.la_blocks.TabIndex = 26;
+			this.la_blocks.Text = "Data Blocks";
+			this.la_blocks.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			// 
+			// la_version
+			// 
+			this.la_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.la_version.Location = new System.Drawing.Point(975, 10);
+			this.la_version.Margin = new System.Windows.Forms.Padding(0);
+			this.la_version.Name = "la_version";
+			this.la_version.Size = new System.Drawing.Size(70, 20);
+			this.la_version.TabIndex = 2;
+			this.la_version.Text = "ver";
+			this.la_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// FxeGeneratorF
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(1052, 491);
+			this.Controls.Add(this.bu_makefxe);
+			this.Controls.Add(this.co_headmodel);
+			this.Controls.Add(this.la_headmodel);
+			this.Controls.Add(this.bu_generate);
+			this.Controls.Add(this.bu_play);
+			this.Controls.Add(this.tb_wavefile);
+			this.Controls.Add(this.dg_phons);
+			this.Controls.Add(this.dg_blocks);
+			this.Controls.Add(this.la_blocks);
+			this.Controls.Add(this.la_phons);
+			this.Controls.Add(this.la_version);
+			this.Controls.Add(this.bu_open);
+			this.Controls.Add(this.la_text);
+			this.Controls.Add(this.tb_text);
+			this.Controls.Add(this.la_expected);
+			this.Controls.Add(this.tb_expected);
+			this.Controls.Add(this.la_def_words);
+			this.Controls.Add(this.la_def_word_pct);
+			this.Controls.Add(this.tb_def_words);
+			this.Controls.Add(this.la_def_phons);
+			this.Controls.Add(this.la_def_phon_pct);
+			this.Controls.Add(this.tb_def_phons);
+			this.Controls.Add(this.la_enh_words);
+			this.Controls.Add(this.la_enh_word_pct);
+			this.Controls.Add(this.tb_enh_words);
+			this.Controls.Add(this.la_enh_phons);
+			this.Controls.Add(this.la_enh_phon_pct);
+			this.Controls.Add(this.tb_enh_phons);
+			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Name = "FxeGeneratorF";
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.Text = "0x22 - FXE LipSyncer";
+			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).EndInit();
+			this.ResumeLayout(false);
+			this.PerformLayout();
+
+		}
+		#endregion Windows Form Designer generated code
+	}
+}
+
