@@ -28,13 +28,13 @@ namespace lipsync_editor
 
 		Button bu_open;
 		Button bu_generate;
-		Button bu_makefxe;
+		Button bu_createfxe;
 
 		TextBox tb_wavefile;
 		Button bu_play;
 
-		Label la_headmodel;
-		ComboBox co_headmodel;
+		Label la_headtype;
+		ComboBox co_headtype;
 
 		Label la_text;
 		TextBox tb_text;
@@ -91,9 +91,9 @@ namespace lipsync_editor
 			this.la_enh_phon_pct = new System.Windows.Forms.Label();
 			this.la_phons = new System.Windows.Forms.Label();
 			this.dg_blocks = new System.Windows.Forms.DataGridView();
-			this.bu_makefxe = new System.Windows.Forms.Button();
-			this.co_headmodel = new System.Windows.Forms.ComboBox();
-			this.la_headmodel = new System.Windows.Forms.Label();
+			this.bu_createfxe = new System.Windows.Forms.Button();
+			this.co_headtype = new System.Windows.Forms.ComboBox();
+			this.la_headtype = new System.Windows.Forms.Label();
 			this.bu_play = new System.Windows.Forms.Button();
 			this.la_blocks = new System.Windows.Forms.Label();
 			this.la_version = new System.Windows.Forms.Label();
@@ -148,10 +148,10 @@ namespace lipsync_editor
 			// bu_generate
 			// 
 			this.bu_generate.Enabled = false;
-			this.bu_generate.Location = new System.Drawing.Point(90, 35);
+			this.bu_generate.Location = new System.Drawing.Point(85, 35);
 			this.bu_generate.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_generate.Name = "bu_generate";
-			this.bu_generate.Size = new System.Drawing.Size(75, 25);
+			this.bu_generate.Size = new System.Drawing.Size(95, 25);
 			this.bu_generate.TabIndex = 4;
 			this.bu_generate.Text = "generate";
 			this.bu_generate.UseVisualStyleBackColor = true;
@@ -353,35 +353,34 @@ namespace lipsync_editor
 			this.dg_blocks.Size = new System.Drawing.Size(280, 425);
 			this.dg_blocks.TabIndex = 27;
 			// 
-			// bu_makefxe
+			// bu_createfxe
 			// 
-			this.bu_makefxe.Enabled = false;
-			this.bu_makefxe.Location = new System.Drawing.Point(390, 35);
-			this.bu_makefxe.Margin = new System.Windows.Forms.Padding(0);
-			this.bu_makefxe.Name = "bu_makefxe";
-			this.bu_makefxe.Size = new System.Drawing.Size(75, 25);
-			this.bu_makefxe.TabIndex = 7;
-			this.bu_makefxe.Text = "Make FXE";
-			this.bu_makefxe.UseVisualStyleBackColor = true;
-			this.bu_makefxe.Click += new System.EventHandler(this.btnMakeFxe_Click);
+			this.bu_createfxe.Enabled = false;
+			this.bu_createfxe.Location = new System.Drawing.Point(380, 35);
+			this.bu_createfxe.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_createfxe.Name = "bu_createfxe";
+			this.bu_createfxe.Size = new System.Drawing.Size(85, 25);
+			this.bu_createfxe.TabIndex = 7;
+			this.bu_createfxe.Text = "Create FXE";
+			this.bu_createfxe.UseVisualStyleBackColor = true;
+			this.bu_createfxe.Click += new System.EventHandler(this.btnCreateFxe_Click);
 			// 
-			// co_headmodel
+			// co_headtype
 			// 
-			this.co_headmodel.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-			this.co_headmodel.Enabled = false;
-			this.co_headmodel.FormattingEnabled = true;
-			this.co_headmodel.Items.AddRange(new object[] {
-			"P_HHF",
+			this.co_headtype.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+			this.co_headtype.Enabled = false;
+			this.co_headtype.FormattingEnabled = true;
+			this.co_headtype.Items.AddRange(new object[] {
 			"P_HHM",
-			"P_GGF",
-			"P_GGM",
-			"P_HTF",
-			"P_EEF",
-			"P_EEM",
-			"P_DDF",
+			"P_HHF",
 			"P_DDM",
-			"P_OOF",
+			"P_DDF",
+			"P_EEF",
+			"P_GGM",
+			"P_GGF",
+			"P_HTF",
 			"P_OOM",
+			"P_OOF",
 			"c_bugbear",
 			"c_devil",
 			"c_dogleg",
@@ -404,21 +403,21 @@ namespace lipsync_editor
 			"c_zombie",
 			"n_okku",
 			"N_SReaver"});
-			this.co_headmodel.Location = new System.Drawing.Point(250, 36);
-			this.co_headmodel.Margin = new System.Windows.Forms.Padding(0);
-			this.co_headmodel.Name = "co_headmodel";
-			this.co_headmodel.Size = new System.Drawing.Size(130, 23);
-			this.co_headmodel.TabIndex = 6;
+			this.co_headtype.Location = new System.Drawing.Point(265, 36);
+			this.co_headtype.Margin = new System.Windows.Forms.Padding(0);
+			this.co_headtype.Name = "co_headtype";
+			this.co_headtype.Size = new System.Drawing.Size(105, 23);
+			this.co_headtype.TabIndex = 6;
 			// 
-			// la_headmodel
+			// la_headtype
 			// 
-			this.la_headmodel.Location = new System.Drawing.Point(175, 40);
-			this.la_headmodel.Margin = new System.Windows.Forms.Padding(0);
-			this.la_headmodel.Name = "la_headmodel";
-			this.la_headmodel.Size = new System.Drawing.Size(70, 15);
-			this.la_headmodel.TabIndex = 5;
-			this.la_headmodel.Text = "Head Model";
-			this.la_headmodel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			this.la_headtype.Location = new System.Drawing.Point(190, 40);
+			this.la_headtype.Margin = new System.Windows.Forms.Padding(0);
+			this.la_headtype.Name = "la_headtype";
+			this.la_headtype.Size = new System.Drawing.Size(70, 15);
+			this.la_headtype.TabIndex = 5;
+			this.la_headtype.Text = "Head Type";
+			this.la_headtype.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// bu_play
 			// 
@@ -459,9 +458,9 @@ namespace lipsync_editor
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1052, 491);
-			this.Controls.Add(this.bu_makefxe);
-			this.Controls.Add(this.co_headmodel);
-			this.Controls.Add(this.la_headmodel);
+			this.Controls.Add(this.bu_createfxe);
+			this.Controls.Add(this.co_headtype);
+			this.Controls.Add(this.la_headtype);
 			this.Controls.Add(this.bu_generate);
 			this.Controls.Add(this.bu_play);
 			this.Controls.Add(this.tb_wavefile);

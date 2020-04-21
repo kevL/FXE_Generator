@@ -9,8 +9,8 @@ using SpeechLib;
 
 namespace lipsync_editor
 {
-	public delegate void RecognitionResultEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
-	public delegate void TtsParseActualTextEvent(string expectedPhonemes);
+	public delegate void TtsParseTextEvent(string expected);
+	public delegate void RecognitionEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
 
 
 	/// <summary>
@@ -19,8 +19,8 @@ namespace lipsync_editor
 	public class SapiLipsync
 	{
 		#region events
-		public RecognitionResultEvent Recognition;
-		public TtsParseActualTextEvent TtsParseText;
+		public TtsParseTextEvent TtsParseText;
+		public RecognitionEvent Recognition;
 		#endregion events
 
 
@@ -35,7 +35,7 @@ namespace lipsync_editor
 
 
 		#region fields
-		string _execpath;
+		string _execpath = String.Empty;
 
 		SpFileStream _input;
 		SpVoice _voice;
@@ -50,7 +50,7 @@ namespace lipsync_editor
 		bool _ruler;
 		string _results = String.Empty;
 
-		string _expected;
+		string _expected = String.Empty;
 				 List<ushort> _tts_PhonIds = new List<ushort>();
 		internal List<string> _tts_Phons   = new List<string>();
 		#endregion fields
@@ -163,18 +163,22 @@ namespace lipsync_editor
 		{
 			logfile.Log("ReadWavefile() text= " + text);
 
-			// kL_clearall ->
-//			_ruler = false;
-//			_results = String.Empty;
-//
-//			_expected = String.Empty;
+			// kL_clearall -> these don't all have to be cleared
+			_ruler = false;
+
+			_results  =
+			_expected = String.Empty;
+
 			_tts_PhonIds.Clear();
 			_tts_Phons  .Clear();
-//
-//			RatioWords_def =
-//			RatioPhons_def =
-//			RatioWords_enh =
-//			RatioPhons_enh = 0.0;
+
+			RatioWords_def =
+			RatioPhons_def =
+			RatioWords_enh =
+			RatioPhons_enh = 0.0;
+
+			_ars_def.Clear();
+			_ars_enh.Clear();
 			// kL_end.
 
 
@@ -184,8 +188,8 @@ namespace lipsync_editor
 			if (TypedText != String.Empty)
 			{
 				logfile.Log(". enhanced - call _voice.Speak()");
-				_tts_PhonIds.Clear();
-				_ars_enh    .Clear();
+//				_tts_PhonIds.Clear();
+//				_ars_enh    .Clear();
 
 				_voice.Speak(TypedText);
 				_voice.WaitUntilDone(-1);
@@ -222,7 +226,7 @@ namespace lipsync_editor
 			// conditional expression below. It causes an infinite loop ...
 			// since '_ruler' will NOT be set true despite 'ruler' being true.
 			//
-			// And that, friends, took a wasted day to figure out.
+			// And that, friends, took a day to figure out.
 
 			if (_ruler
 				&& TypedText != String.Empty
@@ -301,6 +305,8 @@ namespace lipsync_editor
 				string strData = Result.PhraseInfo.GetText(0, -1, true);
 				if (strData.Length > _results.Length)
 				{
+					logfile.Log(". replace _results");
+
 					_ars_enh.Clear();
 					GenerateResults(_ars_enh, Result);
 					_results = strData;

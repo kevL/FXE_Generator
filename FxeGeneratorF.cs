@@ -32,8 +32,8 @@ namespace lipsync_editor
 
 		bool _console;
 
-		string _wavefile;
-		string _model;
+		string _wavefile = String.Empty;
+		string _headtype = String.Empty;
 
 		SapiLipsync _lipsyncer;
 
@@ -48,10 +48,10 @@ namespace lipsync_editor
 
 		#region cTor
 		internal FxeGeneratorF()
-			: this("", "")
+			: this(String.Empty, String.Empty)
 		{}
 
-		internal FxeGeneratorF(string wavefile, string model)
+		internal FxeGeneratorF(string wavefile, string headtype)
 		{
 			LoadVisMap();
 			LoadTriGramTable();
@@ -106,14 +106,17 @@ namespace lipsync_editor
 
 				printversion();
 			}
-			else
+			else if (headtype != String.Empty && File.Exists(wavefile))
 			{
+				// TODO: Ensure that 'headModelType' is a recognized head model type.
+				// Eg. "P_HHM"
+
 				_console  = true;
 				_wavefile = wavefile;
-				_model    = model;
+				_headtype = headtype;
 
 				_lipsyncer = new SapiLipsync(_wavefile);
-				_lipsyncer.Recognition  += OnRecognitionResult;
+				_lipsyncer.Recognition  += OnRecognition;
 //				_lipsyncer.TtsParseText += OnTtsParseText;
 
 				_lipsyncer.ReadWavefile(ReadFiletext());
@@ -171,14 +174,14 @@ namespace lipsync_editor
 
 					LoadFxeFile();
 
-					co_headmodel.SelectedIndex = 0;
-					co_headmodel.Enabled = false;
-					bu_makefxe  .Enabled = false;
+					co_headtype.SelectedIndex = 0;
+					co_headtype.Enabled = false;
+					bu_createfxe.Enabled = false;
 					bu_generate .Enabled = true;
 					bu_play     .Enabled = true;
 
 					_lipsyncer = new SapiLipsync(_wavefile);
-					_lipsyncer.Recognition  += OnRecognitionResult;
+					_lipsyncer.Recognition  += OnRecognition;
 					_lipsyncer.TtsParseText += OnTtsParseText;
 				}
 			}
@@ -212,12 +215,16 @@ namespace lipsync_editor
 			tb_enh_phons   .Text =
 			la_enh_phon_pct.Text = String.Empty;
 
+			_dt1.Clear();
+			_dt2.Clear();
+
 			_lipsyncer.ReadWavefile(tb_text.Text);
 		}
 
-		void btnMakeFxe_Click(object sender, EventArgs e)
+		void btnCreateFxe_Click(object sender, EventArgs e)
 		{
-			WriteFxeFile(co_headmodel.Text);
+			_headtype = co_headtype.Text;
+			WriteFxeFile();
 		}
 
 		void btnPlay_Click(object sender, EventArgs e)
@@ -245,14 +252,12 @@ namespace lipsync_editor
 			bu_generate.Enabled = true;
 		}
 
-		void OnRecognitionResult(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
+		void OnRecognition(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
 		{
 			logfile.Log("OnRecognitionResult() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 
 			if (!_console)
 			{
-				string phon = String.Empty;
-
 				PrintTextResults(ars_def, tb_def_words, tb_def_phons);
 				PrintTextResults(ars_enh, tb_enh_words, tb_enh_phons);
 
@@ -270,8 +275,8 @@ namespace lipsync_editor
 
 				ColorPercents();
 
-				bu_makefxe  .Enabled =
-				co_headmodel.Enabled = true;
+				bu_createfxe.Enabled =
+				co_headtype .Enabled = true;
 			}
 
 			List<AlignmentResult> ars;
@@ -289,7 +294,7 @@ namespace lipsync_editor
 			}
 			else
 			{
-				WriteFxeFile(_model);
+				WriteFxeFile();
 				Application.Exit();
 			}
 		}
@@ -364,6 +369,24 @@ namespace lipsync_editor
 			}
 			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
 			dg_phons.ClearSelection();
+		}
+
+		void PopulateDataGrid()
+		{
+			var blocks = new List<FxeDataBlock>();
+			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in _fxeData)
+			{
+				blocks.AddRange(keyval.Value);
+			}
+
+			_dt2.Clear();
+
+			foreach (FxeDataBlock block in blocks)
+			{
+				_dt2.Rows.Add(new object[] { block.Viseme, block.Val1, block.Val2 });
+			}
+			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
+			dg_blocks.ClearSelection();
 		}
 		#endregion lipsync handlers
 
@@ -572,27 +595,13 @@ namespace lipsync_editor
 		{
 			br.ReadInt16();
 			int len = br.ReadInt32();
-			return new string(br.ReadChars(len));
+			//logfile.Log("len= " + len); // 1,702,194,277 - uh no.
+
+			string chars = new String(br.ReadChars(len));
+			//logfile.Log("chars= " + chars);
+
+			return chars;
 		}
-
-		void PopulateDataGrid()
-		{
-			var blocks = new List<FxeDataBlock>();
-			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in _fxeData)
-			{
-				blocks.AddRange(keyval.Value);
-			}
-
-			_dt2.Clear();
-
-			foreach (FxeDataBlock block in blocks)
-			{
-				_dt2.Rows.Add(new object[] { block.Viseme, block.Val1, block.Val2 });
-			}
-			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
-			dg_blocks.ClearSelection();
-		}
-
 
 		void GenerateFxeData(List<AlignmentResult> arList)
 		{
@@ -934,7 +943,7 @@ namespace lipsync_editor
 
 
 		#region write methods
-		void WriteFxeFile(string model)
+		void WriteFxeFile()
 		{
 			string file = _wavefile.Substring(0, _wavefile.Length - 3).ToLower() + "fxe";
 			using (FileStream fs = File.Open(file, FileMode.Create))
@@ -942,7 +951,7 @@ namespace lipsync_editor
 				var bw = new BinaryWriter(fs);
 
 				WriteFxeHeader(bw);
-				WriteFxeString(model, bw);
+				WriteFxeString(_headtype, bw);
 
 				bw.Write((short)0);
 				bw.Write(0);
@@ -956,8 +965,8 @@ namespace lipsync_editor
 				bw.Write(0);
 
 				int pos = _wavefile.LastIndexOf('\\') + 1;
-				file = _wavefile.Substring(pos, _wavefile.Length - pos - 4).ToLower();
-				WriteFxeString(file, bw);
+				string filelabel = _wavefile.Substring(pos, _wavefile.Length - pos - 4).ToLower();
+				WriteFxeString(filelabel, bw);
 
 				bw.Write((short)3);
 
@@ -971,6 +980,25 @@ namespace lipsync_editor
 				WriteFxeData(bw);
 				WriteFxeFooter(fileLengthOffset, bw);
 			}
+
+
+			string info;
+			MessageBoxIcon icon;
+			if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
+			{
+				info = "Success";
+				icon = MessageBoxIcon.Information;
+			}
+			else
+			{
+				info = "Fail";
+				icon = MessageBoxIcon.Error;
+			}
+			MessageBox.Show(info,
+							"write file",
+							MessageBoxButtons.OK,
+							icon,
+							MessageBoxDefaultButton.Button1);
 		}
 
 		void WriteFxeHeader(BinaryWriter bw)
