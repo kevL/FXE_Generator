@@ -142,7 +142,7 @@ namespace lipsync_editor
 				_lipsyncer.Recognition  += OnRecognition;
 //				_lipsyncer.TtsParseText += OnTtsParseText;
 
-				_lipsyncer.ReadWavefile(ReadFiletext());
+				_lipsyncer.ReadWavefile(LoadTypedTextFile());
 			}
 		}
 
@@ -167,25 +167,26 @@ namespace lipsync_editor
 		#region control handlers
 		void btnOpen_Click(object sender, EventArgs e)
 		{
-			using (var ofd = new OpenFileDialog())
-			{
-				ofd.Title  = "Select a WAV or MP3 Audio file";
-				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|"
-						   + "Wave files (*.wav)|*.wav|"
-						   + "Mp3 files (*.mp3)|*.mp3|"
-						   + "All files (*.*)|*.*";
+			// debug ->
+			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
 
-				if (ofd.ShowDialog() == DialogResult.OK)
-				{
-					// debug ->
-//					_wavefile = @"C:\Neverwinter Nights 2\t\co_belueth_0056.wav";
+//			using (var ofd = new OpenFileDialog())
+//			{
+//				ofd.Title  = "Select a WAV or MP3 Audio file";
+//				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|"
+//						   + "Wave files (*.wav)|*.wav|"
+//						   + "Mp3 files (*.mp3)|*.mp3|"
+//						   + "All files (*.*)|*.*";
+//
+//				if (ofd.ShowDialog() == DialogResult.OK)
+//				{
 
 					_dt1.Clear();
 					_dt2.Clear();
 
-					tb_wavefile.Text = _wavefile = ofd.FileName;
+//					tb_wavefile.Text = _wavefile = ofd.FileName;
 
-					tb_text.Text = ReadFiletext();
+					tb_text.Text = LoadTypedTextFile();
 
 					tb_expected    .Text =
 					tb_def_words   .Text =
@@ -208,11 +209,11 @@ namespace lipsync_editor
 					_lipsyncer = new SapiLipsync(_wavefile);
 					_lipsyncer.Recognition  += OnRecognition;
 					_lipsyncer.TtsParseText += OnTtsParseText;
-				}
-			}
+//				}
+//			}
 		}
 
-		public string ReadFiletext()
+		public string LoadTypedTextFile()
 		{
 			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_TXT;
 			if (File.Exists(file))
@@ -254,11 +255,11 @@ namespace lipsync_editor
 
 		void btnPlay_Click(object sender, EventArgs e)
 		{
-			using (var wavefile = new FileStream(_lipsyncer.Wavefile, FileMode.Open))
+			using (var wavefile = new FileStream(_lipsyncer.Fullpath, FileMode.Open))
 			{
 				using (var player = new SoundPlayer(wavefile))
 				{
-					player.SoundLocation = _lipsyncer.Wavefile;
+					player.SoundLocation = _lipsyncer.Fullpath;
 					player.Play();
 				}
 			}
@@ -480,6 +481,7 @@ namespace lipsync_editor
 
 					TriGramTable[codewords[0]][codewords[1]][codewords[2]] = dataval;
 				}
+				br.Close();
 			}
 		}
 
@@ -558,31 +560,31 @@ namespace lipsync_editor
 
 					fs.Seek(8, SeekOrigin.Current);
 					short blockcount = br.ReadInt16();
-					logfile.Log(". blockcount= " + blockcount);
+					//logfile.Log(". blockcount= " + blockcount);
 
 					fs.Seek(8, SeekOrigin.Current);
 
 					for (short i = 0; i != (short)15; ++i)
 					{
-						logfile.Log(". . i= " + i);
+						//logfile.Log(". . i= " + i);
 
 						string codeword = ReadFxeString(br);
-						logfile.Log(". . codeword= " + codeword);
+						//logfile.Log(". . codeword= " + codeword);
 
 						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
 						short datablockcount = br.ReadInt16();
-						logfile.Log(". . datablockcount= " + datablockcount);
+						//logfile.Log(". . datablockcount= " + datablockcount);
 
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 
 						for (short j = 0; j != datablockcount; ++j)
 						{
-							logfile.Log(". . j= " + j);
+							//logfile.Log(". . j= " + j);
 
 							float val1 = br.ReadSingle();
 							float val2 = br.ReadSingle();
-							logfile.Log(". . val1= " + val1);
-							logfile.Log(". . val2= " + val2);
+							//logfile.Log(". . val1= " + val1);
+							//logfile.Log(". . val2= " + val2);
 
 							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
@@ -1010,6 +1012,8 @@ namespace lipsync_editor
 
 				WriteFxeData(bw);
 				WriteFxeFooter(fileLengthOffset, bw);
+
+				bw.Close();
 			}
 
 
@@ -1017,16 +1021,16 @@ namespace lipsync_editor
 			MessageBoxIcon icon;
 			if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
 			{
-				info = "mission success";
+				info = " SUCCESS";
 				icon = MessageBoxIcon.Information;
 			}
 			else
 			{
-				info = "mission failed";
+				info = " FAILED";
 				icon = MessageBoxIcon.Error;
 			}
 			MessageBox.Show(info,
-							"write file",
+							" Write file",
 							MessageBoxButtons.OK,
 							icon,
 							MessageBoxDefaultButton.Button1);

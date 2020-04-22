@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
+//using System.Reflection;
+using System.Windows.Forms;
 
 using SpeechLib;
 
@@ -27,16 +28,14 @@ namespace lipsync_editor
 		#region fields (static)
 		const string EXT_MP3 = ".mp3";
 		const string EXT_WAV = ".wav";
-		const string TMP_MP3 = "_temp" + EXT_MP3;
-		const string TMP_WAV = "_temp" + EXT_WAV;
+		const string TMP_MP3 = "sapi_lipsync" + EXT_MP3;
+		const string TMP_WAV = "sapi_lipsync" + EXT_WAV;
 
 		const string LAME_EXE = "lame.exe";
 		#endregion fields (static)
 
 
 		#region fields
-		string _execpath = String.Empty;
-
 		SpFileStream _input;
 		SpVoice _voice;
 		ISpeechRecoContext _recoContext;
@@ -57,7 +56,7 @@ namespace lipsync_editor
 
 
 		#region properties
-		public string Wavefile
+		public string Fullpath
 		{ get; private set; }
 
 //		public string Original
@@ -86,8 +85,6 @@ namespace lipsync_editor
 		{
 			//logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
 
-			_execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-
 			_voice = new SpVoice();
 			_voice.Volume = 0;
 			_voice.Rate = 1000;
@@ -96,9 +93,7 @@ namespace lipsync_editor
 
 			_phoneConverter.LanguageId = 1033; // US English
 
-//			Original = wavefile;
-			Wavefile = ConvertFile(wavefile);
-			//logfile.Log(". Wavefile= " + Wavefile);
+			ConvertFile(wavefile);
 		}
 		#endregion cTor
 
@@ -110,9 +105,12 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="file"></param>
 		/// <returns></returns>
-		string ConvertFile(string file)
+		void ConvertFile(string file)
 		{
-			//logfile.Log("ConvertFile() file= " + file);
+			logfile.Log("ConvertFile() file= " + file);
+
+			string pathT = Path.GetTempPath();
+			logfile.Log(". path= " + pathT);
 
 			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase))
 			{
@@ -122,24 +120,30 @@ namespace lipsync_editor
 				char[] c = br.ReadChars(3);
 				br.Close();
 
-				if (   c[0] == 'B'
+				if (   c[0] == 'B' // because .BMUs are .MP3s and NwN2 labels them as .WAVs
 					&& c[1] == 'M'
 					&& c[2] == 'U')
 				{
-					file = Path.Combine(_execpath, TMP_MP3);
-					fi.CopyTo(file);
+					file = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
+					logfile.Log(". file= " + file);
+
+					fi.CopyTo(file, true);
 				}
 			}
 
-			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase))
+			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
-				string wavefile = Path.Combine(_execpath, TMP_WAV);
+				string waveT = Path.Combine(pathT, TMP_WAV);
+				logfile.Log(". wave= " + waveT);
 
-				if (File.Exists(wavefile))
-					File.Delete(wavefile);
 
-				var info = new ProcessStartInfo(Path.Combine(_execpath, LAME_EXE));
-				info.Arguments = "--decode \"" + file + "\" \"" + wavefile + "\"";
+				if (File.Exists(waveT))
+					File.Delete(waveT);
+
+//				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+//				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
+				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
+				info.Arguments = "--decode \"" + file + "\" \"" + waveT + "\"";
 				info.WindowStyle = ProcessWindowStyle.Hidden;
 				info.UseShellExecute = false;
 				info.CreateNoWindow  = true;
@@ -149,13 +153,14 @@ namespace lipsync_editor
 					proc.WaitForExit();
 				}
 
-				string t = Path.Combine(_execpath, TMP_MP3);
-				if (File.Exists(t))
-					File.Delete(t);
+//				string t = Path.Combine(pathT, TMP_MP3);
+//				logfile.Log(". t= " + t);
+//				if (File.Exists(t))
+//					File.Delete(t);
 
-				file = wavefile;
+				file = waveT;
 			}
-			return file;
+			Fullpath = file;
 		}
 
 
@@ -163,7 +168,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("ReadWavefile() text= " + text);
 
-			// kL_clearall -> these don't all have to be cleared
+			// kL_clearall -> these don't all need to be cleared
 			_ruler = false;
 
 			_results  =
@@ -253,7 +258,7 @@ namespace lipsync_editor
 			}
 
 			_input = new SpFileStreamClass();
-			_input.Open(Wavefile);
+			_input.Open(Fullpath);
 			_recoContext.Recognizer.AudioInputStream = _input;
 
 //			_pWaveFmt = _InputWAV.Format;
