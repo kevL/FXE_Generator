@@ -26,6 +26,20 @@ namespace lipsync_editor
 		#endregion structs
 
 
+		#region fields (static)
+		const string EXT_FXE = "fxe";
+		const string EXT_TXT = "txt";
+
+		const string HEAD_PHONS_0 = "phoneme"; // headers for the phonemes table ->
+		const string HEAD_PHONS_1 = "stop (secs)";
+		const string HEAD_PHONS_2 = "viseme";
+
+		const string HEAD_BLOCKS_0 = "viseme"; // headers for the datablocks table ->
+		const string HEAD_BLOCKS_1 = "frame stop";
+		const string HEAD_BLOCKS_2 = "morph weight";
+		#endregion fields (static)
+
+
 		#region fields
 			Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
 		new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
@@ -60,55 +74,59 @@ namespace lipsync_editor
 			{
 				InitializeComponent();
 
-//				la_wordmatch_def_pct.Text =
-//				la_phonmatch_def_pct.Text =
-//				la_wordmatch_enh_pct.Text =
-//				la_phonmatch_enh_pct.Text = String.Empty;
+				tb_text    .BackColor = 
+				tb_expected.BackColor = Color.AntiqueWhite;
+
+				tb_def_words.BackColor =
+				tb_def_phons.BackColor =
+				tb_enh_words.BackColor =
+				tb_enh_phons.BackColor = Color.GhostWhite;
 
 
-				var col = new DataColumn("phoneme", typeof(string));
+				var col = new DataColumn(HEAD_PHONS_0, typeof(string));
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn("stop (secs)", typeof(decimal));
+				col = new DataColumn(HEAD_PHONS_1, typeof(decimal));
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn("viseme", typeof(string));
+				col = new DataColumn(HEAD_PHONS_2, typeof(string));
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
 				dg_phons.DataSource = _dt1;
-				dg_phons.Columns["phoneme"]    .Width =  80;
-				dg_phons.Columns["stop (secs)"].Width = 120;
-				dg_phons.Columns["viseme"]     .Width =  80;
+				dg_phons.Columns[HEAD_PHONS_0].Width =  80;
+				dg_phons.Columns[HEAD_PHONS_1].Width = 120;
+				dg_phons.Columns[HEAD_PHONS_2].Width =  80;
 
 				dg_phons.RowHeadersVisible = false;
 
-				col = new DataColumn("viseme", typeof(string));
+				col = new DataColumn(HEAD_BLOCKS_0, typeof(string));
 				col.ReadOnly = true;
 				_dt2.Columns.Add(col);
 
-				col = new DataColumn("frame time X", typeof(float));
+				col = new DataColumn(HEAD_BLOCKS_1, typeof(float));
 				col.ReadOnly = true;
 				_dt2.Columns.Add(col);
 
-				col = new DataColumn("morph weight Y", typeof(float));
+				col = new DataColumn(HEAD_BLOCKS_2, typeof(float));
 				col.ReadOnly = true;
 				_dt2.Columns.Add(col);
 
 				dg_blocks.DataSource = _dt2;
-				dg_blocks.Columns["viseme"]        .Width =  70;
-				dg_blocks.Columns["frame time X"]  .Width = 100;
-				dg_blocks.Columns["morph weight Y"].Width = 110;
+				dg_blocks.Columns[HEAD_BLOCKS_0].Width =  70;
+				dg_blocks.Columns[HEAD_BLOCKS_1].Width = 100;
+				dg_blocks.Columns[HEAD_BLOCKS_2].Width = 110;
 
 				dg_blocks.RowHeadersVisible = false;
+
 
 				printversion();
 			}
 			else if (headtype != String.Empty && File.Exists(wavefile))
 			{
-				// TODO: Ensure that 'headModelType' is a recognized head model type.
+				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
 				_console  = true;
@@ -157,8 +175,10 @@ namespace lipsync_editor
 					// debug ->
 //					_wavefile = @"C:\Neverwinter Nights 2\t\co_belueth_0056.wav";
 
-					_wavefile =
-					tb_wavefile.Text = ofd.FileName;
+					_dt1.Clear();
+					_dt2.Clear();
+
+					tb_wavefile.Text = _wavefile = ofd.FileName;
 
 					tb_text.Text = ReadFiletext();
 
@@ -175,7 +195,7 @@ namespace lipsync_editor
 					LoadFxeFile();
 
 					co_headtype.SelectedIndex = 0;
-					co_headtype.Enabled = false;
+					co_headtype .Enabled = false;
 					bu_createfxe.Enabled = false;
 					bu_generate .Enabled = true;
 					bu_play     .Enabled = true;
@@ -189,7 +209,7 @@ namespace lipsync_editor
 
 		public string ReadFiletext()
 		{
-			string file = _wavefile.Substring(0, _wavefile.Length - 3) + "txt";
+			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_TXT;
 			if (File.Exists(file))
 			{
 				using (StreamReader sr = File.OpenText(file))
@@ -461,23 +481,23 @@ namespace lipsync_editor
 		void InitTriGramTable()
 		{
 			List<string> codewords = CreateCodewordList();
-			foreach (string cwp2 in codewords)
+			foreach (string c2 in codewords)
 			{
 				var bigram = new Dictionary<string, Dictionary<string, DataVal>>();
-				TriGramTable.Add(cwp2, bigram);
+				TriGramTable.Add(c2, bigram);
 
-				foreach (string cwp1 in codewords)
+				foreach (string c1 in codewords)
 				{
-					if (cwp1 != "S" || cwp2 == "S")
+					if (c1 != "S" || c2 == "S")
 					{
 						var unigram = new Dictionary<string, DataVal>();
-						bigram.Add(cwp1, unigram);
+						bigram.Add(c1, unigram);
 
-						foreach (string cwc in codewords)
+						foreach (string c0 in codewords)
 						{
-							if (cwc != "S")
+							if (c0 != "S")
 							{
-								unigram.Add(cwc, new DataVal());
+								unigram.Add(c0, new DataVal());
 							}
 						}
 					}
@@ -512,7 +532,9 @@ namespace lipsync_editor
 
 		void LoadFxeFile()
 		{
-			string file = _wavefile.Substring(0, _wavefile.Length - 3) + "fxe";
+			logfile.Log("LoadFxeFile()");
+
+			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_FXE;
 			if (File.Exists(file))
 			{
 				LoadFxeCodewords();
@@ -522,37 +544,47 @@ namespace lipsync_editor
 					var br = new BinaryReader(fs);
 
 					fs.Seek(85, SeekOrigin.Begin);
-//					string model = ReadFxeString(br);
+					string headtype = ReadFxeString(br);
+					logfile.Log(". headtype= " + headtype);
 
 					fs.Seek(34, SeekOrigin.Current);
-//					string wav = ReadFxeString(br);
+					string wavefile = ReadFxeString(br);
+					logfile.Log(". wavefile= " + wavefile);
 
 					fs.Seek(8, SeekOrigin.Current);
-//					short blockCount = br.ReadInt16();
+					short blockcount = br.ReadInt16();
+					logfile.Log(". blockcount= " + blockcount);
 
 					fs.Seek(8, SeekOrigin.Current);
 
-					const int blockCount = 15;
-					for (int c = 0; c != blockCount; ++c)
+					for (short i = 0; i != (short)15; ++i)
 					{
+						logfile.Log(". . i= " + i);
+
 						string codeword = ReadFxeString(br);
+						logfile.Log(". . codeword= " + codeword);
 
-						fs.Seek(8, SeekOrigin.Current); // 8 bytes of zeroes
-						short dataBlockCount = br.ReadInt16();
+						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
+						short datablockcount = br.ReadInt16();
+						logfile.Log(". . datablockcount= " + datablockcount);
 
-						fs.Seek(4, SeekOrigin.Current); // 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 
-						for (int j = 0; j != dataBlockCount; ++j)
+						for (short j = 0; j != datablockcount; ++j)
 						{
+							logfile.Log(". . j= " + j);
+
 							float val1 = br.ReadSingle();
 							float val2 = br.ReadSingle();
+							logfile.Log(". . val1= " + val1);
+							logfile.Log(". . val2= " + val2);
 
-							fs.Seek(10, SeekOrigin.Current); // 10 bytes of zeroes
+							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
 							var block = new FxeDataBlock(codeword, val1, val2, 0, 0);
 							_fxeData[codeword].Add(block);
 						}
-						fs.Seek(4, SeekOrigin.Current); // 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 					}
 					br.Close();
 				}
@@ -595,12 +627,7 @@ namespace lipsync_editor
 		{
 			br.ReadInt16();
 			int len = br.ReadInt32();
-			//logfile.Log("len= " + len); // 1,702,194,277 - uh no.
-
-			string chars = new String(br.ReadChars(len));
-			//logfile.Log("chars= " + chars);
-
-			return chars;
+			return new String(br.ReadChars(len));
 		}
 
 		void GenerateFxeData(List<AlignmentResult> arList)
@@ -626,27 +653,27 @@ namespace lipsync_editor
 
 			var blocks = new List<FxeDataBlock>(); // viseme start, mid, end points
 
-			string pcw2 = "S";
-			string pcw1 = "S";
+			string c2 = "S";
+			string c1 = "S";
 			int id = 0;
 
 			foreach (KeyValuePair<string, decimal> vis in vices)
 			{
-				string cw = vis.Key;
+				string c0 = vis.Key;
 
 				float stop = (float)vis.Value;
 
-				DataVal dataval = GetTrigramValues(pcw2, pcw1, cw);
+				DataVal dataval = GetTrigramValues(c2, c1, c0);
 				float strt = stop - dataval.length;
 				float midl = strt + dataval.length / 2F;
 
-				blocks.Add(new FxeDataBlock(cw, strt,          0F, 0, id));
-				blocks.Add(new FxeDataBlock(cw, midl, dataval.val, 1, id));
-				blocks.Add(new FxeDataBlock(cw, stop,          0F, 2, id));
+				blocks.Add(new FxeDataBlock(c0, strt,          0F, 0, id));
+				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, 1, id));
+				blocks.Add(new FxeDataBlock(c0, stop,          0F, 2, id));
 
 				++id;
-				pcw2 = pcw1;
-				pcw1 = cw;
+				c2 = c1;
+				c1 = c0;
 			}
 
 			blocks.Sort();
@@ -654,22 +681,22 @@ namespace lipsync_editor
 			SmoothFxeData();
 		}
 
-		DataVal GetTrigramValues(string pcw2, string pcw1, string cw)
+		DataVal GetTrigramValues(string c2, string c1, string c0)
 		{
-			DataVal dataval = TriGramTable[pcw2][pcw1][cw];
+			DataVal dataval = TriGramTable[c2][c1][c0];
 			if (Math.Abs(dataval.length) < 0.000005)
 			{
-				pcw2 = String.Empty;
+				c2 = String.Empty;
 
 				int count = 0;
 				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> keyval in TriGramTable)
 				{
-					DataVal dataval2 = keyval.Value[pcw1][cw];
-					if (dataval2.count > count)
+					DataVal dataval0 = keyval.Value[c1][c0];
+					if (dataval0.count > count)
 					{
-						count = dataval2.count;
-						pcw2 = keyval.Key;
-						dataval = dataval2;
+						count = dataval0.count;
+						c2 = keyval.Key;
+						dataval = dataval0;
 					}
 				}
 			}
@@ -945,7 +972,7 @@ namespace lipsync_editor
 		#region write methods
 		void WriteFxeFile()
 		{
-			string file = _wavefile.Substring(0, _wavefile.Length - 3).ToLower() + "fxe";
+			string file = _wavefile.Substring(0, _wavefile.Length - 3).ToLower() + EXT_FXE;
 			using (FileStream fs = File.Open(file, FileMode.Create))
 			{
 				var bw = new BinaryWriter(fs);
@@ -986,12 +1013,12 @@ namespace lipsync_editor
 			MessageBoxIcon icon;
 			if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
 			{
-				info = "Success";
+				info = "mission success";
 				icon = MessageBoxIcon.Information;
 			}
 			else
 			{
-				info = "Fail";
+				info = "mission failed";
 				icon = MessageBoxIcon.Error;
 			}
 			MessageBox.Show(info,
