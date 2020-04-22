@@ -74,7 +74,12 @@ namespace lipsync_editor
 			{
 				InitializeComponent();
 
-				tb_text    .BackColor = 
+				la_def_word_pct.Text =
+				la_def_phon_pct.Text =
+				la_enh_word_pct.Text =
+				la_enh_phon_pct.Text = String.Empty;
+
+				tb_text    .BackColor =
 				tb_expected.BackColor = Color.AntiqueWhite;
 
 				tb_def_words.BackColor =
@@ -83,7 +88,8 @@ namespace lipsync_editor
 				tb_enh_phons.BackColor = Color.GhostWhite;
 
 
-				var col = new DataColumn(HEAD_PHONS_0, typeof(string));
+				DataColumn col;
+				col = new DataColumn(HEAD_PHONS_0, typeof(string));
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
@@ -96,11 +102,9 @@ namespace lipsync_editor
 				_dt1.Columns.Add(col);
 
 				dg_phons.DataSource = _dt1;
-				dg_phons.Columns[HEAD_PHONS_0].Width =  80;
-				dg_phons.Columns[HEAD_PHONS_1].Width = 120;
-				dg_phons.Columns[HEAD_PHONS_2].Width =  80;
-
-				dg_phons.RowHeadersVisible = false;
+				dg_phons.Columns[0].Width =  80;
+				dg_phons.Columns[1].Width = 115;
+				dg_phons.Columns[2].Width =  82;
 
 				col = new DataColumn(HEAD_BLOCKS_0, typeof(string));
 				col.ReadOnly = true;
@@ -115,10 +119,11 @@ namespace lipsync_editor
 				_dt2.Columns.Add(col);
 
 				dg_blocks.DataSource = _dt2;
-				dg_blocks.Columns[HEAD_BLOCKS_0].Width =  70;
-				dg_blocks.Columns[HEAD_BLOCKS_1].Width = 100;
-				dg_blocks.Columns[HEAD_BLOCKS_2].Width = 110;
+				dg_blocks.Columns[0].Width =  70;
+				dg_blocks.Columns[1].Width = 100;
+				dg_blocks.Columns[2].Width = 107;
 
+				dg_phons .RowHeadersVisible =
 				dg_blocks.RowHeadersVisible = false;
 
 
@@ -195,9 +200,9 @@ namespace lipsync_editor
 					LoadFxeFile();
 
 					co_headtype.SelectedIndex = 0;
-					co_headtype .Enabled = false;
+					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
-					bu_generate .Enabled = true;
+					bu_generate .Enabled =
 					bu_play     .Enabled = true;
 
 					_lipsyncer = new SapiLipsync(_wavefile);
@@ -380,7 +385,7 @@ namespace lipsync_editor
 					ulong stop = ar.Stops[i];
 
 //					decimal dstrt = (decimal)strt / (decimal)10000000;
-					decimal dstop = (decimal)stop / (decimal)10000000; // TODO: Fuck off the decimals. Thanks.
+					decimal dstop = (decimal)stop / (decimal)10000000;
 
 					string phon = ar.Phons[i];
 
@@ -635,7 +640,6 @@ namespace lipsync_editor
 			var vices = new List<KeyValuePair<string, decimal>>();
 
 			string phon;
-
 			foreach (AlignmentResult ar in arList)
 			{
 				for (int i = 0; i < ar.Phons.Count; ++i)
@@ -667,9 +671,9 @@ namespace lipsync_editor
 				float strt = stop - dataval.length;
 				float midl = strt + dataval.length / 2F;
 
-				blocks.Add(new FxeDataBlock(c0, strt,          0F, 0, id));
-				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, 1, id));
-				blocks.Add(new FxeDataBlock(c0, stop,          0F, 2, id));
+				blocks.Add(new FxeDataBlock(c0, strt,          0F, (byte)0, id));
+				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
+				blocks.Add(new FxeDataBlock(c0, stop,          0F, (byte)2, id));
 
 				++id;
 				c2 = c1;

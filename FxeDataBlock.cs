@@ -30,9 +30,9 @@ namespace lipsync_editor
 
 
 		#region methods
-		public FxeDataBlock(string viseme, float val1, float val2, byte type, int id)
+		public FxeDataBlock(string vis, float val1, float val2, byte type, int id)
 		{
-			Viseme = viseme;
+			Viseme = vis;
 			Val1   = val1;
 			Val2   = val2;
 

@@ -206,7 +206,7 @@ namespace lipsync_editor
 			this.dg_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.dg_phons.Name = "dg_phons";
 			this.dg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_phons.Size = new System.Drawing.Size(280, 425);
+			this.dg_phons.Size = new System.Drawing.Size(280, 420);
 			this.dg_phons.TabIndex = 25;
 			// 
 			// la_text
@@ -356,7 +356,7 @@ namespace lipsync_editor
 			this.dg_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.dg_blocks.Name = "dg_blocks";
 			this.dg_blocks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_blocks.Size = new System.Drawing.Size(280, 425);
+			this.dg_blocks.Size = new System.Drawing.Size(280, 420);
 			this.dg_blocks.TabIndex = 27;
 			// 
 			// bu_createfxe
@@ -463,7 +463,7 @@ namespace lipsync_editor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1052, 491);
+			this.ClientSize = new System.Drawing.Size(1052, 486);
 			this.Controls.Add(this.bu_createfxe);
 			this.Controls.Add(this.co_headtype);
 			this.Controls.Add(this.la_headtype);
