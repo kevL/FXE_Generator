@@ -27,7 +27,7 @@ namespace lipsync_editor
 
 
 		#region fields (static)
-		const string EXT_FXE = "fxe";
+		internal const string EXT_FXE = "fxe";
 		const string EXT_TXT = "txt";
 
 		const string HEAD_PHONS_0 = "phoneme"; // headers for the phonemes table ->
@@ -56,7 +56,8 @@ namespace lipsync_editor
 		DataTable _dt1 = new DataTable();
 		DataTable _dt2 = new DataTable();
 
-		Dictionary<string, List<FxeDataBlock>> _fxeData = new Dictionary<string, List<FxeDataBlock>>();
+			Dictionary<string, List<FxeDataBlock>> _fxeData =
+		new Dictionary<string, List<FxeDataBlock>>();
 		#endregion fields
 
 
@@ -265,7 +266,7 @@ namespace lipsync_editor
 		void btnCreateFxe_Click(object sender, EventArgs e)
 		{
 			_headtype = co_headtype.Text;
-			WriteFxeFile();
+			FxeWriter.WriteFxeFile(_wavefile, _headtype, _fxeData);
 		}
 
 		void btnPlay_Click(object sender, EventArgs e)
@@ -335,7 +336,7 @@ namespace lipsync_editor
 			}
 			else
 			{
-				WriteFxeFile();
+				FxeWriter.WriteFxeFile(_wavefile, _headtype, _fxeData);
 				Application.Exit();
 			}
 		}
@@ -988,131 +989,6 @@ namespace lipsync_editor
 				datablocks.Add(datablock);
 		}
 		#endregion methods
-
-
-		#region write methods
-		void WriteFxeFile()
-		{
-			string file = _wavefile.Substring(0, _wavefile.Length - 3).ToLower() + EXT_FXE;
-			using (FileStream fs = File.Open(file, FileMode.Create))
-			{
-				var bw = new BinaryWriter(fs);
-
-				WriteFxeHeader(bw);
-				WriteFxeString(_headtype, bw);
-
-				bw.Write((short)0);
-				bw.Write(0);
-
-				WriteFxeString("exported", bw);
-
-				bw.Write(0);
-
-				WriteFxeString(String.Empty, bw);
-
-				bw.Write(0);
-
-				int pos = _wavefile.LastIndexOf('\\') + 1;
-				string filelabel = _wavefile.Substring(pos, _wavefile.Length - pos - 4).ToLower();
-				WriteFxeString(filelabel, bw);
-
-				bw.Write((short)3);
-
-				long fileLengthOffset = bw.BaseStream.Position;
-
-				bw.Write(0);
-				bw.Write((short)0);
-				bw.Write((short)25);
-				bw.Write(0L);
-
-				WriteFxeData(bw);
-				WriteFxeFooter(fileLengthOffset, bw);
-
-				bw.Close();
-			}
-
-
-			if (!isConsole)
-			{
-				string info;
-				MessageBoxIcon icon;
-				if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
-				{
-					info = " SUCCESS";
-					icon = MessageBoxIcon.Information;
-				}
-				else
-				{
-					info = " FAILED";
-					icon = MessageBoxIcon.Error;
-				}
-				MessageBox.Show(info,
-								" Write file",
-								MessageBoxButtons.OK,
-								icon,
-								MessageBoxDefaultButton.Button1);
-			}
-		}
-
-		void WriteFxeHeader(BinaryWriter bw)
-		{
-			bw.Write("FACE".ToCharArray());
-			bw.Write(1500);
-			WriteFxeString("Obsidian Entertainment", bw);
-			WriteFxeString("evaluation only", bw);
-			bw.Write((short)1000);
-			bw.Write(0L);
-			WriteFxeString("exported", bw);
-			bw.Write(0);
-		}
-
-		void WriteFxeData(BinaryWriter bw)
-		{
-			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in _fxeData)
-			{
-				WriteFxeString(keyval.Key, bw); // key=codeword
-
-				bw.Write(0L);
-
-				List<FxeDataBlock> dataList = keyval.Value;
-				bw.Write((short)dataList.Count);
-
-				bw.Write(0);
-
-				dataList.Sort();
-
-				foreach (FxeDataBlock datablock in dataList)
-				{
-					bw.Write(datablock.Val1);
-					bw.Write(datablock.Val2);
-					bw.Write((short)0);
-					bw.Write(0L);
-				}
-				bw.Write(0);
-			}
-		}
-
-		void WriteFxeFooter(long fileLengthOffsetLocation, BinaryWriter bw)
-		{
-			bw.Write(4494952716784883466L);
-			bw.Write((short)0);
-			bw.Write(0);
-			WriteFxeString(String.Empty, bw);
-			WriteFxeString(String.Empty, bw);
-			bw.Write(-1);
-			int length = (int)bw.BaseStream.Length;
-			bw.BaseStream.Seek(fileLengthOffsetLocation, SeekOrigin.Begin);
-			bw.Write(length);
-		}
-
-		void WriteFxeString(string str, BinaryWriter bw)
-		{
-			bw.Write((short)1);
-			bw.Write(str.Length);
-			if (str.Length > 0)
-				bw.Write(str.ToCharArray());
-		}
-		#endregion write methods
 
 
 		static bool floatsequal(float f1, float f2)
