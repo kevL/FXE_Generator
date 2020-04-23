@@ -37,14 +37,14 @@ namespace lipsync_editor
 		const string HEAD_BLOCKS_0 = "viseme"; // headers for the datablocks table ->
 		const string HEAD_BLOCKS_1 = "frame stop";
 		const string HEAD_BLOCKS_2 = "morph weight";
+
+		internal static bool isConsole;
 		#endregion fields (static)
 
 
 		#region fields
 			Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
 		new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
-
-		bool _console;
 
 		string _wavefile = String.Empty;
 		string _headtype = String.Empty;
@@ -73,6 +73,8 @@ namespace lipsync_editor
 			if (wavefile == String.Empty)
 			{
 				InitializeComponent();
+
+				co_headtype.SelectedIndex = 0;
 
 				la_def_word_pct.Text =
 				la_def_phon_pct.Text =
@@ -134,15 +136,19 @@ namespace lipsync_editor
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
-				_console  = true;
+				isConsole = true;
+
 				_wavefile = wavefile;
 				_headtype = headtype;
 
 				_lipsyncer = new SapiLipsync(_wavefile);
-				_lipsyncer.Recognition  += OnRecognition;
-//				_lipsyncer.TtsParseText += OnTtsParseText;
+				if (_lipsyncer.Fullpath != String.Empty)
+				{
+					_lipsyncer.Recognition  += OnRecognition;
+//					_lipsyncer.TtsParseText += OnTtsParseText;
 
-				_lipsyncer.ReadWavefile(LoadTypedTextFile());
+					_lipsyncer.Start(LoadTypedTextFile());
+				}
 			}
 		}
 
@@ -169,6 +175,7 @@ namespace lipsync_editor
 		{
 			// debug ->
 			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
+//			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\ding.wav";
 
 //			using (var ofd = new OpenFileDialog())
 //			{
@@ -198,17 +205,24 @@ namespace lipsync_editor
 					tb_enh_phons   .Text =
 					la_enh_phon_pct.Text = String.Empty;
 
-					LoadFxeFile();
-
-					co_headtype.SelectedIndex = 0;
 					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
-					bu_generate .Enabled =
-					bu_play     .Enabled = true;
+
+					LoadFxeFile();
+
+					bool enabled = false;
 
 					_lipsyncer = new SapiLipsync(_wavefile);
-					_lipsyncer.Recognition  += OnRecognition;
-					_lipsyncer.TtsParseText += OnTtsParseText;
+					if (_lipsyncer.Fullpath != String.Empty)
+					{
+						enabled = true;
+
+						_lipsyncer.Recognition  += OnRecognition;
+						_lipsyncer.TtsParseText += OnTtsParseText;
+					}
+
+					bu_generate .Enabled =
+					bu_play     .Enabled = enabled;
 //				}
 //			}
 		}
@@ -232,6 +246,7 @@ namespace lipsync_editor
 
 			Cursor = Cursors.WaitCursor;
 
+			tb_expected    .Text =
 			tb_def_words   .Text =
 			la_def_word_pct.Text =
 			tb_def_phons   .Text =
@@ -244,7 +259,7 @@ namespace lipsync_editor
 			_dt1.Clear();
 			_dt2.Clear();
 
-			_lipsyncer.ReadWavefile(tb_text.Text);
+			_lipsyncer.Start(tb_text.Text);
 		}
 
 		void btnCreateFxe_Click(object sender, EventArgs e)
@@ -282,7 +297,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("OnRecognitionResult() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 
-			if (!_console)
+			if (!isConsole)
 			{
 				PrintTextResults(ars_def, tb_def_words, tb_def_phons);
 				PrintTextResults(ars_enh, tb_enh_words, tb_enh_phons);
@@ -313,7 +328,7 @@ namespace lipsync_editor
 
 			GenerateFxeData(ars);
 
-			if (!_console)
+			if (!isConsole)
 			{
 				PopulatePhonGrid(ars);
 				PopulateDataGrid();
@@ -1017,23 +1032,26 @@ namespace lipsync_editor
 			}
 
 
-			string info;
-			MessageBoxIcon icon;
-			if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
+			if (!isConsole)
 			{
-				info = " SUCCESS";
-				icon = MessageBoxIcon.Information;
+				string info;
+				MessageBoxIcon icon;
+				if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
+				{
+					info = " SUCCESS";
+					icon = MessageBoxIcon.Information;
+				}
+				else
+				{
+					info = " FAILED";
+					icon = MessageBoxIcon.Error;
+				}
+				MessageBox.Show(info,
+								" Write file",
+								MessageBoxButtons.OK,
+								icon,
+								MessageBoxDefaultButton.Button1);
 			}
-			else
-			{
-				info = " FAILED";
-				icon = MessageBoxIcon.Error;
-			}
-			MessageBox.Show(info,
-							" Write file",
-							MessageBoxButtons.OK,
-							icon,
-							MessageBoxDefaultButton.Button1);
 		}
 
 		void WriteFxeHeader(BinaryWriter bw)

@@ -93,7 +93,7 @@ namespace lipsync_editor
 
 			_phoneConverter.LanguageId = 1033; // US English
 
-			ConvertFile(wavefile);
+			ConvertMp3toWav(wavefile);
 		}
 		#endregion cTor
 
@@ -105,14 +105,16 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="file"></param>
 		/// <returns></returns>
-		void ConvertFile(string file)
+		void ConvertMp3toWav(string file)
 		{
-			logfile.Log("ConvertFile() file= " + file);
+			logfile.Log("ConvertMp3toWav() file= " + file);
+
+			Fullpath = String.Empty;
 
 			string pathT = Path.GetTempPath();
-			logfile.Log(". path= " + pathT);
+			//logfile.Log(". path= " + pathT);
 
-			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase))
+			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // prep .BMU ->
 			{
 				var fi = new FileInfo(file);
 				var br = new BinaryReader(fi.OpenRead());
@@ -125,7 +127,7 @@ namespace lipsync_editor
 					&& c[2] == 'U')
 				{
 					file = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
-					logfile.Log(". file= " + file);
+					//logfile.Log(". file= " + file);
 
 					fi.CopyTo(file, true);
 				}
@@ -134,7 +136,7 @@ namespace lipsync_editor
 			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
 				string waveT = Path.Combine(pathT, TMP_WAV);
-				logfile.Log(". wave= " + waveT);
+				//logfile.Log(". wave= " + waveT);
 
 
 				if (File.Exists(waveT))
@@ -160,13 +162,85 @@ namespace lipsync_editor
 
 				file = waveT;
 			}
-			Fullpath = file;
+
+			// http://www.topherlee.com/software/pcm-tut-wavformat.html
+//			 1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
+//			 5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
+//			 9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
+//			13-16	"fmt "				Format chunk marker. Includes trailing null
+//			17-20	16					Length of format data as listed above
+//			21-22	1					Type of format (1 is PCM) - 2 byte integer
+//			23-24	2					Number of Channels - 2 byte integer
+//			25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
+//			29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
+//			33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
+//			35-36	16					Bits per sample
+//			37-40	"data"				"data" chunk header. Marks the beginning of the data section.
+//			41-44	File size (data)	Size of the data section.
+
+			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
+			{
+				var fi = new FileInfo(file);
+				var br = new BinaryReader(fi.OpenRead());
+
+				char[] c = br.ReadChars(16); // start 0
+
+				if (   c[ 0] == 'R'
+					&& c[ 1] == 'I'
+					&& c[ 2] == 'F'
+					&& c[ 3] == 'F'
+					&& c[ 8] == 'W'
+					&& c[ 9] == 'A'
+					&& c[10] == 'V'
+					&& c[11] == 'E'
+					&& c[12] == 'f'
+					&& c[13] == 'm'
+					&& c[14] == 't'
+					&& c[15] == ' ')
+				{
+					br.ReadBytes(4);							// start 16
+
+					short format = br.ReadInt16();				// start 20: is PCM
+					//logfile.Log(". format= " + format);
+					if (format == 1)
+					{
+						short channels = br.ReadInt16();		// start 22: is Mono
+						//logfile.Log(". channels= " + channels);
+						if (channels == 1)
+						{
+							int rate = br.ReadInt32();	// start 24: is 44.1kHz
+							//logfile.Log(". rate= " + rate);
+							if (rate == 44100)
+							{
+								br.ReadBytes(6);				// start 28
+								short bits = br.ReadInt16();	// start 34: is 16-bit
+								//logfile.Log(". bits= " + bits);
+								if (bits == 16)
+								{
+									Fullpath = file;
+									logfile.Log(". Fullpath= " + file);
+								}
+							}
+						}
+					}
+				}
+				br.Close();
+			}
+
+			if (!FxeGeneratorF.isConsole && Fullpath == String.Empty)
+			{
+				MessageBox.Show(" Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
+								" Conversion failed",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error,
+								MessageBoxDefaultButton.Button1);
+			}
 		}
 
 
-		internal void ReadWavefile(string text)
+		internal void Start(string text)
 		{
-			logfile.Log("ReadWavefile() text= " + text);
+			logfile.Log("Start() text= " + text);
 
 			// kL_clearall -> these don't all need to be cleared
 			_ruler = false;
@@ -216,7 +290,7 @@ namespace lipsync_editor
 
 			Generate(false);
 
-			logfile.Log("ReadWavefile() DONE");
+			logfile.Log("Start() DONE");
 		}
 
 
@@ -231,7 +305,7 @@ namespace lipsync_editor
 			// conditional expression below. It causes an infinite loop ...
 			// since '_ruler' will NOT be set true despite 'ruler' being true.
 			//
-			// And that, friends, took a day to figure out.
+			// And that, friends, took all day to figure out.
 
 			if (_ruler
 				&& TypedText != String.Empty
