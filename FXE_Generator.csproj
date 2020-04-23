@@ -52,6 +52,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SapiLipsync.cs" />
+    <Compile Include="VisemeSmoother.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FxeGeneratorF.resx">
