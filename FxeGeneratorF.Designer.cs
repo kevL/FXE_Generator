@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace lipsync_editor
 {
-	partial class FxeGeneratorF
+	sealed partial class FxeGeneratorF
 	{
 		/// <summary>
 		/// (un)Required designer variable.
@@ -111,7 +111,7 @@ namespace lipsync_editor
 			this.tb_def_words.Name = "tb_def_words";
 			this.tb_def_words.ReadOnly = true;
 			this.tb_def_words.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_def_words.Size = new System.Drawing.Size(460, 55);
+			this.tb_def_words.Size = new System.Drawing.Size(460, 40);
 			this.tb_def_words.TabIndex = 14;
 			// 
 			// la_def_words
@@ -121,7 +121,7 @@ namespace lipsync_editor
 			this.la_def_words.Name = "la_def_words";
 			this.la_def_words.Size = new System.Drawing.Size(305, 15);
 			this.la_def_words.TabIndex = 12;
-			this.la_def_words.Text = "Text - recognized";
+			this.la_def_words.Text = "Result - recognized speech";
 			this.la_def_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_wavefile
@@ -134,6 +134,7 @@ namespace lipsync_editor
 			this.tb_wavefile.ReadOnly = true;
 			this.tb_wavefile.Size = new System.Drawing.Size(885, 22);
 			this.tb_wavefile.TabIndex = 1;
+			this.tb_wavefile.WordWrap = false;
 			// 
 			// bu_open
 			// 
@@ -162,23 +163,23 @@ namespace lipsync_editor
 			// 
 			this.tb_def_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_def_phons.Location = new System.Drawing.Point(5, 300);
+			this.tb_def_phons.Location = new System.Drawing.Point(5, 286);
 			this.tb_def_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_def_phons.Multiline = true;
 			this.tb_def_phons.Name = "tb_def_phons";
 			this.tb_def_phons.ReadOnly = true;
 			this.tb_def_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_def_phons.Size = new System.Drawing.Size(460, 40);
+			this.tb_def_phons.Size = new System.Drawing.Size(460, 55);
 			this.tb_def_phons.TabIndex = 17;
 			// 
 			// la_def_phons
 			// 
-			this.la_def_phons.Location = new System.Drawing.Point(5, 284);
+			this.la_def_phons.Location = new System.Drawing.Point(5, 270);
 			this.la_def_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_phons.Name = "la_def_phons";
 			this.la_def_phons.Size = new System.Drawing.Size(305, 15);
 			this.la_def_phons.TabIndex = 15;
-			this.la_def_phons.Text = "Text - phonemes";
+			this.la_def_phons.Text = "Result - phonemes";
 			this.la_def_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_text
@@ -190,7 +191,7 @@ namespace lipsync_editor
 			this.tb_text.Multiline = true;
 			this.tb_text.Name = "tb_text";
 			this.tb_text.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_text.Size = new System.Drawing.Size(460, 55);
+			this.tb_text.Size = new System.Drawing.Size(460, 40);
 			this.tb_text.TabIndex = 9;
 			// 
 			// dg_phons
@@ -221,7 +222,7 @@ namespace lipsync_editor
 			// 
 			// la_expected
 			// 
-			this.la_expected.Location = new System.Drawing.Point(5, 139);
+			this.la_expected.Location = new System.Drawing.Point(5, 124);
 			this.la_expected.Margin = new System.Windows.Forms.Padding(0);
 			this.la_expected.Name = "la_expected";
 			this.la_expected.Size = new System.Drawing.Size(460, 15);
@@ -233,36 +234,36 @@ namespace lipsync_editor
 			// 
 			this.tb_expected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_expected.Location = new System.Drawing.Point(5, 155);
+			this.tb_expected.Location = new System.Drawing.Point(5, 140);
 			this.tb_expected.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_expected.Multiline = true;
 			this.tb_expected.Name = "tb_expected";
 			this.tb_expected.ReadOnly = true;
 			this.tb_expected.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_expected.Size = new System.Drawing.Size(460, 40);
+			this.tb_expected.Size = new System.Drawing.Size(460, 55);
 			this.tb_expected.TabIndex = 11;
 			// 
 			// la_enh_phons
 			// 
-			this.la_enh_phons.Location = new System.Drawing.Point(5, 424);
+			this.la_enh_phons.Location = new System.Drawing.Point(5, 410);
 			this.la_enh_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_phons.Name = "la_enh_phons";
 			this.la_enh_phons.Size = new System.Drawing.Size(305, 15);
 			this.la_enh_phons.TabIndex = 21;
-			this.la_enh_phons.Text = "Text - phonemes w/ typed";
+			this.la_enh_phons.Text = "Result - phonemes enhanced w/ Typed text";
 			this.la_enh_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_enh_phons
 			// 
 			this.tb_enh_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_enh_phons.Location = new System.Drawing.Point(5, 440);
+			this.tb_enh_phons.Location = new System.Drawing.Point(5, 426);
 			this.tb_enh_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_enh_phons.Multiline = true;
 			this.tb_enh_phons.Name = "tb_enh_phons";
 			this.tb_enh_phons.ReadOnly = true;
 			this.tb_enh_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_enh_phons.Size = new System.Drawing.Size(460, 40);
+			this.tb_enh_phons.Size = new System.Drawing.Size(460, 55);
 			this.tb_enh_phons.TabIndex = 23;
 			// 
 			// la_enh_words
@@ -272,7 +273,7 @@ namespace lipsync_editor
 			this.la_enh_words.Name = "la_enh_words";
 			this.la_enh_words.Size = new System.Drawing.Size(305, 15);
 			this.la_enh_words.TabIndex = 18;
-			this.la_enh_words.Text = "Text - recognized w/ typed";
+			this.la_enh_words.Text = "Result - recognized speech enhanced w/ Typed text";
 			this.la_enh_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_enh_words
@@ -285,7 +286,7 @@ namespace lipsync_editor
 			this.tb_enh_words.Name = "tb_enh_words";
 			this.tb_enh_words.ReadOnly = true;
 			this.tb_enh_words.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.tb_enh_words.Size = new System.Drawing.Size(460, 55);
+			this.tb_enh_words.Size = new System.Drawing.Size(460, 40);
 			this.tb_enh_words.TabIndex = 20;
 			// 
 			// la_def_word_pct
@@ -302,7 +303,7 @@ namespace lipsync_editor
 			// la_def_phon_pct
 			// 
 			this.la_def_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_def_phon_pct.Location = new System.Drawing.Point(410, 284);
+			this.la_def_phon_pct.Location = new System.Drawing.Point(410, 270);
 			this.la_def_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_phon_pct.Name = "la_def_phon_pct";
 			this.la_def_phon_pct.Size = new System.Drawing.Size(55, 15);
@@ -324,7 +325,7 @@ namespace lipsync_editor
 			// la_enh_phon_pct
 			// 
 			this.la_enh_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_enh_phon_pct.Location = new System.Drawing.Point(410, 424);
+			this.la_enh_phon_pct.Location = new System.Drawing.Point(410, 410);
 			this.la_enh_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_phon_pct.Name = "la_enh_phon_pct";
 			this.la_enh_phon_pct.Size = new System.Drawing.Size(55, 15);

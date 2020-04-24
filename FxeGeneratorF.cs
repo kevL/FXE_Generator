@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace lipsync_editor
 {
-	public partial class FxeGeneratorF
+	sealed partial class FxeGeneratorF
 		: Form
 	{
 		#region structs
@@ -19,16 +19,16 @@ namespace lipsync_editor
 		/// </summary>
 		struct DataVal
 		{
-			public float length;
-			public float val;
-			public short count;
+			internal float length;
+			internal float val;
+			internal short count;
 		}
 		#endregion structs
 
 
 		#region fields (static)
 		internal const string EXT_FXE = "fxe";
-		const string EXT_TXT = "txt";
+				 const string EXT_TXT = "txt";
 
 		const string HEAD_PHONS_0 = "phoneme"; // headers for the phonemes table ->
 		const string HEAD_PHONS_1 = "stop (secs)";
@@ -43,21 +43,21 @@ namespace lipsync_editor
 
 
 		#region fields
-			Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
-		new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
+		SapiLipsync _lipsyncer;
 
 		string _wavefile = String.Empty;
 		string _headtype = String.Empty;
 
-		SapiLipsync _lipsyncer;
+			Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
+		new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
 
 		Dictionary<string, string> _phon2vis = new Dictionary<string, string>();
 
-		DataTable _dt1 = new DataTable();
-		DataTable _dt2 = new DataTable();
-
 			Dictionary<string, List<FxeDataBlock>> _fxeData =
 		new Dictionary<string, List<FxeDataBlock>>();
+
+		DataTable _dt1 = new DataTable();
+		DataTable _dt2 = new DataTable();
 		#endregion fields
 
 
@@ -68,8 +68,8 @@ namespace lipsync_editor
 
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
-			LoadVisMap();
-			LoadTriGramTable();
+			StaticData.AddPhon2VisMap(_phon2vis);
+			LoadTrigramTable();
 
 			if (wavefile == String.Empty)
 			{
@@ -145,8 +145,8 @@ namespace lipsync_editor
 				_lipsyncer = new SapiLipsync(_wavefile);
 				if (_lipsyncer.Fullpath != String.Empty)
 				{
-					_lipsyncer.Recognition  += OnRecognition;
 //					_lipsyncer.TtsParseText += OnTtsParseText;
+					_lipsyncer.Recognition  += OnRecognition;
 
 					_lipsyncer.Start(LoadTypedTextFile());
 				}
@@ -157,14 +157,20 @@ namespace lipsync_editor
 		void printversion()
 		{
 			var an = System.Reflection.Assembly.GetExecutingAssembly().GetName();
-			string ver = an.Version.Major + "."
-					   + an.Version.Minor + "."
-					   + an.Version.Build + "."
-					   + an.Version.Revision;
+			string ver = "[" + an.Version.Major
+					   + "." + an.Version.Minor;
+
+			if (an.Version.Build != 0 || an.Version.Revision != 0)
+			{
+				ver += "." + an.Version.Build;
+
+				if (an.Version.Revision != 0)
+					ver += "." + an.Version.Revision;
+			}
 #if DEBUG
-			ver += "  deb";
+			ver += "  deb]";
 #else
-			ver += "  rel";
+			ver += "  rel]";
 #endif
 			la_version.Text = ver;
 		}
@@ -218,8 +224,8 @@ namespace lipsync_editor
 					{
 						enabled = true;
 
-						_lipsyncer.Recognition  += OnRecognition;
 						_lipsyncer.TtsParseText += OnTtsParseText;
+						_lipsyncer.Recognition  += OnRecognition;
 					}
 
 					bu_generate .Enabled =
@@ -305,14 +311,14 @@ namespace lipsync_editor
 
 				if (tb_text.Text != String.Empty)
 				{
-					la_def_word_pct.Text = _lipsyncer.RatioWords_def.ToString("P0");
-					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P0");
+					la_def_word_pct.Text = _lipsyncer.RatioWords_def.ToString("P1");
+					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P1");
 				}
 
 				if (_lipsyncer._tts_Phons.Count != 0)
 				{
-					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P0");
-					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P0");
+					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P1");
+					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P1");
 				}
 
 				ColorPercents();
@@ -398,15 +404,12 @@ namespace lipsync_editor
 			{
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-//					ulong strt = ar.GetStart(i);
-					ulong stop = ar.Stops[i];
-
-//					decimal dstrt = (decimal)strt / (decimal)10000000;
-					decimal dstop = (decimal)stop / (decimal)10000000;
+//					decimal strt = (decimal)ar.GetStart(i) / (decimal)10000000;
+					decimal stop = (decimal)ar.Stops[i]    / (decimal)10000000;
 
 					string phon = ar.Phons[i];
 
-					_dt1.Rows.Add(new object[] { phon, dstop, _phon2vis[phon] });
+					_dt1.Rows.Add(new object[] { phon, stop, _phon2vis[phon] });
 				}
 			}
 			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
@@ -434,54 +437,9 @@ namespace lipsync_editor
 
 
 		#region methods
-		void LoadVisMap()
+		void LoadTrigramTable()
 		{
-			_phon2vis.Add( "x", String.Empty);
-			_phon2vis.Add("iy", "Eat");
-			_phon2vis.Add("ih", "If");
-			_phon2vis.Add("eh", "If");
-			_phon2vis.Add("ey", "If");
-			_phon2vis.Add("ae", "If");
-			_phon2vis.Add("aa", "Ox");
-			_phon2vis.Add("aw", "If");
-			_phon2vis.Add("ay", "If");
-			_phon2vis.Add("ah", "If");
-			_phon2vis.Add("ao", "Ox");
-			_phon2vis.Add("oy", "Oat");
-			_phon2vis.Add("ow", "Oat");
-			_phon2vis.Add("uh", "Oat");
-			_phon2vis.Add("uw", "Oat");
-			_phon2vis.Add("er", "Earth");
-			_phon2vis.Add("ax", "If");
-			_phon2vis.Add( "s", "Size");
-			_phon2vis.Add("sh", "Church");
-			_phon2vis.Add( "z", "Size");
-			_phon2vis.Add("zh", "Church");
-			_phon2vis.Add( "f", "Fave");
-			_phon2vis.Add("th", "Though");
-			_phon2vis.Add( "v", "Fave");
-			_phon2vis.Add("dh", "Though");
-			_phon2vis.Add( "m", "Bump");
-			_phon2vis.Add( "n", "New");
-			_phon2vis.Add("ng", "New");
-			_phon2vis.Add( "l", "Told");
-			_phon2vis.Add( "r", "Roar");
-			_phon2vis.Add( "w", "Wet");
-			_phon2vis.Add( "y", "Wet");
-			_phon2vis.Add( "h", "If");
-			_phon2vis.Add( "b", "Bump");
-			_phon2vis.Add( "d", "Told");
-			_phon2vis.Add("jh", "Church");
-			_phon2vis.Add( "g", "Cage");
-			_phon2vis.Add( "p", "Bump");
-			_phon2vis.Add( "t", "Told");
-			_phon2vis.Add( "k", "Cage");
-			_phon2vis.Add("ch", "Church");
-		}
-
-		void LoadTriGramTable()
-		{
-			InitTriGramTable();
+			InitTrigramTable();
 
 			using (FileStream fs = File.OpenRead("TriGramTable.dat"))
 			{
@@ -501,9 +459,9 @@ namespace lipsync_editor
 			}
 		}
 
-		void InitTriGramTable()
+		void InitTrigramTable()
 		{
-			List<string> codewords = CreateCodewordList();
+			List<string> codewords = StaticData.AddCodewords();
 			foreach (string c2 in codewords)
 			{
 				var bigram = new Dictionary<string, Dictionary<string, DataVal>>();
@@ -528,30 +486,6 @@ namespace lipsync_editor
 			}
 		}
 
-		List<string> CreateCodewordList()
-		{
-			var codewords = new List<string>();
-
-			codewords.Add("S");
-			codewords.Add("Eat");
-			codewords.Add("If");
-			codewords.Add("Ox");
-			codewords.Add("Oat");
-			codewords.Add("Earth");
-			codewords.Add("Size");
-			codewords.Add("Church");
-			codewords.Add("Though");
-			codewords.Add("Bump");
-			codewords.Add("New");
-			codewords.Add("Told");
-			codewords.Add("Roar");
-			codewords.Add("Cage");
-			codewords.Add("Wet");
-			codewords.Add("Fave");
-
-			return codewords;
-		}
-
 
 		void LoadFxeFile()
 		{
@@ -560,7 +494,7 @@ namespace lipsync_editor
 			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_FXE;
 			if (File.Exists(file))
 			{
-				LoadFxeCodewords();
+				StaticData.AddFxeCodewords(_fxeData);
 
 				using (FileStream fs = File.Open(file, FileMode.Open))
 				{
@@ -613,37 +547,6 @@ namespace lipsync_editor
 				}
 				PopulateDataGrid();
 			}
-		}
-
-		void LoadFxeCodewords()
-		{
-			_fxeData.Clear();
-
-			_fxeData.Add("Eat",                    new List<FxeDataBlock>());
-			_fxeData.Add("If",                     new List<FxeDataBlock>());
-			_fxeData.Add("Ox",                     new List<FxeDataBlock>());
-			_fxeData.Add("Oat",                    new List<FxeDataBlock>());
-			_fxeData.Add("Earth",                  new List<FxeDataBlock>());
-			_fxeData.Add("Size",                   new List<FxeDataBlock>());
-			_fxeData.Add("Church",                 new List<FxeDataBlock>());
-			_fxeData.Add("Fave",                   new List<FxeDataBlock>());
-			_fxeData.Add("Though",                 new List<FxeDataBlock>());
-			_fxeData.Add("Bump",                   new List<FxeDataBlock>());
-			_fxeData.Add("New",                    new List<FxeDataBlock>());
-			_fxeData.Add("Told",                   new List<FxeDataBlock>());
-			_fxeData.Add("Roar",                   new List<FxeDataBlock>());
-			_fxeData.Add("Wet",                    new List<FxeDataBlock>());
-			_fxeData.Add("Cage",                   new List<FxeDataBlock>());
-			_fxeData.Add("Orientation Head Pitch", new List<FxeDataBlock>());
-			_fxeData.Add("Orientation Head Roll",  new List<FxeDataBlock>());
-			_fxeData.Add("Orientation Head Yaw",   new List<FxeDataBlock>());
-			_fxeData.Add("Gaze Eye Pitch",         new List<FxeDataBlock>());
-			_fxeData.Add("Gaze Eye Yaw",           new List<FxeDataBlock>());
-			_fxeData.Add("Emphasis Head Pitch",    new List<FxeDataBlock>());
-			_fxeData.Add("Emphasis Head Roll",     new List<FxeDataBlock>());
-			_fxeData.Add("Emphasis Head Yaw",      new List<FxeDataBlock>());
-			_fxeData.Add("Eyebrow Raise",          new List<FxeDataBlock>());
-			_fxeData.Add("Blink",                  new List<FxeDataBlock>());
 		}
 
 		string ReadFxeString(BinaryReader br)
@@ -699,7 +602,7 @@ namespace lipsync_editor
 			}
 
 			blocks.Sort();
-			AssignDatablocks(blocks);
+			AddDatablocks(blocks);
 			SmoothFxeData();
 		}
 
@@ -725,9 +628,9 @@ namespace lipsync_editor
 			return dataval;
 		}
 
-		void AssignDatablocks(IList<FxeDataBlock> datablocks)
+		void AddDatablocks(IList<FxeDataBlock> datablocks)
 		{
-			LoadFxeCodewords();
+			StaticData.AddFxeCodewords(_fxeData);
 
 			FxeDataBlock datablock0 = null;
 
@@ -739,7 +642,7 @@ namespace lipsync_editor
 				{
 					if (Math.Abs(datablock.Val1 - datablock0.Val1) < 0.000005F)
 					{
-						// force the x values (time values) to not ever be equal
+						// force the x values (stop values) to never be equal
 						if (i + 1 < datablocks.Count)
 						{
 							datablock.Val1 += Math.Min(0.0000001F, (datablocks[i + 1].Val1 - datablock.Val2) / 2F);

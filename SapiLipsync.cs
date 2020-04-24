@@ -10,18 +10,18 @@ using SpeechLib;
 
 namespace lipsync_editor
 {
-	public delegate void TtsParseTextEvent(string expected);
-	public delegate void RecognitionEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
+	internal delegate void TtsParseTextEvent(string expected);
+	internal delegate void RecognitionEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
 
 
 	/// <summary>
 	/// Sapi stuff
 	/// </summary>
-	public class SapiLipsync
+	public sealed class SapiLipsync
 	{
 		#region events
-		public TtsParseTextEvent TtsParseText;
-		public RecognitionEvent Recognition;
+		internal TtsParseTextEvent TtsParseText;
+		internal RecognitionEvent Recognition;
 		#endregion events
 
 
@@ -44,7 +44,7 @@ namespace lipsync_editor
 //		SpAudioFormat _pWaveFmt;
 
 				 List<AlignmentResult> _ars_def = new List<AlignmentResult>(); // default
-		readonly List<AlignmentResult> _ars_enh = new List<AlignmentResult>(); // enhanced w/ ActualText
+		readonly List<AlignmentResult> _ars_enh = new List<AlignmentResult>(); // enhanced w/ TypedText
 
 		bool _ruler;
 		string _results = String.Empty;
@@ -381,21 +381,31 @@ namespace lipsync_editor
 
 			if (_ruler)
 			{
-				string strData = Result.PhraseInfo.GetText(0, -1, true);
-				if (strData.Length > _results.Length)
+				string results = Result.PhraseInfo.GetText(0, -1, true);
+				if (results.Length > _results.Length)
 				{
 					logfile.Log(". replace _results");
 
 					_ars_enh.Clear();
-					GenerateResults(_ars_enh, Result);
-					_results = strData;
+					GenerateResults(Result);
+					_results = results;
 				}
 			}
 		}
 
-		void GenerateResults(ICollection<AlignmentResult> ars, ISpeechRecoResult Result)
+		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
-			logfile.Log("GenerateResults() ars.Count= " + ars.Count);
+			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
+
+			if (_ruler && _ars_enh.Count > 0)
+				_ars_enh.Clear();
+
+			GenerateResults(Result);
+		}
+
+		void GenerateResults(ISpeechRecoResult Result)
+		{
+			logfile.Log("GenerateResults() _ars_enh.Count= " + _ars_enh.Count);
 
 			if (Result.PhraseInfo != null)
 			{
@@ -415,24 +425,12 @@ namespace lipsync_editor
 					ar.Start = (ulong)(word.AudioTimeOffset);						// starttime of the ortheme
 					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop time of the ortheme
 
-					ars.Add(ar);
+					_ars_enh.Add(ar);
 				}
 			}
 
 			logfile.Log("GenerateResults() DONE");
 		}
-
-
-		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
-		{
-			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
-
-			if (_ruler && _ars_enh.Count > 0)
-				_ars_enh.Clear();
-
-			GenerateResults(_ars_enh, Result);
-		}
-
 
 		void Sapi_Lipsync_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{

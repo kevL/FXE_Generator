@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace lipsync_editor
 {
-	public class FxeDataBlock
+	sealed class FxeDataBlock
 		: IComparable
 	{
 		#region fields
@@ -12,25 +12,25 @@ namespace lipsync_editor
 
 
 		#region properties
-		public string Viseme
+		internal string Viseme
 		{ get; private set; }
 
-		public float Val1
+		internal float Val1
 		{ get; set; }
 
-		public float Val2
+		internal float Val2
 		{ get; private set; }
 
-		public byte Type
+		internal byte Type
 		{ get; private set; }
 
-		public int Id
+		internal int Id
 		{ get; private set; }
 		#endregion properties
 
 
-		#region methods
-		public FxeDataBlock(string vis, float val1, float val2, byte type, int id)
+		#region cTor
+		internal FxeDataBlock(string vis, float val1, float val2, byte type, int id)
 		{
 			Viseme = vis;
 			Val1   = val1;
@@ -39,12 +39,15 @@ namespace lipsync_editor
 			Type = type;
 			Id = id;
 		}
+		#endregion cTor
 
+
+		#region methods
 		public int CompareTo(object o)
 		{
 			var other = o as FxeDataBlock;
 
-			if (o == null)
+			if (other == null)
 				throw new ArgumentException();
 
 
