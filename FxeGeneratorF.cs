@@ -404,8 +404,8 @@ namespace lipsync_editor
 			{
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-//					decimal strt = (decimal)ar.GetStart(i) / (decimal)10000000;
-					decimal stop = (decimal)ar.Stops[i]    / (decimal)10000000;
+//					decimal strt = (decimal)ar.GetStart(i) / 10000000;
+					decimal stop = (decimal)ar.Stops[i]    / 10000000;
 
 					string phon = ar.Phons[i];
 
@@ -419,9 +419,9 @@ namespace lipsync_editor
 		void PopulateDataGrid()
 		{
 			var blocks = new List<FxeDataBlock>();
-			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in _fxeData)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxeData)
 			{
-				blocks.AddRange(keyval.Value);
+				blocks.AddRange(pair.Value);
 			}
 
 			_dt2.Clear();
@@ -563,14 +563,12 @@ namespace lipsync_editor
 			string phon;
 			foreach (AlignmentResult ar in arList)
 			{
-				for (int i = 0; i < ar.Phons.Count; ++i)
+				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
 					if ((phon = ar.Phons[i]) != "x")
 					{
-						decimal stop = (decimal)ar.Stops[i] / (decimal)10000000;
-
-						var keyval = new KeyValuePair<string, decimal>(_phon2vis[phon], stop);
-						vices.Add(keyval);
+						decimal stop = (decimal)ar.Stops[i] / 10000000;
+						vices.Add(new KeyValuePair<string, decimal>(_phon2vis[phon], stop));
 					}
 				}
 			}
@@ -591,11 +589,11 @@ namespace lipsync_editor
 
 				dataval = GetTrigramValue(c2, c1, c0);
 				float strt = stop - dataval.length;
-				float midl = strt + dataval.length / 2F;
+				float midl = strt + dataval.length / 2f;
 
-				blocks.Add(new FxeDataBlock(c0, strt,          0F, (byte)0, id));
+				blocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
 				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
-				blocks.Add(new FxeDataBlock(c0, stop,          0F, (byte)2, id));
+				blocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
 
 				++id;
 				c2 = c1;
@@ -615,13 +613,13 @@ namespace lipsync_editor
 				c2 = String.Empty;
 
 				int count = 0;
-				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> keyval in TriGramTable)
+				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> pair in TriGramTable)
 				{
-					DataVal dataval0 = keyval.Value[c1][c0];
+					DataVal dataval0 = pair.Value[c1][c0];
 					if (dataval0.count > count)
 					{
 						count = dataval0.count;
-						c2 = keyval.Key;
+						c2 = pair.Key;
 						dataval = dataval0;
 					}
 				}
@@ -641,15 +639,15 @@ namespace lipsync_editor
 
 				if (datablock0 != null)
 				{
-					if (Math.Abs(datablock.Val1 - datablock0.Val1) < 0.000005F)
+					if (Math.Abs(datablock.Val1 - datablock0.Val1) < 0.000005f)
 					{
-						// force the x values (stop values) to never be equal
+						// force the x-values (stop values) to never be equal
 						if (i + 1 < datablocks.Count)
 						{
-							datablock.Val1 += Math.Min(0.0000001F, (datablocks[i + 1].Val1 - datablock.Val2) / 2F);
+							datablock.Val1 += Math.Min(0.0000001f, (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
 						}
 						else
-							datablock.Val1 += 0.0000001F;
+							datablock.Val1 += 0.0000001f;
 					}
 				}
 
@@ -660,10 +658,10 @@ namespace lipsync_editor
 
 		void SmoothFxeData()
 		{
-			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in _fxeData)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxeData)
 			{
-				if (keyval.Value.Count > 0)
-					VisemeSmoother.Smooth(keyval.Key, keyval.Value);
+				if (pair.Value.Count > 0)
+					VisemeSmoother.Smooth(pair.Key, pair.Value);
 			}
 		}
 		#endregion methods

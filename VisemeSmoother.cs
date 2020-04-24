@@ -25,8 +25,8 @@ namespace lipsync_editor
 
 					int Aindex = i - 1;
 
-					float Bx = 0F;
-					float By = 0F;
+					float Bx = 0f;
+					float By = 0f;
 
 					int Bindex = GetNextPoint(datablocks, Aindex, ref Bx, ref By);
 					if (Bindex == -1)
@@ -41,13 +41,13 @@ namespace lipsync_editor
 					float Cx = datablock.Val1;
 					float Cy = datablock.Val2;
 
-					float Dx = 0F;
-					float Dy = 0F;
+					float Dx = 0f;
+					float Dy = 0f;
 
 					int Dindex = GetNextPoint(datablocks, Cindex, ref Dx, ref Dy);
 					if (Dindex == -1)
 					{
-						if (Ay > 0F) // remove c
+						if (Ay > 0f) // remove c
 						{
 							datablocks.RemoveAt(i);
 							--i;
@@ -56,8 +56,8 @@ namespace lipsync_editor
 						}
 					}
 
-					float x = 0F;
-					float y = 0F;
+					float x = 0f;
+					float y = 0f;
 
 					if (GetLineIntersection(Ax,Ay, Bx,By, Cx,Cy, Dx,Dy, ref x, ref y))
 					{
@@ -65,7 +65,7 @@ namespace lipsync_editor
 												new FxeDataBlock(vis, x, y, 1, id),
 												i + 1);
 
-						if (floatsequal(Ay, 0F) && Cy > y) // remove a
+						if (floatsequal(Ay, 0f) && Cy > y) // remove a
 						{
 							datablocks.RemoveAt(i - 1);
 							--i;
@@ -104,8 +104,8 @@ namespace lipsync_editor
 						}
 
 						if ((Dx < Bx && Dy < By) // kL_note: not sure about that refactor.
-							|| floatsequal(Dy, 0F)
-							|| floatsequal(By, 0F)) // remove c
+							|| floatsequal(Dy, 0f)
+							|| floatsequal(By, 0f)) // remove c
 						{
 							datablocks.RemoveAt(i);
 							--i;
@@ -199,8 +199,8 @@ namespace lipsync_editor
 			Dx = (float)x1;
 
 			// Fail if segment C-D doesn't cross line A-B.
-			if (   (Cy <  0F && Dy <  0F)
-				|| (Cy >= 0F && Dy >= 0F))
+			if (   (Cy <  0f && Dy <  0f)
+				|| (Cy >= 0f && Dy >= 0f))
 			{
 				return false;
 			}
@@ -209,7 +209,7 @@ namespace lipsync_editor
 			double AB_pos = Dx + (Cx - Dx) * Dy / (Dy - Cy);
 
 			// Fail if segment C-D crosses line A-B outside of segment A-B.
-			if (AB_pos < 0F || AB_pos > AB_dist)
+			if (AB_pos < 0f || AB_pos > AB_dist)
 			{
 				return false;
 			}
@@ -236,7 +236,7 @@ namespace lipsync_editor
 
 		static bool floatsequal(float f1, float f2)
 		{
-			return Math.Abs(f2 - f1) < 0.000005F;
+			return Math.Abs(f2 - f1) < 0.000005f;
 		}
 	}
 }

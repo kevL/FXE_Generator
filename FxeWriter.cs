@@ -95,13 +95,13 @@ namespace lipsync_editor
 
 		static void WriteFxeData(Dictionary<string, List<FxeDataBlock>> fxeData)
 		{
-			foreach (KeyValuePair<string, List<FxeDataBlock>> keyval in fxeData)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxeData)
 			{
-				WriteFxeString(keyval.Key); // key=codeword
+				WriteFxeString(pair.Key); // key=codeword
 
 				_bw.Write(0L);
 
-				List<FxeDataBlock> dataList = keyval.Value;
+				List<FxeDataBlock> dataList = pair.Value;
 				_bw.Write((short)dataList.Count);
 
 				_bw.Write(0);

@@ -32,6 +32,8 @@ namespace lipsync_editor
 		const string TMP_WAV = "sapi_lipsync" + EXT_WAV;
 
 		const string LAME_EXE = "lame.exe";
+
+		const string RULE = "TextLipsync";
 		#endregion fields (static)
 
 
@@ -306,26 +308,32 @@ namespace lipsync_editor
 
 			if (_ruler
 				&& TypedText != String.Empty
-				&& _recoGrammar.Rules.FindRule("TextLipsync") == null)
+				&& _recoGrammar.Rules.FindRule(RULE) == null)
 			{
-				logfile.Log(". . add TextLypsync rule");
-				ISpeechGrammarRule rule = _recoGrammar.Rules.Add("TextLipsync",
+				logfile.Log(". . add TextLipsync rule");
+				ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
 																 SpeechRuleAttributes.SRATopLevel
 															   | SpeechRuleAttributes.SRADynamic,
 																 1);
 
-				object PropertyValue = String.Empty;
+/*				object PropertyValue = String.Empty;
 				rule.InitialState.AddWordTransition(null,
 													TypedText,
 													" ",
 													SpeechGrammarWordType.SGLexical,
-													"TextLipSync",
+													"TextLipSync",						// <- typo looks like
 													1,
 													ref PropertyValue,
-													1F);
+													1f); */
+				rule.InitialState.AddWordTransition(null,
+													TypedText,
+													" ",
+													SpeechGrammarWordType.SGLexical,
+													RULE,
+													1);
 
 				_recoGrammar.Rules.Commit();
-				_recoGrammar.CmdSetRuleState("TextLipsync", SpeechRuleState.SGDSActive);
+				_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
 			}
 
 			_input = new SpFileStreamClass();
