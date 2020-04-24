@@ -10,7 +10,7 @@ using SpeechLib;
 
 namespace lipsync_editor
 {
-	internal delegate void TtsParseTextEvent(string expected);
+	internal delegate void TtsParseTextEvent();
 	internal delegate void RecognitionEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
 
 
@@ -51,9 +51,7 @@ namespace lipsync_editor
 		bool _ruler;
 		string _results = String.Empty;
 
-		string _expected = String.Empty;
-				 List<ushort> _tts_PhonIds = new List<ushort>();
-		internal List<string> _tts_Phons   = new List<string>();
+		internal List<string> _tts_Expected = new List<string>();
 		#endregion fields
 
 
@@ -244,11 +242,9 @@ namespace lipsync_editor
 			// kL_clearall -> these don't all need to be cleared
 			_ruler = false;
 
-			_results  =
-			_expected = String.Empty;
+			_results = String.Empty;
 
-			_tts_PhonIds.Clear();
-			_tts_Phons  .Clear();
+			_tts_Expected.Clear();
 
 			RatioWords_def =
 			RatioPhons_def =
@@ -275,7 +271,7 @@ namespace lipsync_editor
 			else if (TtsParseText != null)
 			{
 				logfile.Log(". default - call TtsParseText()");
-				TtsParseText(String.Empty);
+				TtsParseText();
 			}
 
 			_recoContext = new SpInProcRecoContext();
@@ -350,17 +346,6 @@ namespace lipsync_editor
 
 
 		#region voice handlers
-		void voice_OnEndStream(int StreamNumber, object StreamPosition)
-		{
-			logfile.Log("voice_OnEndStream()");
-
-			_expected = _phoneConverter.IdToPhone(_tts_PhonIds.ToArray());
-			_tts_Phons = new List<string>(_expected.Split(' '));
-
-			if (TtsParseText != null)
-				TtsParseText(_expected);
-		}
-
 		void voice_OnPhoneme(int StreamNumber,
 							 object StreamPosition,
 							 int Duration,
@@ -368,13 +353,23 @@ namespace lipsync_editor
 							 SpeechVisemeFeature Feature,
 							 short CurrentPhoneId)
 		{
-			//logfile.Log("voice_OnPhoneme() CurrentPhoneId= " + CurrentPhoneId);
+			logfile.Log("voice_OnPhoneme() CurrentPhoneId= " + CurrentPhoneId);
 
 			if (CurrentPhoneId > 9)
 			{
-				//logfile.Log(". add id");
-				_tts_PhonIds.Add((ushort)CurrentPhoneId);
+				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
+				logfile.Log(". add id - phon= " + phon);
+
+				_tts_Expected.Add(phon);
 			}
+		}
+
+		void voice_OnEndStream(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("voice_OnEndStream()");
+
+			if (TtsParseText != null)
+				TtsParseText();
 		}
 		#endregion voice handlers
 
@@ -589,14 +584,14 @@ namespace lipsync_editor
 					}
 				}
 
-				RatioWords_def = (double)count_def / (double)words.Count;
-				RatioWords_enh = (double)count_enh / (double)words.Count;
+				RatioWords_def = (double)count_def / words.Count;
+				RatioWords_enh = (double)count_enh / words.Count;
 			}
 		}
 
 		void CalculatePhonRatio()
 		{
-			if (_tts_Phons.Count != 0)
+			if (_tts_Expected.Count != 0)
 			{
 				var phon_def = new List<string>();
 				var phon_enh = new List<string>();
@@ -617,7 +612,7 @@ namespace lipsync_editor
 				int count_enh = 0;
 
 				string phon0 = null;
-				foreach (string phon in _tts_Phons)
+				foreach (string phon in _tts_Expected)
 				{
 					if (phon0 == null)
 					{
@@ -650,8 +645,8 @@ namespace lipsync_editor
 					phon0 = phon;
 				}
 
-				RatioPhons_def = (double)count_def / (double)_tts_Phons.Count;
-				RatioPhons_enh = (double)count_enh / (double)_tts_Phons.Count;
+				RatioPhons_def = (double)count_def / _tts_Expected.Count;
+				RatioPhons_enh = (double)count_enh / _tts_Expected.Count;
 			}
 		}
 		#endregion lipsync handlers

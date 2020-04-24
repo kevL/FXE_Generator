@@ -145,9 +145,7 @@ namespace lipsync_editor
 				_lipsyncer = new SapiLipsync(_wavefile);
 				if (_lipsyncer.Fullpath != String.Empty)
 				{
-//					_lipsyncer.TtsParseText += OnTtsParseText;
-					_lipsyncer.Recognition  += OnRecognition;
-
+					_lipsyncer.Recognition += OnRecognition;
 					_lipsyncer.Start(LoadTypedTextFile());
 				}
 			}
@@ -290,11 +288,19 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
-		void OnTtsParseText(string expected)
+		void OnTtsParseText()
 		{
-			logfile.Log("OnTtsParseText() expected= " + expected);
+			logfile.Log("OnTtsParseText()");
 
 			Cursor = Cursors.Default;
+
+			string expected = String.Empty;
+			foreach (var expect in _lipsyncer._tts_Expected)
+			{
+				if (expected != String.Empty) expected += " ";
+				expected += expect;
+			}
+			logfile.Log(". expected= " + expected);
 
 			tb_expected.Text = expected;
 			bu_generate.Enabled = true;
@@ -315,7 +321,7 @@ namespace lipsync_editor
 					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P1");
 				}
 
-				if (_lipsyncer._tts_Phons.Count != 0)
+				if (_lipsyncer._tts_Expected.Count != 0)
 				{
 					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P1");
 					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P1");
