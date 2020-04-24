@@ -578,6 +578,7 @@ namespace lipsync_editor
 
 			var blocks = new List<FxeDataBlock>(); // viseme start, mid, end points
 
+			DataVal dataval;
 			string c2 = "S";
 			string c1 = "S";
 			int id = 0;
@@ -588,7 +589,7 @@ namespace lipsync_editor
 
 				float stop = (float)vis.Value;
 
-				DataVal dataval = GetTrigramValues(c2, c1, c0);
+				dataval = GetTrigramValue(c2, c1, c0);
 				float strt = stop - dataval.length;
 				float midl = strt + dataval.length / 2F;
 
@@ -606,7 +607,7 @@ namespace lipsync_editor
 			SmoothFxeData();
 		}
 
-		DataVal GetTrigramValues(string c2, string c1, string c0)
+		DataVal GetTrigramValue(string c2, string c1, string c0)
 		{
 			DataVal dataval = TriGramTable[c2][c1][c0];
 			if (Math.Abs(dataval.length) < 0.000005)

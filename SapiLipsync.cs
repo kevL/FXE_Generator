@@ -56,32 +56,29 @@ namespace lipsync_editor
 
 
 		#region properties
-		public string Fullpath
+		internal string Fullpath
 		{ get; private set; }
-
-//		public string Original
-//		{ get; set; }
 
 		string TypedText
 		{ get; set; }
 
 
-		public double RatioWords_def // default
+		internal double RatioWords_def // default
 		{ get; private set; }
 
-		public double RatioPhons_def // default
+		internal double RatioPhons_def // default
 		{ get; private set; }
 
-		public double RatioWords_enh // enhanced w/ ActualText
+		internal double RatioWords_enh // enhanced w/ ActualText
 		{ get; private set; }
 
-		public double RatioPhons_enh // enhanced w/ ActualText
+		internal double RatioPhons_enh // enhanced w/ ActualText
 		{ get; private set; }
 		#endregion properties
 
 
 		#region cTor
-		public SapiLipsync(string wavefile)
+		internal SapiLipsync(string wavefile)
 		{
 			//logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
 

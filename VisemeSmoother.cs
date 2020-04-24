@@ -153,11 +153,11 @@ namespace lipsync_editor
 			return -1;
 		}
 
-		public static bool GetLineIntersection(float Ax, float Ay,
-											   float Bx, float By,
-											   float Cx, float Cy,
-											   float Dx, float Dy,
-											   ref float x, ref float y)
+		static bool GetLineIntersection(float Ax, float Ay,
+										float Bx, float By,
+										float Cx, float Cy,
+										float Dx, float Dy,
+										ref float x, ref float y)
 		{
 			// Fail if either line segment is zero-length.
 			if (   (floatsequal(Ax, Bx) && floatsequal(Ay, By))
