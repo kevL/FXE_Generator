@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 //using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 using SpeechLib;
@@ -69,10 +70,10 @@ namespace lipsync_editor
 		internal double RatioPhons_def // default
 		{ get; private set; }
 
-		internal double RatioWords_enh // enhanced w/ ActualText
+		internal double RatioWords_enh // enhanced w/ TypedText
 		{ get; private set; }
 
-		internal double RatioPhons_enh // enhanced w/ ActualText
+		internal double RatioPhons_enh // enhanced w/ TypedText
 		{ get; private set; }
 		#endregion properties
 
@@ -180,20 +181,11 @@ namespace lipsync_editor
 				var fi = new FileInfo(file);
 				var br = new BinaryReader(fi.OpenRead());
 
-				char[] c = br.ReadChars(16); // start 0
+				char[] c = br.ReadChars(16);					// start 0
 
-				if (   c[ 0] == 'R'
-					&& c[ 1] == 'I'
-					&& c[ 2] == 'F'
-					&& c[ 3] == 'F'
-					&& c[ 8] == 'W'
-					&& c[ 9] == 'A'
-					&& c[10] == 'V'
-					&& c[11] == 'E'
-					&& c[12] == 'f'
-					&& c[13] == 'm'
-					&& c[14] == 't'
-					&& c[15] == ' ')
+				if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
+					&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
+					&& c[12] == 'f' && c[13] == 'm' && c[14] == 't' && c[15] == ' ')
 				{
 					br.ReadBytes(4);							// start 16
 
@@ -205,7 +197,7 @@ namespace lipsync_editor
 						//logfile.Log(". channels= " + channels);
 						if (channels == 1)
 						{
-							int rate = br.ReadInt32();	// start 24: is 44.1kHz
+							int rate = br.ReadInt32();			// start 24: is 44.1kHz
 							//logfile.Log(". rate= " + rate);
 							if (rate == 44100)
 							{
@@ -381,12 +373,13 @@ namespace lipsync_editor
 
 			if (_ruler)
 			{
-				string results = Result.PhraseInfo.GetText(0, -1, true);
+//				string results = Result.PhraseInfo.GetText(0, -1, true);
+				string results = Result.PhraseInfo.GetText();
 				if (results.Length > _results.Length)
 				{
 					logfile.Log(". replace _results");
 
-					_ars_enh.Clear();
+//					_ars_enh.Clear();
 					GenerateResults(Result);
 					_results = results;
 				}
@@ -397,7 +390,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
 
-			if (_ruler && _ars_enh.Count > 0)
+			if (_ruler)// && _ars_enh.Count != 0)
 				_ars_enh.Clear();
 
 			GenerateResults(Result);
@@ -439,7 +432,7 @@ namespace lipsync_editor
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 			_input.Close();
 
-			FinalizeAlignment();
+			FinalizeAlignments(); // NOTE: This is only for ars_enh.
 
 			if (!_ruler)
 			{
@@ -460,33 +453,50 @@ namespace lipsync_editor
 			}
 		}
 
-		void FinalizeAlignment()
+		void FinalizeAlignments()
 		{
-			logfile.Log("FinalizeAlignment()");
+			logfile.Log("FinalizeAlignments()");
 
-			ulong lastStop = 0;
+			AlignmentResult ar;
+			ulong stop = 0;
+
 			for (int i = 0; i < _ars_enh.Count; ++i)
 			{
-				AlignmentResult ar = _ars_enh[i];
+				ar = _ars_enh[i];
 
-				if (ar.Start > lastStop)
+				logfile.Log(". ar.Orthography= " + ar.Orthography);
+				string phons = String.Empty;
+				foreach (var phon in ar.Phons)
 				{
+					if (phons != String.Empty) phons += " ";
+					phons += phon;
+				}
+				logfile.Log(". ar.Phons= " + phons);
+
+
+				if (ar.Start > stop)
+				{
+					logfile.Log(". . insert silence");
 					var silence = new AlignmentResult();
-					silence.Stop = ar.Start;
-					silence.Start = lastStop;
+
+					silence.Start = stop;
+					silence.Stop  = ar.Start;
+
 					silence.Phons = new List<string>();
 					silence.Phons.Add("x");
+
 					silence.Orthography = String.Empty;
+
 					silence.Stops.Add(silence.Stop);
 
-					lastStop = ar.Start;
 					_ars_enh.Insert(i, silence);
 
+					stop = ar.Start;
 					++i;
 				}
 
 				TabulateStops(ar);
-				lastStop = ar.Stop;
+				stop = ar.Stop;
 			}
 		}
 
@@ -494,10 +504,8 @@ namespace lipsync_editor
 		{
 			//logfile.Log("TabulateStops()");
 
-			ulong duration = ar.Stop - ar.Start;
-			ulong stop = 0;
-
-			var stops = new List<ulong>();
+			var stops = new List<decimal>();
+			decimal stop = 0;
 			foreach (var phon in ar.Phons)
 			{
 				switch (phon)
@@ -534,10 +542,9 @@ namespace lipsync_editor
 
 			if (stop != 0)
 			{
+				decimal factor = (decimal)(ar.Stop - ar.Start) / stop;
+
 				ar.Stops = new List<ulong>();
-
-				decimal factor = (decimal)duration / (decimal)stop;
-
 				for (int i = 0; i != stops.Count; ++i)
 				{
 					decimal dur = (decimal)stops[i] * factor;
@@ -548,22 +555,32 @@ namespace lipsync_editor
 
 		void CalculateWordRatio()
 		{
+			logfile.Log("CalculateWordRatio()");
+
 			var words = new List<string>(TypedText.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
 			{
 				var words_def = new List<string>();
 				var words_enh = new List<string>();
 
+				logfile.Log(". words_def");
 				foreach (var ar in _ars_def)
 				{
 					if (ar.Orthography != String.Empty)
+					{
+						logfile.Log(". . add " + ar.Orthography);
 						words_def.Add(ar.Orthography);
+					}
 				}
 
+				logfile.Log(". words_enh");
 				foreach (var ar in _ars_enh)
 				{
 					if (ar.Orthography != String.Empty)
+					{
+						logfile.Log(". . add " + ar.Orthography);
 						words_enh.Add(ar.Orthography);
+					}
 				}
 
 				int count_def = 0;
@@ -596,30 +613,66 @@ namespace lipsync_editor
 				var phon_def = new List<string>();
 				var phon_enh = new List<string>();
 
+				logfile.Log(". phon_def");
 				foreach (var ar in _ars_def)
 				{
 					if (ar.Orthography != String.Empty)
+					{
 						phon_def.AddRange(ar.Phons);
+
+						string phons = String.Empty;
+						foreach (var phon in ar.Phons)
+						{
+							if (phons != String.Empty) phons += " ";
+							phons += phon;
+						}
+						logfile.Log(". . ar.Phons= " + phons);
+					}
 				}
 
+				logfile.Log(". phon_enh");
 				foreach (var ar in _ars_enh)
 				{
 					if (ar.Orthography != String.Empty)
+					{
 						phon_enh.AddRange(ar.Phons);
+
+						string phons = String.Empty;
+						foreach (var phon in ar.Phons)
+						{
+							if (phons != String.Empty) phons += " ";
+							phons += phon;
+						}
+						logfile.Log(". . ar.Phons= " + phons);
+					}
 				}
 
 				int count_def = 0;
 				int count_enh = 0;
 
-				string phon0 = null;
+				foreach (string phon in _tts_Expected)
+				{
+					if (phon_def.Contains(phon))
+					{
+						++count_def;
+						phon_def.Remove(phon);
+					}
+
+					if (phon_enh.Contains(phon))
+					{
+						++count_enh;
+						phon_enh.Remove(phon);
+					}
+				}
+/*				string phon0 = null;
 				foreach (string phon in _tts_Expected)
 				{
 					if (phon0 == null)
 					{
-						if (phon_def.Count > 0 && phon_def[0] == phon)
+						if (phon_def.Count != 0 && phon_def[0] == phon)
 							++count_def;
 
-						if (phon_enh.Count > 0 && phon_enh[0] == phon)
+						if (phon_enh.Count != 0 && phon_enh[0] == phon)
 							++count_enh;
 					}
 					else
@@ -643,7 +696,7 @@ namespace lipsync_editor
 						}
 					}
 					phon0 = phon;
-				}
+				} */
 
 				RatioPhons_def = (double)count_def / _tts_Expected.Count;
 				RatioPhons_enh = (double)count_enh / _tts_Expected.Count;
@@ -656,10 +709,14 @@ namespace lipsync_editor
 		{
 			//logfile.Log("ParseText() text= " + text);
 
-			text = RemoveSubstring('<', '>', text);
-			text = RemoveSubstring('{', '}', text);
-			text = RemoveSubstring('[', ']', text);
-			text = RemoveSubstring('|', '|', text);
+			text = Spaceout(text);
+
+			text = RemoveComment('<', '>', text);
+			text = RemoveComment('{', '}', text);
+			text = RemoveComment('[', ']', text);
+			text = RemoveComment('|', '|', text);
+
+			text = text.Replace("\t", " ");
 
 			for (int i = 0; i != text.Length; ++i)
 			{
@@ -671,7 +728,43 @@ namespace lipsync_editor
 					text = text.Replace(text[i], ' ');
 				}
 			}
-			return text.ToLower().Trim();
+			return Onespace(text).ToLower().Trim();
+		}
+
+		/// <summary>
+		/// No tabs, no newlines, no funny stuff - just space.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		static string Spaceout(string text)
+		{
+			var sb = new StringBuilder(text.Length);
+			for (int i = 0; i != text.Length; ++i)
+			{
+				char c = text[i];
+				if (char.IsWhiteSpace(c))
+					sb.Append(' ');
+				else
+					sb.Append(c);
+			}
+			return sb.ToString();
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		static string Onespace(string text)
+		{
+			var sb = new StringBuilder(text.Length);
+			for (int i = 0; i != text.Length; ++i)
+			{
+				char c = text[i];
+				if (c != ' ' || i == 0 || text[i - 1] != ' ')
+					sb.Append(c);
+			}
+			return sb.ToString();
 		}
 
 		/// <summary>
@@ -681,32 +774,15 @@ namespace lipsync_editor
 		/// <param name="stop"></param>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		static string RemoveSubstring(char start, char stop, string text)
+		static string RemoveComment(char start, char stop, string text)
 		{
-			int i = 0;
+			int i,j;
 			while ((i = text.IndexOf(start)) != -1)
 			{
-				int j = -1;
-
-				if (start != stop)
-				{
-					j = text.IndexOf(stop);
-				}
-				else
-					j = text.IndexOf(stop, i + 1);
-
-				if (i < j)
+				if ((j = text.IndexOf(stop, i + 1)) != -1)
 				{
 					text = text.Remove(i, j - i + 1);
-				}
-				else
-				{
-					if (j == -1)
-						j = i;
-
-					char[] a = text.ToCharArray();
-					a[j] = ' ';
-					text = new string(a);
+					text = text.Insert(i, " ");
 				}
 			}
 			return text;

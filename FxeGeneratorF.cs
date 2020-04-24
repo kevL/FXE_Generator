@@ -232,14 +232,14 @@ namespace lipsync_editor
 //			}
 		}
 
-		public string LoadTypedTextFile()
+		string LoadTypedTextFile()
 		{
 			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_TXT;
 			if (File.Exists(file))
 			{
 				using (StreamReader sr = File.OpenText(file))
 				{
-					return sr.ReadToEnd();
+					return SapiLipsync.ParseText(sr.ReadToEnd());
 				}
 			}
 			return String.Empty;
@@ -379,7 +379,8 @@ namespace lipsync_editor
 			logfile.Log(". words= " + words);
 			logfile.Log(". phons= " + phons);
 
-			tb_words.Text = SapiLipsync.ParseText(words); // TODO: Parse should be unnecessary.
+//			tb_words.Text = SapiLipsync.ParseText(words); // TODO: Parse should be unnecessary.
+			tb_words.Text = words;
 			tb_phons.Text = phons;
 		}
 
