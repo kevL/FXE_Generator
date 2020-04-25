@@ -263,8 +263,8 @@ namespace lipsync_editor
 
 			_recoContext = new SpInProcRecoContext();
 
-			((SpInProcRecoContext)_recoContext).Recognition += Sapi_Lipsync_Recognition;
 			((SpInProcRecoContext)_recoContext).Hypothesis  += Sapi_Lipsync_Hypothesis;
+			((SpInProcRecoContext)_recoContext).Recognition += Sapi_Lipsync_Recognition;
 			((SpInProcRecoContext)_recoContext).EndStream   += Sapi_Lipsync_EndStream;
 
 			_recoGrammar = _recoContext.CreateGrammar();	// was "2" but MS doc says not needed on its end.
@@ -363,9 +363,12 @@ namespace lipsync_editor
 		void Sapi_Lipsync_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log("Sapi_Lipsync_Hypothesis() _ruler= " + _ruler);
+			logfile.Log(". " + Result.PhraseInfo.GetText());
 
-			if (_ruler)
+/*			if (_ruler)
 			{
+				logfile.Log("Sapi_Lipsync_Hypothesis()");
+
 //				string results = Result.PhraseInfo.GetText(0, -1, true);
 				string results = Result.PhraseInfo.GetText();
 				if (results.Length > _results.Length)
@@ -373,22 +376,48 @@ namespace lipsync_editor
 					logfile.Log(". replace _results");
 
 					_results = results;
-					GenerateResults(Result);
+//					GenerateResults(Result);
 				}
-			}
+			} */
 		}
 
 		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
+			logfile.Log(". " + Result.PhraseInfo.GetText());
 
-			if (_ruler)
-				_ars_enh.Clear();
+//			if (_ruler)
+//				_ars_enh.Clear();
 
-			GenerateResults(Result);
+//			GenerateResults(Result); ->
+			if (Result.PhraseInfo != null)
+			{
+				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
+				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
+
+				List<AlignmentResult> ars;
+				if (!_ruler) ars = _ars_def;
+				else         ars = _ars_enh;
+
+				for (int i = 0; i != wordcount; ++i)
+				{
+					var ar = new AlignmentResult();
+
+					ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
+					ar.Orthography = word.DisplayText;
+
+					string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
+
+					ar.Phons = new List<string>(phons.Split(' '));
+					ar.Start = (ulong)(word.AudioTimeOffset);						// start of the ortheme/word
+					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
+
+					ars.Add(ar);
+				}
+			}
 		}
 
-		void GenerateResults(ISpeechRecoResult Result)
+/*		void GenerateResults(ISpeechRecoResult Result)
 		{
 			logfile.Log("GenerateResults() _ruler= " + _ruler);
 			logfile.Log(". _ars_def.Count= " + _ars_def.Count);
@@ -421,7 +450,7 @@ namespace lipsync_editor
 			}
 
 			logfile.Log("GenerateResults() DONE");
-		}
+		} */
 
 		void Sapi_Lipsync_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
