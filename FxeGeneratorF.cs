@@ -312,11 +312,12 @@ namespace lipsync_editor
 
 			if (!isConsole)
 			{
-				PrintTextResults(ars_def, tb_def_words, tb_def_phons);
-				PrintTextResults(ars_enh, tb_enh_words, tb_enh_phons);
+				PrintResults(ars_def, tb_def_words, tb_def_phons);
 
 				if (tb_text.Text != String.Empty)
 				{
+					PrintResults(ars_enh, tb_enh_words, tb_enh_phons);
+
 					la_def_word_pct.Text = _lipsyncer.RatioWords_def.ToString("P1");
 					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P1");
 				}
@@ -353,7 +354,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void PrintTextResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
+		void PrintResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
 		{
 			logfile.Log("GetResults() ars.Count= " + ars.Count);
 

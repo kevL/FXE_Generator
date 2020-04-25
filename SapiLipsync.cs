@@ -263,7 +263,7 @@ namespace lipsync_editor
 
 			_recoContext = new SpInProcRecoContext();
 
-			((SpInProcRecoContext)_recoContext).Hypothesis  += Sapi_Lipsync_Hypothesis;
+//			((SpInProcRecoContext)_recoContext).Hypothesis  += Sapi_Lipsync_Hypothesis;
 			((SpInProcRecoContext)_recoContext).Recognition += Sapi_Lipsync_Recognition;
 			((SpInProcRecoContext)_recoContext).EndStream   += Sapi_Lipsync_EndStream;
 
@@ -360,12 +360,12 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
-		void Sapi_Lipsync_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
+/*		void Sapi_Lipsync_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log("Sapi_Lipsync_Hypothesis() _ruler= " + _ruler);
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
-/*			if (_ruler)
+			if (_ruler)
 			{
 				logfile.Log("Sapi_Lipsync_Hypothesis()");
 
@@ -378,8 +378,8 @@ namespace lipsync_editor
 					_results = results;
 //					GenerateResults(Result);
 				}
-			} */
-		}
+			}
+		} */
 
 		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
@@ -464,14 +464,14 @@ namespace lipsync_editor
 			if (!_ruler)
 			{
 				logfile.Log(". call Generate() w/ ruler");
-				Generate(true);
-			}
+				Generate(true);	// TODO: not a good way to initiate 2nd pass w/ ruler.
+			}					// The 2nd pass should be bypassed if there is no typed-text.
 			else
 			{
 				logfile.Log(". call calculate ratios");
 
-				CalculateWordRatio();
-				CalculatePhonRatio();
+				CalculateWordRatios();
+				CalculatePhonRatios();
 
 				if (Recognition != null)
 					Recognition(_ars_def, _ars_enh);
@@ -568,7 +568,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void CalculateWordRatio()
+		void CalculateWordRatios()
 		{
 			logfile.Log("CalculateWordRatio()");
 
@@ -621,7 +621,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void CalculatePhonRatio()
+		void CalculatePhonRatios()
 		{
 			if (Expected.Count != 0)
 			{
