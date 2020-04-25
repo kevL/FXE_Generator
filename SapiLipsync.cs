@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-//using System.Reflection;
 using System.Windows.Forms;
 
 using SpeechLib;
@@ -43,11 +42,10 @@ namespace lipsync_editor
 		ISpeechRecoContext _recoContext;
 		ISpeechRecoGrammar _recoGrammar;
 		SpPhoneConverter _phoneConverter = new SpPhoneConverter();
-//		SpAudioFormat _pWaveFmt;
 
 		string _text = String.Empty;
 
-				 List<AlignmentResult> _ars_def = new List<AlignmentResult>(); // default
+		readonly List<AlignmentResult> _ars_def = new List<AlignmentResult>(); // default
 		readonly List<AlignmentResult> _ars_enh = new List<AlignmentResult>(); // enhanced w/ TypedText
 
 		bool _ruler;
@@ -258,7 +256,6 @@ namespace lipsync_editor
 			else if (TtsParseText != null)
 			{
 				logfile.Log(". enhanced - call SpVoice.Speak()");
-//				_ars_enh.Clear();
 
 				_voice.Speak(_text);
 //				_voice.WaitUntilDone(-1);
@@ -326,8 +323,6 @@ namespace lipsync_editor
 			_input.Open(Fullpath);
 			_recoContext.Recognizer.AudioInputStream = _input;
 
-//			_pWaveFmt = _InputWAV.Format;
-
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
 			logfile.Log("Generate() DONE");
@@ -378,7 +373,6 @@ namespace lipsync_editor
 					logfile.Log(". replace _results");
 
 					_results = results;
-//					_ars_enh.Clear();
 					GenerateResults(Result);
 				}
 			}
@@ -388,7 +382,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
 
-			if (_ruler)// && _ars_enh.Count != 0)
+			if (_ruler)
 				_ars_enh.Clear();
 
 			GenerateResults(Result);
@@ -405,6 +399,10 @@ namespace lipsync_editor
 				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
 				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
 
+				List<AlignmentResult> ars;
+				if (!_ruler) ars = _ars_def;
+				else         ars = _ars_enh;
+
 				for (int i = 0; i != wordcount; ++i)
 				{
 					var ar = new AlignmentResult();
@@ -418,10 +416,7 @@ namespace lipsync_editor
 					ar.Start = (ulong)(word.AudioTimeOffset);						// start of the ortheme/word
 					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
 
-//					if (!_ruler)
-//						_ars_def.Add(ar);
-//					else
-					_ars_enh.Add(ar);
+					ars.Add(ar);
 				}
 			}
 
@@ -435,20 +430,12 @@ namespace lipsync_editor
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 			_input.Close();
 
-			FinalizeAlignments(); // NOTE: That is only for ars_enh.
+			FinalizeAlignments();
 
 			if (!_ruler)
 			{
-//				logfile.Log(". replace _ars_def w/ _ars_enh");
-				foreach (var ar in _ars_def)
-					logfile.Log(". _ars_def.ar= " + ar.Orthography);
-				foreach (var ar in _ars_enh)
-					logfile.Log(". _ars_enh.ar= " + ar.Orthography);
-
-				_ars_def = new List<AlignmentResult>(_ars_enh);	// what is this doing here
-																// because !_ruler results are listed as '_ars_enh'
-				logfile.Log(". call Generate() w/ ruler");		// when they should go into '_ars_def'.
-				Generate(true);									// So that confusing/misleading swap is done ... TODO: fix.
+				logfile.Log(". call Generate() w/ ruler");
+				Generate(true);
 			}
 			else
 			{
@@ -466,12 +453,16 @@ namespace lipsync_editor
 		{
 			logfile.Log("FinalizeAlignments() _ruler= " + _ruler);
 
+			List<AlignmentResult> ars;
+			if (!_ruler) ars = _ars_def;
+			else         ars = _ars_enh;
+
 			AlignmentResult ar;
 			ulong stop = 0;
 
-			for (int i = 0; i < _ars_enh.Count; ++i)
+			for (int i = 0; i < ars.Count; ++i)
 			{
-				ar = _ars_enh[i];
+				ar = ars[i];
 
 				logfile.Log(". ar.Orthography= " + ar.Orthography);
 				string phons = String.Empty;
@@ -498,7 +489,7 @@ namespace lipsync_editor
 
 					silence.Stops.Add(silence.Stop);
 
-					_ars_enh.Insert(i, silence);
+					ars.Insert(i, silence);
 
 					stop = ar.Start;
 					++i;
