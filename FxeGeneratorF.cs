@@ -356,7 +356,7 @@ namespace lipsync_editor
 
 		void PrintResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
 		{
-			logfile.Log("GetResults() ars.Count= " + ars.Count);
+			logfile.Log("PrintResults() ars.Count= " + ars.Count);
 
 			string words = String.Empty;
 			string phons = String.Empty;
@@ -406,6 +406,8 @@ namespace lipsync_editor
 
 		void PopulatePhonGrid(List<AlignmentResult> ars)
 		{
+			logfile.Log("PopulatePhonGrid()");
+
 			_dt1.Clear();
 
 			foreach (AlignmentResult ar in ars)
@@ -426,6 +428,8 @@ namespace lipsync_editor
 
 		void PopulateDataGrid()
 		{
+			logfile.Log("PopulateDataGrid()");
+
 			var blocks = new List<FxeDataBlock>();
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxeData)
 			{

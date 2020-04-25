@@ -386,9 +386,6 @@ namespace lipsync_editor
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
-//			if (_ruler)
-//				_ars_enh.Clear();
-
 //			GenerateResults(Result); ->
 			if (Result.PhraseInfo != null)
 			{
@@ -472,6 +469,8 @@ namespace lipsync_editor
 
 				CalculateWordRatios();
 				CalculatePhonRatios();
+
+				logfile.Log(". fire Recognition");
 
 				if (Recognition != null)
 					Recognition(_ars_def, _ars_enh);
