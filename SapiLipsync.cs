@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 //using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 using SpeechLib;
@@ -46,13 +45,13 @@ namespace lipsync_editor
 		SpPhoneConverter _phoneConverter = new SpPhoneConverter();
 //		SpAudioFormat _pWaveFmt;
 
+		string _text = String.Empty;
+
 				 List<AlignmentResult> _ars_def = new List<AlignmentResult>(); // default
 		readonly List<AlignmentResult> _ars_enh = new List<AlignmentResult>(); // enhanced w/ TypedText
 
 		bool _ruler;
 		string _results = String.Empty;
-
-		internal List<string> _tts_Expected = new List<string>();
 		#endregion fields
 
 
@@ -60,8 +59,12 @@ namespace lipsync_editor
 		internal string Fullpath
 		{ get; private set; }
 
-		string TypedText
-		{ get; set; }
+		List<string> _expected = new List<string>();
+		internal List<string> Expected
+		{
+			get { return _expected; }
+			set { _expected = value; }
+		}
 
 
 		internal double RatioWords_def // default
@@ -85,9 +88,9 @@ namespace lipsync_editor
 
 			_voice = new SpVoice();
 			_voice.Volume = 0;
-			_voice.Rate = 1000;
-			_voice.Phoneme   += voice_OnPhoneme;
-			_voice.EndStream += voice_OnEndStream;
+			_voice.Rate   = 1000;
+			_voice.Phoneme   += OnSpeechPhoneme;
+			_voice.EndStream += OnSpeechEndStream;
 
 			_phoneConverter.LanguageId = 1033; // US English
 
@@ -161,20 +164,20 @@ namespace lipsync_editor
 				file = waveT;
 			}
 
-			// http://www.topherlee.com/software/pcm-tut-wavformat.html
-//			 1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
-//			 5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
-//			 9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
-//			13-16	"fmt "				Format chunk marker. Includes trailing null
-//			17-20	16					Length of format data as listed above
-//			21-22	1					Type of format (1 is PCM) - 2 byte integer
-//			23-24	2					Number of Channels - 2 byte integer
-//			25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
-//			29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
-//			33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
-//			35-36	16					Bits per sample
-//			37-40	"data"				"data" chunk header. Marks the beginning of the data section.
-//			41-44	File size (data)	Size of the data section.
+// http://www.topherlee.com/software/pcm-tut-wavformat.html
+//  1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
+//  5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
+//  9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
+// 13-16	"fmt "				Format chunk marker. Includes trailing null
+// 17-20	16					Length of format data as listed above
+// 21-22	1					Type of format (1 is PCM) - 2 byte integer
+// 23-24	2					Number of Channels - 2 byte integer
+// 25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
+// 29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
+// 33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
+// 35-36	16					Bits per sample
+// 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
+// 41-44	File size (data)	Size of the data section.
 
 			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
@@ -190,20 +193,16 @@ namespace lipsync_editor
 					br.ReadBytes(4);							// start 16
 
 					short format = br.ReadInt16();				// start 20: is PCM
-					//logfile.Log(". format= " + format);
 					if (format == 1)
 					{
 						short channels = br.ReadInt16();		// start 22: is Mono
-						//logfile.Log(". channels= " + channels);
 						if (channels == 1)
 						{
 							int rate = br.ReadInt32();			// start 24: is 44.1kHz
-							//logfile.Log(". rate= " + rate);
 							if (rate == 44100)
 							{
 								br.ReadBytes(6);				// start 28
 								short bits = br.ReadInt16();	// start 34: is 16-bit
-								//logfile.Log(". bits= " + bits);
 								if (bits == 16)
 								{
 									Fullpath = file;
@@ -229,14 +228,14 @@ namespace lipsync_editor
 
 		internal void Start(string text)
 		{
-			logfile.Log("Start() text= " + text);
+			logfile.Log("Start()");
 
 			// kL_clearall -> these don't all need to be cleared
 			_ruler = false;
 
 			_results = String.Empty;
 
-			_tts_Expected.Clear();
+			Expected.Clear();
 
 			RatioWords_def =
 			RatioPhons_def =
@@ -248,22 +247,21 @@ namespace lipsync_editor
 			// kL_end.
 
 
-			TypedText = SapiLipsync.ParseText(text.Trim());
-			logfile.Log(". TypedText= " + TypedText);
+			_text = text;
+			logfile.Log(". _text= " + _text);
 
-			if (TypedText != String.Empty)
-			{
-				logfile.Log(". enhanced - call _voice.Speak()");
-//				_tts_PhonIds.Clear();
-//				_ars_enh    .Clear();
-
-				_voice.Speak(TypedText);
-				_voice.WaitUntilDone(-1);
-			}
-			else if (TtsParseText != null)
+			if (_text == String.Empty)
 			{
 				logfile.Log(". default - call TtsParseText()");
 				TtsParseText();
+			}
+			else if (TtsParseText != null)
+			{
+				logfile.Log(". enhanced - call SpVoice.Speak()");
+//				_ars_enh.Clear();
+
+				_voice.Speak(_text);
+//				_voice.WaitUntilDone(-1);
 			}
 
 			_recoContext = new SpInProcRecoContext();
@@ -272,8 +270,8 @@ namespace lipsync_editor
 			((SpInProcRecoContext)_recoContext).Hypothesis  += Sapi_Lipsync_Hypothesis;
 			((SpInProcRecoContext)_recoContext).EndStream   += Sapi_Lipsync_EndStream;
 
-			_recoGrammar = _recoContext.CreateGrammar(2);
-			_recoGrammar.DictationLoad();
+			_recoGrammar = _recoContext.CreateGrammar();	// was "2" but MS doc says not needed on its end.
+			_recoGrammar.DictationLoad();					// and I don't see grammar id #2 defined on this end either.
 
 			Generate(false);
 
@@ -283,7 +281,7 @@ namespace lipsync_editor
 
 		void Generate(bool ruler)
 		{
-			logfile.Log("Generate() ruler= " + ruler);
+			logfile.Log("Generate()");
 
 			_ruler = ruler;
 			logfile.Log(". _ruler= " + _ruler);
@@ -295,7 +293,7 @@ namespace lipsync_editor
 			// And that, friends, took all day to figure out.
 
 			if (_ruler
-				&& TypedText != String.Empty
+				&& _text != String.Empty
 				&& _recoGrammar.Rules.FindRule(RULE) == null)
 			{
 				logfile.Log(". . add TextLipsync rule");
@@ -304,17 +302,17 @@ namespace lipsync_editor
 															   | SpeechRuleAttributes.SRADynamic,
 																 1);
 
-/*				object PropertyValue = String.Empty;
+//				object PropertyValue = String.Empty;
+//				rule.InitialState.AddWordTransition(null,
+//													TypedText,
+//													" ",
+//													SpeechGrammarWordType.SGLexical,
+//													"TextLipSync",						// <- typo looks like
+//													1,
+//													ref PropertyValue,
+//													1f);
 				rule.InitialState.AddWordTransition(null,
-													TypedText,
-													" ",
-													SpeechGrammarWordType.SGLexical,
-													"TextLipSync",						// <- typo looks like
-													1,
-													ref PropertyValue,
-													1f); */
-				rule.InitialState.AddWordTransition(null,
-													TypedText,
+													_text,
 													" ",
 													SpeechGrammarWordType.SGLexical,
 													RULE,
@@ -338,27 +336,27 @@ namespace lipsync_editor
 
 
 		#region voice handlers
-		void voice_OnPhoneme(int StreamNumber,
+		void OnSpeechPhoneme(int StreamNumber,
 							 object StreamPosition,
 							 int Duration,
 							 short NextPhoneId,
 							 SpeechVisemeFeature Feature,
 							 short CurrentPhoneId)
 		{
-			logfile.Log("voice_OnPhoneme() CurrentPhoneId= " + CurrentPhoneId);
+			logfile.Log("OnSpeechPhoneme() CurrentPhoneId= " + CurrentPhoneId);
 
 			if (CurrentPhoneId > 9)
 			{
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
 				logfile.Log(". add id - phon= " + phon);
 
-				_tts_Expected.Add(phon);
+				Expected.Add(phon);
 			}
 		}
 
-		void voice_OnEndStream(int StreamNumber, object StreamPosition)
+		void OnSpeechEndStream(int StreamNumber, object StreamPosition)
 		{
-			logfile.Log("voice_OnEndStream()");
+			logfile.Log("OnSpeechEndStream()");
 
 			if (TtsParseText != null)
 				TtsParseText();
@@ -379,9 +377,9 @@ namespace lipsync_editor
 				{
 					logfile.Log(". replace _results");
 
+					_results = results;
 //					_ars_enh.Clear();
 					GenerateResults(Result);
-					_results = results;
 				}
 			}
 		}
@@ -398,12 +396,14 @@ namespace lipsync_editor
 
 		void GenerateResults(ISpeechRecoResult Result)
 		{
-			logfile.Log("GenerateResults() _ars_enh.Count= " + _ars_enh.Count);
+			logfile.Log("GenerateResults() _ruler= " + _ruler);
+			logfile.Log(". _ars_def.Count= " + _ars_def.Count);
+			logfile.Log(". _ars_enh.Count= " + _ars_enh.Count);
 
 			if (Result.PhraseInfo != null)
 			{
 				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
-				logfile.Log(". Result.PhraseInfo VALID - wordcount= " + wordcount);
+				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
 
 				for (int i = 0; i != wordcount; ++i)
 				{
@@ -415,9 +415,12 @@ namespace lipsync_editor
 					string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
 
 					ar.Phons = new List<string>(phons.Split(' '));
-					ar.Start = (ulong)(word.AudioTimeOffset);						// starttime of the ortheme
-					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop time of the ortheme
+					ar.Start = (ulong)(word.AudioTimeOffset);						// start of the ortheme/word
+					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
 
+//					if (!_ruler)
+//						_ars_def.Add(ar);
+//					else
 					_ars_enh.Add(ar);
 				}
 			}
@@ -432,14 +435,20 @@ namespace lipsync_editor
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 			_input.Close();
 
-			FinalizeAlignments(); // NOTE: This is only for ars_enh.
+			FinalizeAlignments(); // NOTE: That is only for ars_enh.
 
 			if (!_ruler)
 			{
-				_ars_def = new List<AlignmentResult>(_ars_enh);
+//				logfile.Log(". replace _ars_def w/ _ars_enh");
+				foreach (var ar in _ars_def)
+					logfile.Log(". _ars_def.ar= " + ar.Orthography);
+				foreach (var ar in _ars_enh)
+					logfile.Log(". _ars_enh.ar= " + ar.Orthography);
 
-				logfile.Log(". call Generate() w/ ruler");
-				Generate(true);
+				_ars_def = new List<AlignmentResult>(_ars_enh);	// what is this doing here
+																// because !_ruler results are listed as '_ars_enh'
+				logfile.Log(". call Generate() w/ ruler");		// when they should go into '_ars_def'.
+				Generate(true);									// So that confusing/misleading swap is done ... TODO: fix.
 			}
 			else
 			{
@@ -455,7 +464,7 @@ namespace lipsync_editor
 
 		void FinalizeAlignments()
 		{
-			logfile.Log("FinalizeAlignments()");
+			logfile.Log("FinalizeAlignments() _ruler= " + _ruler);
 
 			AlignmentResult ar;
 			ulong stop = 0;
@@ -495,14 +504,14 @@ namespace lipsync_editor
 					++i;
 				}
 
-				TabulateStops(ar);
+				TallyStops(ar);
 				stop = ar.Stop;
 			}
 		}
 
-		void TabulateStops(AlignmentResult ar)
+		void TallyStops(AlignmentResult ar)
 		{
-			//logfile.Log("TabulateStops()");
+			//logfile.Log("TallyStops()");
 
 			var stops = new List<decimal>();
 			decimal stop = 0;
@@ -510,27 +519,13 @@ namespace lipsync_editor
 			{
 				switch (phon)
 				{
-					case "aa":
-					case "ae":
-					case "ah":
-					case "ax":
-					case "ay":
-					case  "b":
-					case "eh":
-					case  "l":
-					case  "r":
-					case  "w":
+					case "aa": case "ae": case "ah": case "ax": case "ay":
+					case  "b": case "eh": case  "l": case  "r": case  "w":
 						stops.Add(stop += 50);
 						break;
 
-					case "ao":
-					case "aw":
-					case "er":
-					case "ey":
-					case "ow":
-					case "oy":
-					case "uh":
-					case "uw":
+					case "ao": case "aw": case "er": case "ey": case "ow":
+					case "oy": case "uh": case "uw":
 						stops.Add(stop += 60);
 						break;
 
@@ -547,7 +542,7 @@ namespace lipsync_editor
 				ar.Stops = new List<ulong>();
 				for (int i = 0; i != stops.Count; ++i)
 				{
-					decimal dur = (decimal)stops[i] * factor;
+					decimal dur = stops[i] * factor;
 					ar.Stops.Add(ar.Start + (ulong)dur);
 				}
 			}
@@ -557,7 +552,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("CalculateWordRatio()");
 
-			var words = new List<string>(TypedText.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
 			{
 				var words_def = new List<string>();
@@ -608,7 +603,7 @@ namespace lipsync_editor
 
 		void CalculatePhonRatio()
 		{
-			if (_tts_Expected.Count != 0)
+			if (Expected.Count != 0)
 			{
 				var phon_def = new List<string>();
 				var phon_enh = new List<string>();
@@ -650,7 +645,7 @@ namespace lipsync_editor
 				int count_def = 0;
 				int count_enh = 0;
 
-				foreach (string phon in _tts_Expected)
+				foreach (string phon in Expected)
 				{
 					if (phon_def.Contains(phon))
 					{
@@ -698,94 +693,10 @@ namespace lipsync_editor
 					phon0 = phon;
 				} */
 
-				RatioPhons_def = (double)count_def / _tts_Expected.Count;
-				RatioPhons_enh = (double)count_enh / _tts_Expected.Count;
+				RatioPhons_def = (double)count_def / Expected.Count;
+				RatioPhons_enh = (double)count_enh / Expected.Count;
 			}
 		}
 		#endregion lipsync handlers
-
-
-		internal static string ParseText(string text)
-		{
-			//logfile.Log("ParseText() text= " + text);
-
-			text = Spaceout(text);
-
-			text = RemoveComment('<', '>', text);
-			text = RemoveComment('{', '}', text);
-			text = RemoveComment('[', ']', text);
-			text = RemoveComment('|', '|', text);
-
-			text = text.Replace("\t", " ");
-
-			for (int i = 0; i != text.Length; ++i)
-			{
-				if (   !char.IsLetter(text[i])
-					&& !char.IsNumber(text[i])
-					&& text[i] != ' '
-					&& text[i] != '\'')
-				{
-					text = text.Replace(text[i], ' ');
-				}
-			}
-			return Onespace(text).ToLower().Trim();
-		}
-
-		/// <summary>
-		/// No tabs, no newlines, no funny stuff - just space.
-		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		static string Spaceout(string text)
-		{
-			var sb = new StringBuilder(text.Length);
-			for (int i = 0; i != text.Length; ++i)
-			{
-				char c = text[i];
-				if (char.IsWhiteSpace(c))
-					sb.Append(' ');
-				else
-					sb.Append(c);
-			}
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		static string Onespace(string text)
-		{
-			var sb = new StringBuilder(text.Length);
-			for (int i = 0; i != text.Length; ++i)
-			{
-				char c = text[i];
-				if (c != ' ' || i == 0 || text[i - 1] != ' ')
-					sb.Append(c);
-			}
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// helper for ParseText()
-		/// </summary>
-		/// <param name="start"></param>
-		/// <param name="stop"></param>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		static string RemoveComment(char start, char stop, string text)
-		{
-			int i,j;
-			while ((i = text.IndexOf(start)) != -1)
-			{
-				if ((j = text.IndexOf(stop, i + 1)) != -1)
-				{
-					text = text.Remove(i, j - i + 1);
-					text = text.Insert(i, " ");
-				}
-			}
-			return text;
-		}
 	}
 }

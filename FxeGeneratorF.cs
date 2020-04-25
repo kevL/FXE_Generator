@@ -239,7 +239,7 @@ namespace lipsync_editor
 			{
 				using (StreamReader sr = File.OpenText(file))
 				{
-					return SapiLipsync.ParseText(sr.ReadToEnd());
+					return TypedText.ParseText(sr.ReadToEnd());
 				}
 			}
 			return String.Empty;
@@ -295,7 +295,7 @@ namespace lipsync_editor
 			Cursor = Cursors.Default;
 
 			string expected = String.Empty;
-			foreach (var expect in _lipsyncer._tts_Expected)
+			foreach (var expect in _lipsyncer.Expected)
 			{
 				if (expected != String.Empty) expected += " ";
 				expected += expect;
@@ -321,7 +321,7 @@ namespace lipsync_editor
 					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P1");
 				}
 
-				if (_lipsyncer._tts_Expected.Count != 0)
+				if (_lipsyncer.Expected.Count != 0)
 				{
 					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P1");
 					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P1");
