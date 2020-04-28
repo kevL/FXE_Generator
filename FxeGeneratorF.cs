@@ -236,7 +236,8 @@ namespace lipsync_editor
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
 
 					bu_generate .Enabled =
-					bu_play     .Enabled = (_lipsyncer.Audiopath != String.Empty);
+					bu_play     .Enabled =
+					bu_synth    .Enabled = (_lipsyncer.Audiopath != String.Empty);
 				}
 			}
 		}
@@ -292,6 +293,17 @@ namespace lipsync_editor
 					player.Play();
 				}
 			}
+		}
+
+		void btnSynth_Click(object sender, EventArgs e)
+		{
+			var synth = new VoiceSynthF(this, tb_text.Text);
+			synth.Show(this);
+		}
+
+		internal void SetText(string text)
+		{
+			tb_text.Text = text;
 		}
 		#endregion control handlers
 

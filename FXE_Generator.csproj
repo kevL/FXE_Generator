@@ -58,10 +58,14 @@
     <Compile Include="SapiLipsync.cs" />
     <Compile Include="TypedText.cs" />
     <Compile Include="VisemeSmoother.cs" />
+    <Compile Include="VoiceSynthF.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="FxeGeneratorF.resx">
       <DependentUpon>FxeGeneratorF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VoiceSynthF.resx">
+      <DependentUpon>VoiceSynthF.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
