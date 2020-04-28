@@ -62,19 +62,26 @@ namespace lipsync_editor
 
 
 		#region cTor
+		/// <summary>
+		/// cTor for GUI interface.
+		/// </summary>
 		internal FxeGeneratorF()
 			: this(String.Empty, String.Empty)
 		{}
 
+		/// <summary>
+		/// cTor.
+		/// </summary>
+		/// <param name="wavefile"></param>
+		/// <param name="headtype"></param>
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
 			StaticData.AddPhon2VisMap(_phon2vis);
 			LoadTrigramTable();
 
-			if (wavefile == String.Empty)
+			if (wavefile == String.Empty) // is GUI interface ->
 			{
 				InitializeComponent();
-				LanguageLister.AddLanguages(co_langId);
 
 				co_headtype.SelectedIndex = 0;
 
@@ -130,10 +137,15 @@ namespace lipsync_editor
 				dg_phons .RowHeadersVisible =
 				dg_blocks.RowHeadersVisible = false;
 
-
 				printversion();
+
+				_lipsyncer = new SapiLipsync();
+				_lipsyncer.TtsParseText += OnTtsParseText;
+				_lipsyncer.SpeechRecognitionEnded += OnSpeechRecognitionEnded;
+
+				LanguageLister.AddLanguages(co_langId); // this will set '_lipsyncer._phoneConverter.LanguageId'
 			}
-			else if (headtype != String.Empty && File.Exists(wavefile))
+			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
 			{
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
@@ -146,7 +158,7 @@ namespace lipsync_editor
 				_lipsyncer = new SapiLipsync(_wavefile);
 				if (_lipsyncer.Audiopath != String.Empty)
 				{
-					_lipsyncer.Recognition += OnRecognition;
+					_lipsyncer.SpeechRecognitionEnded += OnSpeechRecognitionEnded;
 					_lipsyncer.Start(LoadTypedTextFile());
 				}
 			}
@@ -167,9 +179,9 @@ namespace lipsync_editor
 					ver += "." + an.Version.Revision;
 			}
 #if DEBUG
-			ver += "  deb]";
+			ver += " d]";
 #else
-			ver += "  rel]";
+			ver += " r]";
 #endif
 			la_version.Text = ver;
 		}
@@ -177,6 +189,12 @@ namespace lipsync_editor
 
 
 		#region control handlers
+		void OnLanguageChanged(object sender, EventArgs e)
+		{
+			var langid = co_langId.SelectedItem as LanguageId;
+			_lipsyncer.SetLanguage(langid._id);
+		}
+
 		void btnOpen_Click(object sender, EventArgs e)
 		{
 			// debug ->
@@ -215,19 +233,10 @@ namespace lipsync_editor
 
 					LoadFxeFile();
 
-					bool enabled = false;
-
-					_lipsyncer = new SapiLipsync(_wavefile);
-					if (_lipsyncer.Audiopath != String.Empty)
-					{
-						enabled = true;
-
-						_lipsyncer.TtsParseText += OnTtsParseText;
-						_lipsyncer.Recognition  += OnRecognition;
-					}
+					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
 
 					bu_generate .Enabled =
-					bu_play     .Enabled = enabled;
+					bu_play     .Enabled = (_lipsyncer.Audiopath != String.Empty);
 				}
 			}
 		}
@@ -284,12 +293,6 @@ namespace lipsync_editor
 				}
 			}
 		}
-
-		void OnLanguageChanged(object sender, EventArgs e)
-		{
-			var langid = co_langId.SelectedItem as LanguageId;
-			_lipsyncer.SetLanguage(langid._id);
-		}
 		#endregion control handlers
 
 
@@ -312,7 +315,7 @@ namespace lipsync_editor
 			bu_generate.Enabled = true;
 		}
 
-		void OnRecognition(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
+		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
 		{
 			logfile.Log("OnRecognitionResult() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 

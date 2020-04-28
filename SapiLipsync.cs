@@ -7,7 +7,8 @@ using SpeechLib;
 namespace lipsync_editor
 {
 	internal delegate void TtsParseTextEvent();
-	internal delegate void RecognitionEvent(List<AlignmentResult> arListDef, List<AlignmentResult> arListEnh);
+	internal delegate void SpeechRecognitionEndedEvent(List<AlignmentResult> arListDef,
+													   List<AlignmentResult> arListEnh);
 
 
 	/// <summary>
@@ -17,7 +18,7 @@ namespace lipsync_editor
 	{
 		#region events
 		internal TtsParseTextEvent TtsParseText;
-		internal RecognitionEvent Recognition;
+		internal SpeechRecognitionEndedEvent SpeechRecognitionEnded;
 		#endregion events
 
 
@@ -47,13 +48,12 @@ namespace lipsync_editor
 
 		#region properties
 		internal string Audiopath
-		{ get; private set; }
+		{ get; set; }
 
 		List<string> _expected = new List<string>();
 		internal List<string> Expected
 		{
 			get { return _expected; }
-			set { _expected = value; }
 		}
 
 
@@ -72,20 +72,38 @@ namespace lipsync_editor
 
 
 		#region cTor
+		/// <summary>
+		/// cTor for GUI interface.
+		/// </summary>
+		internal SapiLipsync()
+			: this(String.Empty)
+		{}
+
+		/// <summary>
+		/// cTor.
+		/// </summary>
+		/// <param name="wavefile"></param>
 		internal SapiLipsync(string wavefile)
 		{
-			//logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
+			logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
 
 			_voice = new SpVoice();
-			_voice.Volume = 100; //0
-			_voice.Rate   =  -2; //1000
+//			_voice.Volume =  100;
+//			_voice.Rate   =   -2;
+			_voice.Volume =    0;
+			_voice.Rate   = 1000;
 			_voice.Phoneme   += OnSpeechPhoneme;
 			_voice.EndStream += OnSpeechEndStream;
 
+			logfile.Log(". create (SpPhoneConverter)_phoneConverter");
 			_phoneConverter = new SpPhoneConverter();
-			_phoneConverter.LanguageId = 1033; // US English (default)
+			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
 
-			Audiopath = AudioConverter.deterAudiopath(wavefile);
+			if (wavefile != String.Empty) // is Console ->
+			{
+				_phoneConverter.LanguageId = 1033; // US English (default)
+				Audiopath = AudioConverter.deterAudiopath(wavefile);
+			}
 		}
 		#endregion cTor
 
@@ -365,8 +383,8 @@ namespace lipsync_editor
 
 				logfile.Log(". fire Recognition");
 
-				if (Recognition != null)
-					Recognition(_ars_def, _ars_enh);
+				if (SpeechRecognitionEnded != null)
+					SpeechRecognitionEnded(_ars_def, _ars_enh);
 			}
 		}
 
