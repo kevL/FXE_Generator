@@ -74,6 +74,7 @@ namespace lipsync_editor
 			if (wavefile == String.Empty)
 			{
 				InitializeComponent();
+				LanguageLister.AddLanguages(co_langId);
 
 				co_headtype.SelectedIndex = 0;
 
@@ -143,7 +144,7 @@ namespace lipsync_editor
 				_headtype = headtype;
 
 				_lipsyncer = new SapiLipsync(_wavefile);
-				if (_lipsyncer.Fullpath != String.Empty)
+				if (_lipsyncer.Audiopath != String.Empty)
 				{
 					_lipsyncer.Recognition += OnRecognition;
 					_lipsyncer.Start(LoadTypedTextFile());
@@ -179,24 +180,23 @@ namespace lipsync_editor
 		void btnOpen_Click(object sender, EventArgs e)
 		{
 			// debug ->
-			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
+//			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
 //			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\ding.wav";
 
-//			using (var ofd = new OpenFileDialog())
-//			{
-//				ofd.Title  = "Select a WAV or MP3 Audio file";
-//				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|"
-//						   + "Wave files (*.wav)|*.wav|"
-//						   + "Mp3 files (*.mp3)|*.mp3|"
-//						   + "All files (*.*)|*.*";
-//
-//				if (ofd.ShowDialog() == DialogResult.OK)
-//				{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.Title  = "Select a WAV or MP3 Audio file";
+				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|"
+						   + "Wave files (*.wav)|*.wav|"
+						   + "Mp3 files (*.mp3)|*.mp3|"
+						   + "All files (*.*)|*.*";
 
+				if (ofd.ShowDialog() == DialogResult.OK)
+				{
 					_dt1.Clear();
 					_dt2.Clear();
 
-//					tb_wavefile.Text = _wavefile = ofd.FileName;
+					tb_wavefile.Text = _wavefile = ofd.FileName;
 
 					tb_text.Text = LoadTypedTextFile();
 
@@ -218,7 +218,7 @@ namespace lipsync_editor
 					bool enabled = false;
 
 					_lipsyncer = new SapiLipsync(_wavefile);
-					if (_lipsyncer.Fullpath != String.Empty)
+					if (_lipsyncer.Audiopath != String.Empty)
 					{
 						enabled = true;
 
@@ -228,8 +228,8 @@ namespace lipsync_editor
 
 					bu_generate .Enabled =
 					bu_play     .Enabled = enabled;
-//				}
-//			}
+				}
+			}
 		}
 
 		string LoadTypedTextFile()
@@ -275,14 +275,20 @@ namespace lipsync_editor
 
 		void btnPlay_Click(object sender, EventArgs e)
 		{
-			using (var wavefile = new FileStream(_lipsyncer.Fullpath, FileMode.Open))
+			using (var wavefile = new FileStream(_lipsyncer.Audiopath, FileMode.Open))
 			{
 				using (var player = new SoundPlayer(wavefile))
 				{
-					player.SoundLocation = _lipsyncer.Fullpath;
+					player.SoundLocation = _lipsyncer.Audiopath;
 					player.Play();
 				}
 			}
+		}
+
+		void OnLanguageChanged(object sender, EventArgs e)
+		{
+			var langid = co_langId.SelectedItem as LanguageId;
+			_lipsyncer.SetLanguage(langid._id);
 		}
 		#endregion control handlers
 
@@ -565,7 +571,7 @@ namespace lipsync_editor
 		{
 			br.ReadInt16();
 			int len = br.ReadInt32();
-			return new String(br.ReadChars(len));
+			return new string(br.ReadChars(len));
 		}
 
 		void GenerateFxeData(List<AlignmentResult> arList)

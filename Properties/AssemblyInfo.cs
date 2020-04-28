@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("0100010 Industries")]
 [assembly: AssemblyProduct("nwn2 FXE Generator/LipSyncer")]
-[assembly: AssemblyCopyright("2020 apr 25")]
+[assembly: AssemblyCopyright("2020 apr 28")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,5 +18,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("6cce54fb-ce5e-4384-bd3b-0a88b226ee66")]
 
-[assembly: AssemblyVersion("2.1.0.0")]
-[assembly: AssemblyFileVersion("2.1.0.0")]
+[assembly: AssemblyVersion("2.1.2.0")]
+[assembly: AssemblyFileVersion("2.1.2.0")]

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Windows.Forms;
 
 using SpeechLib;
 
@@ -25,23 +22,18 @@ namespace lipsync_editor
 
 
 		#region fields (static)
-		const string EXT_MP3 = ".mp3";
-		const string EXT_WAV = ".wav";
-		const string TMP_MP3 = "sapi_lipsync" + EXT_MP3;
-		const string TMP_WAV = "sapi_lipsync" + EXT_WAV;
-
-		const string LAME_EXE = "lame.exe";
-
 		const string RULE = "TextLipsync";
 		#endregion fields (static)
 
 
 		#region fields
+		SpInprocRecognizer _recognizer;
+		SpInProcRecoContext _recoContext;
+
 		SpFileStream _input;
 		SpVoice _voice;
-		ISpeechRecoContext _recoContext;
 		ISpeechRecoGrammar _recoGrammar;
-		SpPhoneConverter _phoneConverter = new SpPhoneConverter();
+		SpPhoneConverter _phoneConverter;
 
 		string _text = String.Empty;
 
@@ -54,7 +46,7 @@ namespace lipsync_editor
 
 
 		#region properties
-		internal string Fullpath
+		internal string Audiopath
 		{ get; private set; }
 
 		List<string> _expected = new List<string>();
@@ -85,142 +77,23 @@ namespace lipsync_editor
 			//logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
 
 			_voice = new SpVoice();
-			_voice.Volume = 0;
-			_voice.Rate   = 1000;
+			_voice.Volume = 100; //0
+			_voice.Rate   =  -2; //1000
 			_voice.Phoneme   += OnSpeechPhoneme;
 			_voice.EndStream += OnSpeechEndStream;
 
-			_phoneConverter.LanguageId = 1033; // US English
+			_phoneConverter = new SpPhoneConverter();
+			_phoneConverter.LanguageId = 1033; // US English (default)
 
-			ConvertMp3toWav(wavefile);
+			Audiopath = AudioConverter.deterAudiopath(wavefile);
 		}
 		#endregion cTor
 
 
 		#region methods
-		/// <summary>
-		/// TODO: Fix this. Check for valid audio format, handle some errors,
-		/// etc.
-		/// </summary>
-		/// <param name="file"></param>
-		/// <returns></returns>
-		void ConvertMp3toWav(string file)
+		internal void SetLanguage(int id)
 		{
-			logfile.Log("ConvertMp3toWav() file= " + file);
-
-			Fullpath = String.Empty;
-
-			string pathT = Path.GetTempPath();
-			//logfile.Log(". path= " + pathT);
-
-			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // prep .BMU ->
-			{
-				var fi = new FileInfo(file);
-				var br = new BinaryReader(fi.OpenRead());
-
-				char[] c = br.ReadChars(3);
-				br.Close();
-
-				if (   c[0] == 'B' // because .BMUs are .MP3s and NwN2 labels them as .WAVs
-					&& c[1] == 'M'
-					&& c[2] == 'U')
-				{
-					file = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
-					//logfile.Log(". file= " + file);
-
-					fi.CopyTo(file, true);
-				}
-			}
-
-			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
-			{
-				string waveT = Path.Combine(pathT, TMP_WAV);
-				//logfile.Log(". wave= " + waveT);
-
-
-				if (File.Exists(waveT))
-					File.Delete(waveT);
-
-//				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-//				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
-				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
-				info.Arguments = "--decode \"" + file + "\" \"" + waveT + "\"";
-				info.WindowStyle = ProcessWindowStyle.Hidden;
-				info.UseShellExecute = false;
-				info.CreateNoWindow  = true;
-
-				using (Process proc = Process.Start(info))
-				{
-					proc.WaitForExit();
-				}
-
-//				string t = Path.Combine(pathT, TMP_MP3);
-//				logfile.Log(". t= " + t);
-//				if (File.Exists(t))
-//					File.Delete(t);
-
-				file = waveT;
-			}
-
-// http://www.topherlee.com/software/pcm-tut-wavformat.html
-//  1- 4	"RIFF"				Marks the file as a riff file. Characters are each 1 byte long.
-//  5- 8	File size (integer)	Size of the overall file - 8 bytes, in bytes (32-bit integer). Typically, you'd fill this in after creation.
-//  9-12	"WAVE"				File Type Header. For our purposes, it always equals "WAVE".
-// 13-16	"fmt "				Format chunk marker. Includes trailing null
-// 17-20	16					Length of format data as listed above
-// 21-22	1					Type of format (1 is PCM) - 2 byte integer
-// 23-24	2					Number of Channels - 2 byte integer
-// 25-28	44100				Sample Rate - 32 byte integer. Common values are 44100 (CD), 48000 (DAT). Sample Rate = Number of Samples per second, or Hertz.
-// 29-32	176400				(Sample Rate * BitsPerSample * Channels) / 8.
-// 33-34	4					(BitsPerSample * Channels) / 8.1 - 8 bit mono2 - 8 bit stereo/16 bit mono4 - 16 bit stereo
-// 35-36	16					Bits per sample
-// 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
-// 41-44	File size (data)	Size of the data section.
-
-			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
-			{
-				var fi = new FileInfo(file);
-				var br = new BinaryReader(fi.OpenRead());
-
-				char[] c = br.ReadChars(16);					// start 0
-
-				if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
-					&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
-					&& c[12] == 'f' && c[13] == 'm' && c[14] == 't' && c[15] == ' ')
-				{
-					br.ReadBytes(4);							// start 16
-
-					short format = br.ReadInt16();				// start 20: is PCM
-					if (format == 1)
-					{
-						short channels = br.ReadInt16();		// start 22: is Mono
-						if (channels == 1)
-						{
-							int rate = br.ReadInt32();			// start 24: is 44.1kHz
-							if (rate == 44100)
-							{
-								br.ReadBytes(6);				// start 28
-								short bits = br.ReadInt16();	// start 34: is 16-bit
-								if (bits == 16)
-								{
-									Fullpath = file;
-									logfile.Log(". Fullpath= " + file);
-								}
-							}
-						}
-					}
-				}
-				br.Close();
-			}
-
-			if (!FxeGeneratorF.isConsole && Fullpath == String.Empty)
-			{
-				MessageBox.Show(" Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
-								" Conversion failed",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Error,
-								MessageBoxDefaultButton.Button1);
-			}
+			_phoneConverter.LanguageId = id;
 		}
 
 
@@ -250,25 +123,40 @@ namespace lipsync_editor
 
 			if (_text == String.Empty)
 			{
-				logfile.Log(". default - call TtsParseText()");
-				TtsParseText();
+				logfile.Log(". . default - call TtsParseText()");
+				if (TtsParseText != null)
+					TtsParseText();
 			}
-			else if (TtsParseText != null)
+			else
 			{
-				logfile.Log(". enhanced - call SpVoice.Speak()");
+				logfile.Log(". . enhanced - call SpVoice.Speak()");
 
-				_voice.Speak(_text);
+				_voice.Speak(_text); // -> fire TtsParseText when the TTS-stream ends.
 //				_voice.WaitUntilDone(-1);
 			}
 
-			_recoContext = new SpInProcRecoContext();
 
-//			((SpInProcRecoContext)_recoContext).Hypothesis  += Sapi_Lipsync_Hypothesis;
-			((SpInProcRecoContext)_recoContext).Recognition += Sapi_Lipsync_Recognition;
-			((SpInProcRecoContext)_recoContext).EndStream   += Sapi_Lipsync_EndStream;
+//			_recoContext = new SpInProcRecoContext();
 
-			_recoGrammar = _recoContext.CreateGrammar();	// was "2" but MS doc says not needed on its end.
+			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+			_recognizer = new SpInprocRecognizer();
+			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
+			_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
+			logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
+
+
+//			_input = new SpFileStream();
+//			_input.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
+//			_recognizer.AudioInputStream = _input;
+
+//			_recoContext.Hypothesis  += Sapi_Lipsync_Hypothesis;
+			_recoContext.Recognition += Sapi_Lipsync_Recognition;
+			_recoContext.EndStream   += Sapi_Lipsync_EndStream;
+
+			_recoGrammar = _recoContext.CreateGrammar(2);	// was "2" but MS doc says not needed on its end.
 			_recoGrammar.DictationLoad();					// and I don't see grammar id #2 defined on this end either.
+//			_recoGrammar.DictationLoad("Pronunciation");	// Load pronunciation dictation topic into the grammar so that the raw (unfiltered) phonemes may be retrieved.
+//			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
 			Generate(false);
 
@@ -293,7 +181,7 @@ namespace lipsync_editor
 				&& _text != String.Empty
 				&& _recoGrammar.Rules.FindRule(RULE) == null)
 			{
-				logfile.Log(". . add TextLipsync rule");
+				logfile.Log(". . add TextLipsync rule and set Rule ACTIVE");
 				ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
 																 SpeechRuleAttributes.SRATopLevel
 															   | SpeechRuleAttributes.SRADynamic,
@@ -319,9 +207,13 @@ namespace lipsync_editor
 				_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
 			}
 
-			_input = new SpFileStreamClass();
-			_input.Open(Fullpath);
-			_recoContext.Recognizer.AudioInputStream = _input;
+
+			logfile.Log(". open audiostream and set Dictation ACTIVE");
+
+			_input = new SpFileStream();
+//			_input.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
+			_input.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
+			_recognizer.AudioInputStream = _input;
 
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
@@ -338,7 +230,7 @@ namespace lipsync_editor
 							 SpeechVisemeFeature Feature,
 							 short CurrentPhoneId)
 		{
-			logfile.Log("OnSpeechPhoneme() CurrentPhoneId= " + CurrentPhoneId);
+			logfile.Log("OnSpeechPhoneme() CurrentPhoneId= " + CurrentPhoneId + " langid= " + _phoneConverter.LanguageId);
 
 			if (CurrentPhoneId > 9)
 			{
@@ -390,7 +282,7 @@ namespace lipsync_editor
 			if (Result.PhraseInfo != null)
 			{
 				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
-				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
+				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
 
 				List<AlignmentResult> ars;
 				if (!_ruler) ars = _ars_def;
@@ -453,6 +345,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("Sapi_Lipsync_EndStream() _ruler= " + _ruler);
 
+			logfile.Log(". set Dictation INACTIVE and close audiostream");
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 			_input.Close();
 
