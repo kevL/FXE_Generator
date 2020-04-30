@@ -237,7 +237,7 @@ namespace lipsync_editor
 					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
 
-					if (FxeReader.LoadFxeFile(_wavefile, _fxeData))
+					if (FxeReader.ReadFile(_wavefile, _fxeData))
 						PopulateDataGrid();
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);

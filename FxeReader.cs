@@ -11,7 +11,13 @@ namespace lipsync_editor
 	/// </summary>
 	static class FxeReader
 	{
-		internal static bool LoadFxeFile(string file, Dictionary<string, List<FxeDataBlock>> fxeData)
+		#region fields (static)
+		static BinaryReader _br;
+		#endregion fields (static)
+
+
+		#region write methods (static)
+		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxeData)
 		{
 			logfile.Log("LoadFxeFile()");
 
@@ -22,19 +28,19 @@ namespace lipsync_editor
 
 				using (FileStream fs = File.Open(file, FileMode.Open))
 				{
-					var br = new BinaryReader(fs);
-					logfile.Log(". br.length= " + br.BaseStream.Length);
+					_br = new BinaryReader(fs);
+					logfile.Log(". _br.length= " + _br.BaseStream.Length);
 
 					fs.Seek(85, SeekOrigin.Begin);
-					string headtype = GetString(br);
+					string headtype = GetString();
 					logfile.Log(". headtype= " + headtype);
 
 					fs.Seek(34, SeekOrigin.Current);
-					string wavelabel = GetString(br);
+					string wavelabel = GetString();
 					logfile.Log(". wavelabel= " + wavelabel);
 
 					fs.Seek(8, SeekOrigin.Current);
-					short blockcount = br.ReadInt16();
+					short blockcount = _br.ReadInt16();
 					logfile.Log(". blockcount= " + blockcount);
 
 					fs.Seek(8, SeekOrigin.Current);
@@ -43,11 +49,11 @@ namespace lipsync_editor
 					{
 						logfile.Log(". . i= " + i);
 
-						string codeword = GetString(br);
+						string codeword = GetString();
 						logfile.Log(". . codeword= " + codeword);
 
 						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
-						short datablockcount = br.ReadInt16();
+						short datablockcount = _br.ReadInt16();
 						logfile.Log(". . datablockcount= " + datablockcount);
 
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
@@ -56,38 +62,41 @@ namespace lipsync_editor
 						{
 							logfile.Log(". . . j= " + j);
 
-							float val1 = br.ReadSingle();
-							float val2 = br.ReadSingle();
+							float val1 = _br.ReadSingle();
+							float val2 = _br.ReadSingle();
 							logfile.Log(". . . val1= " + val1);
 							logfile.Log(". . . val2= " + val2);
 
 							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
-							var block = new FxeDataBlock(codeword, val1, val2, 0, 0);
+							var block = new FxeDataBlock(codeword, val1, val2, 0,0);
 							fxeData[codeword].Add(block);
 						}
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 					}
-					br.Close();
+					_br.Close();
 				}
-//				PopulateDataGrid();
 				return true;
 			}
 			return false;
 		}
 
-		static string GetString(BinaryReader br)
+		static string GetString()
 		{
-			logfile.Log("GetString() pos= " + br.BaseStream.Position);
+			logfile.Log("GetString() pos= " + _br.BaseStream.Position);
 
-			br.ReadInt16();
-			logfile.Log(". pos of Int32= " + br.BaseStream.Position);
-			int len = br.ReadInt32();
-			logfile.Log(". pos of Chars= " + br.BaseStream.Position);
+			_br.ReadInt16();
+
+			logfile.Log(". pos of Int32= " + _br.BaseStream.Position);
+			int len = _br.ReadInt32();
+
+			logfile.Log(". pos of Chars= " + _br.BaseStream.Position);
 			logfile.Log(". length of Chars= " + len);
-			string str = new string(br.ReadChars(len));
+			string str = new string(_br.ReadChars(len));
 			logfile.Log(". str= " + str);
+
 			return str;
 		}
+		#endregion write methods (static)
 	}
 }
