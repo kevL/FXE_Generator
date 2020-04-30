@@ -8,8 +8,6 @@ namespace lipsync_editor
 	{
 		internal static void Smooth(string vis, List<FxeDataBlock> datablocks)
 		{
-//			var linesById = new Dictionary<int, List<KeyValuePair<float,float>>>();
-
 			FxeDataBlock datablock;
 
 			int   id = datablocks[0].Id;

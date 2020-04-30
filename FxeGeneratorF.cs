@@ -291,7 +291,7 @@ namespace lipsync_editor
 			logfile.Log("btnCreateFxe_Click()");
 
 			_headtype = co_headtype.Text;
-			FxeWriter.WriteFxeFile(_wavefile, _headtype, _fxeData);
+			FxeWriter.WriteFile(_wavefile, _headtype, _fxeData);
 		}
 
 		void btnPlay_Click(object sender, EventArgs e)
@@ -310,6 +310,11 @@ namespace lipsync_editor
 			synth.Show(this);
 		}
 
+		/// <summary>
+		/// Sets the typed-text when Ok is clicked in the VoiceSynthesizer
+		/// dialog.
+		/// </summary>
+		/// <param name="text"></param>
 		internal void SetText(string text)
 		{
 			tb_text.Text = text;
@@ -379,7 +384,7 @@ namespace lipsync_editor
 			}
 			else
 			{
-				FxeWriter.WriteFxeFile(_wavefile, _headtype, _fxeData);
+				FxeWriter.WriteFile(_wavefile, _headtype, _fxeData);
 				Application.Exit();
 			}
 		}

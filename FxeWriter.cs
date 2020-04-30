@@ -14,30 +14,30 @@ namespace lipsync_editor
 
 
 		#region write methods (static)
-		internal static void WriteFxeFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxeData)
+		internal static void WriteFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxeData)
 		{
 			string file = wavefile.Substring(0, wavefile.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
 			using (FileStream fs = File.Open(file, FileMode.Create))
 			{
 				_bw = new BinaryWriter(fs);
 
-				WriteFxeHeader();
-				WriteFxeString(headtype);
+				WriteHeader();
+				WriteString(headtype);
 
 				_bw.Write((short)0);
 				_bw.Write(0);
 
-				WriteFxeString("exported");
+				WriteString("exported");
 
 				_bw.Write(0);
 
-				WriteFxeString(String.Empty);
+				WriteString(String.Empty);
 
 				_bw.Write(0);
 
 				int pos = wavefile.LastIndexOf('\\') + 1;
 				string filelabel = wavefile.Substring(pos, wavefile.Length - pos - 4).ToLower();
-				WriteFxeString(filelabel);
+				WriteString(filelabel);
 
 				_bw.Write((short)3);
 
@@ -48,8 +48,8 @@ namespace lipsync_editor
 				_bw.Write((short)25);
 				_bw.Write(0L);
 
-				WriteFxeData(fxeData);
-				WriteFxeFooter(fileLengthOffsetLocation);
+				WriteData(fxeData);
+				WriteFooter(fileLengthOffsetLocation);
 
 				_bw.Close();
 			}
@@ -77,27 +77,27 @@ namespace lipsync_editor
 			}
 		}
 
-		static void WriteFxeHeader()
+		static void WriteHeader()
 		{
 			_bw.Write("FACE".ToCharArray());
 			_bw.Write(1500);
 
-			WriteFxeString("Obsidian Entertainment");
-			WriteFxeString("evaluation only");
+			WriteString("Obsidian Entertainment");
+			WriteString("evaluation only");
 
 			_bw.Write((short)1000);
 			_bw.Write(0L);
 
-			WriteFxeString("exported");
+			WriteString("exported");
 
 			_bw.Write(0);
 		}
 
-		static void WriteFxeData(Dictionary<string, List<FxeDataBlock>> fxeData)
+		static void WriteData(Dictionary<string, List<FxeDataBlock>> fxeData)
 		{
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxeData)
 			{
-				WriteFxeString(pair.Key); // key=codeword
+				WriteString(pair.Key); // key=codeword
 
 				_bw.Write(0L);
 
@@ -119,14 +119,14 @@ namespace lipsync_editor
 			}
 		}
 
-		static void WriteFxeFooter(long fileLengthOffsetLocation)
+		static void WriteFooter(long fileLengthOffsetLocation)
 		{
 			_bw.Write(4494952716784883466L);
 			_bw.Write((short)0);
 			_bw.Write(0);
 
-			WriteFxeString(String.Empty);
-			WriteFxeString(String.Empty);
+			WriteString(String.Empty);
+			WriteString(String.Empty);
 
 			_bw.Write(-1);
 
@@ -136,7 +136,7 @@ namespace lipsync_editor
 			_bw.Write(length);
 		}
 
-		static void WriteFxeString(string str)
+		static void WriteString(string str)
 		{
 			_bw.Write((short)1);
 
