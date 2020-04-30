@@ -236,7 +236,7 @@ namespace lipsync_editor
 
 		static bool floatsequal(float f1, float f2)
 		{
-			return Math.Abs(f2 - f1) < 0.000005f;
+			return Math.Abs(f2 - f1) < StaticData.EPSILON;
 		}
 	}
 }

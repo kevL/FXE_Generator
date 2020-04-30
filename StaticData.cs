@@ -6,6 +6,10 @@ namespace lipsync_editor
 {
 	static class StaticData
 	{
+		internal static float EPSILON   = 0.000005f;
+		internal static float STOP_INCR = 0.0000001f;
+
+
 		internal static void AddPhon2VisMap(IDictionary<string, string> phon2vis)
 		{
 			phon2vis.Add( "x", String.Empty);

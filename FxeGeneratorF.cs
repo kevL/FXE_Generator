@@ -569,8 +569,8 @@ namespace lipsync_editor
 				blocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
 				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
 				blocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
-
 				++id;
+
 				c2 = c1;
 				c1 = c0;
 			}
@@ -583,20 +583,14 @@ namespace lipsync_editor
 		DataVal GetTrigramValue(string c2, string c1, string c0)
 		{
 			DataVal dataval = TriGramTable[c2][c1][c0];
-			if (Math.Abs(dataval.length) < 0.000005)
+			if (Math.Abs(dataval.length) < StaticData.EPSILON)
 			{
-				c2 = String.Empty;
-
-				int count = 0;
+				DataVal dataval0;
 				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> pair in TriGramTable)
 				{
-					DataVal dataval0 = pair.Value[c1][c0];
-					if (dataval0.count > count)
-					{
-						count = dataval0.count;
-						c2 = pair.Key;
+					dataval0 = pair.Value[c1][c0];
+					if (dataval0.count > dataval.count)
 						dataval = dataval0;
-					}
 				}
 			}
 			return dataval;
@@ -614,15 +608,16 @@ namespace lipsync_editor
 
 				if (datablock0 != null)
 				{
-					if (Math.Abs(datablock.Val1 - datablock0.Val1) < 0.000005f)
+					if (Math.Abs(datablock.Val1 - datablock0.Val1) < StaticData.EPSILON)
 					{
 						// force the x-values (stop values) to never be equal
 						if (i + 1 < datablocks.Count)
 						{
-							datablock.Val1 += Math.Min(0.0000001f, (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
+							datablock.Val1 += Math.Min(StaticData.STOP_INCR,
+													  (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
 						}
 						else
-							datablock.Val1 += 0.0000001f;
+							datablock.Val1 += StaticData.STOP_INCR;
 					}
 				}
 
