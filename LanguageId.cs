@@ -7,18 +7,21 @@ namespace lipsync_editor
 {
 	sealed class LanguageId
 	{
-		internal readonly string _label;
-		internal readonly int _id;
+		string Label
+		{ get; set; }
+
+		internal int Id
+		{ get; private set; }
 
 		internal LanguageId(string label, int id)
 		{
-			_label = label;
-			_id    = id;
+			Label = label;
+			Id    = id;
 		}
 
 		public override string ToString()
 		{
-			return _label;
+			return Label;
 		}
 	}
 
@@ -69,7 +72,8 @@ namespace lipsync_editor
 			list.Add(new LanguageId("Spanish - 1034", 1034));
 			// msoLanguageIDSwedish			1053	The Swedish language
 			list.Add(new LanguageId("Swedish - 1053", 1053));
-
+			// msoLanguageIDZulu			1077	The Zulu language
+			list.Add(new LanguageId("Zulu - 1077", 1077));
 
 			co.DataSource = list;
 			co.SelectedIndex = 0;
@@ -274,5 +278,4 @@ msoLanguageIDXhosa 	1076 	The Xhosa language
 msoLanguageIDYi 	1144 	The Yi language
 msoLanguageIDYiddish 	1085 	The Yiddish language
 msoLanguageIDYoruba 	1130 	The Yoruba language
-msoLanguageIDZulu 	1077 	The Zulu language
 */

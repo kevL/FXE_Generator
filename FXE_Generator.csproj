@@ -44,6 +44,7 @@
     <Compile Include="AlignmentResult.cs" />
     <Compile Include="AudioConverter.cs" />
     <Compile Include="Exergist_VoiceAttack.cs" />
+    <Compile Include="FxeReader.cs" />
     <Compile Include="LanguageId.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="FxeDataBlock.cs" />

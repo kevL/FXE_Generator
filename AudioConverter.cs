@@ -26,7 +26,7 @@ namespace lipsync_editor
 		/// <returns></returns>
 		internal static string deterAudiopath(string file)
 		{
-			logfile.Log("AudioConverter.deterAudiopath() file= " + file);
+			//logfile.Log("AudioConverter.deterAudiopath() file= " + file);
 
 			string fullpath = String.Empty;
 
@@ -124,7 +124,7 @@ namespace lipsync_editor
 								if (bits == 16)
 								{
 									fullpath = file;
-									logfile.Log(". AudioConverter.fullpath= " + fullpath);
+									//logfile.Log(". AudioConverter.fullpath= " + fullpath);
 								}
 							}
 						}

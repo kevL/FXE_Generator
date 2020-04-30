@@ -126,7 +126,7 @@ namespace lipsync_editor
 			this.la_def_words.Name = "la_def_words";
 			this.la_def_words.Size = new System.Drawing.Size(305, 15);
 			this.la_def_words.TabIndex = 14;
-			this.la_def_words.Text = "Recognized - orthemes";
+			this.la_def_words.Text = "SpeechRecognition - orthemes";
 			this.la_def_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_wavefile
@@ -184,7 +184,7 @@ namespace lipsync_editor
 			this.la_def_phons.Name = "la_def_phons";
 			this.la_def_phons.Size = new System.Drawing.Size(305, 15);
 			this.la_def_phons.TabIndex = 17;
-			this.la_def_phons.Text = "Recognized - phonemes";
+			this.la_def_phons.Text = "SpeechRecognition - phonemes";
 			this.la_def_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_text
@@ -222,7 +222,7 @@ namespace lipsync_editor
 			this.la_text.Name = "la_text";
 			this.la_text.Size = new System.Drawing.Size(460, 15);
 			this.la_text.TabIndex = 10;
-			this.la_text.Text = "Typed Text";
+			this.la_text.Text = "TextToSpeech - typed text";
 			this.la_text.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// la_expected
@@ -232,7 +232,7 @@ namespace lipsync_editor
 			this.la_expected.Name = "la_expected";
 			this.la_expected.Size = new System.Drawing.Size(460, 15);
 			this.la_expected.TabIndex = 12;
-			this.la_expected.Text = "TextToSpeech - phonemes";
+			this.la_expected.Text = "TextToSpeech - phonemes expected";
 			this.la_expected.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_expected
@@ -255,7 +255,7 @@ namespace lipsync_editor
 			this.la_enh_phons.Name = "la_enh_phons";
 			this.la_enh_phons.Size = new System.Drawing.Size(305, 15);
 			this.la_enh_phons.TabIndex = 23;
-			this.la_enh_phons.Text = "Recognized - phonemes enhanced w/ Typed text";
+			this.la_enh_phons.Text = "SpeechRecognition - phonemes enhanced w/ TTS";
 			this.la_enh_phons.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_enh_phons
@@ -278,7 +278,7 @@ namespace lipsync_editor
 			this.la_enh_words.Name = "la_enh_words";
 			this.la_enh_words.Size = new System.Drawing.Size(305, 15);
 			this.la_enh_words.TabIndex = 20;
-			this.la_enh_words.Text = "Recognized - orthemes enhanced w/ Typed text";
+			this.la_enh_words.Text = "SpeechRecognition - orthemes enhanced w/ TTS";
 			this.la_enh_words.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// tb_enh_words

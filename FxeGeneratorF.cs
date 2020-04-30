@@ -76,11 +76,15 @@ namespace lipsync_editor
 		/// <param name="headtype"></param>
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
+			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
+
 			StaticData.AddPhon2VisMap(_phon2vis);
 			LoadTrigramTable();
 
 			if (wavefile == String.Empty) // is GUI interface ->
 			{
+				logfile.Log(". is GUI");
+
 				InitializeComponent();
 
 				co_headtype.SelectedIndex = 0;
@@ -147,6 +151,8 @@ namespace lipsync_editor
 			}
 			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
 			{
+				logfile.Log(". is Console");
+
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
@@ -168,8 +174,8 @@ namespace lipsync_editor
 		void printversion()
 		{
 			var an = System.Reflection.Assembly.GetExecutingAssembly().GetName();
-			string ver = "[" + an.Version.Major
-					   + "." + an.Version.Minor;
+			string ver = "ver " + an.Version.Major
+					   + "."    + an.Version.Minor;
 
 			if (an.Version.Build != 0 || an.Version.Revision != 0)
 			{
@@ -179,9 +185,9 @@ namespace lipsync_editor
 					ver += "." + an.Version.Revision;
 			}
 #if DEBUG
-			ver += " d]";
+			ver += ".d";
 #else
-			ver += " r]";
+			ver += ".r";
 #endif
 			la_version.Text = ver;
 		}
@@ -192,7 +198,7 @@ namespace lipsync_editor
 		void OnLanguageChanged(object sender, EventArgs e)
 		{
 			var langid = co_langId.SelectedItem as LanguageId;
-			_lipsyncer.SetLanguage(langid._id);
+			_lipsyncer.SetLanguage(langid.Id);
 		}
 
 		void btnOpen_Click(object sender, EventArgs e)
@@ -231,9 +237,11 @@ namespace lipsync_editor
 					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
 
-					LoadFxeFile();
+					if (FxeReader.LoadFxeFile(_wavefile, _fxeData))
+						PopulateDataGrid();
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
+					logfile.Log("btnOpen_Click() _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
 
 					bu_generate .Enabled =
 					bu_play     .Enabled =
@@ -280,6 +288,8 @@ namespace lipsync_editor
 
 		void btnCreateFxe_Click(object sender, EventArgs e)
 		{
+			logfile.Log("btnCreateFxe_Click()");
+
 			_headtype = co_headtype.Text;
 			FxeWriter.WriteFxeFile(_wavefile, _headtype, _fxeData);
 		}
@@ -397,8 +407,8 @@ namespace lipsync_editor
 				}
 			}
 
-			logfile.Log(". words= " + words);
-			logfile.Log(". phons= " + phons);
+			logfile.Log(". words= " + ((words.Length != 0) ? words : "NO WORDS"));
+			logfile.Log(". phons= " + ((phons.Length != 0) ? phons : "NO PHONS"));
 
 //			tb_words.Text = SapiLipsync.ParseText(words); // TODO: Parse should be unnecessary.
 			tb_words.Text = words;
@@ -468,7 +478,7 @@ namespace lipsync_editor
 		#endregion lipsync handlers
 
 
-		#region methods
+		#region methods (load trigram table)
 		void LoadTrigramTable()
 		{
 			InitTrigramTable();
@@ -517,77 +527,10 @@ namespace lipsync_editor
 				}
 			}
 		}
+		#endregion methods (load trigram table)
 
 
-		void LoadFxeFile()
-		{
-			logfile.Log("LoadFxeFile()");
-
-			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_FXE;
-			if (File.Exists(file))
-			{
-				StaticData.AddFxeCodewords(_fxeData);
-
-				using (FileStream fs = File.Open(file, FileMode.Open))
-				{
-					var br = new BinaryReader(fs);
-
-					fs.Seek(85, SeekOrigin.Begin);
-					string headtype = ReadFxeString(br);
-					logfile.Log(". headtype= " + headtype);
-
-					fs.Seek(34, SeekOrigin.Current);
-					string wavefile = ReadFxeString(br);
-					logfile.Log(". wavefile= " + wavefile);
-
-					fs.Seek(8, SeekOrigin.Current);
-					short blockcount = br.ReadInt16();
-					//logfile.Log(". blockcount= " + blockcount);
-
-					fs.Seek(8, SeekOrigin.Current);
-
-					for (short i = 0; i != (short)15; ++i)
-					{
-						//logfile.Log(". . i= " + i);
-
-						string codeword = ReadFxeString(br);
-						//logfile.Log(". . codeword= " + codeword);
-
-						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
-						short datablockcount = br.ReadInt16();
-						//logfile.Log(". . datablockcount= " + datablockcount);
-
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
-
-						for (short j = 0; j != datablockcount; ++j)
-						{
-							//logfile.Log(". . j= " + j);
-
-							float val1 = br.ReadSingle();
-							float val2 = br.ReadSingle();
-							//logfile.Log(". . val1= " + val1);
-							//logfile.Log(". . val2= " + val2);
-
-							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
-
-							var block = new FxeDataBlock(codeword, val1, val2, 0, 0);
-							_fxeData[codeword].Add(block);
-						}
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
-					}
-					br.Close();
-				}
-				PopulateDataGrid();
-			}
-		}
-
-		string ReadFxeString(BinaryReader br)
-		{
-			br.ReadInt16();
-			int len = br.ReadInt32();
-			return new string(br.ReadChars(len));
-		}
-
+		#region methods (generate FXE data)
 		void GenerateFxeData(List<AlignmentResult> arList)
 		{
 			var vices = new List<KeyValuePair<string, decimal>>();
@@ -696,6 +639,6 @@ namespace lipsync_editor
 					VisemeSmoother.Smooth(pair.Key, pair.Value);
 			}
 		}
-		#endregion methods
+		#endregion methods (generate FXE data)
 	}
 }

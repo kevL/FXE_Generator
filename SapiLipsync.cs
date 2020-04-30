@@ -85,13 +85,11 @@ namespace lipsync_editor
 		/// <param name="wavefile"></param>
 		internal SapiLipsync(string wavefile)
 		{
-			logfile.Log("SapiLipsync() cTor - wavefile= " + wavefile);
+			logfile.Log("SapiLipsync() cTor wavefile= " + wavefile);
 
 			_voice = new SpVoice();
-//			_voice.Volume =  100;
-//			_voice.Rate   =   -2;
-			_voice.Volume =    0;
-			_voice.Rate   = 1000;
+			_voice.Volume = 0;
+			_voice.Rate   = 10;
 			_voice.Phoneme   += OnSpeechPhoneme;
 			_voice.EndStream += OnSpeechEndStream;
 
@@ -103,6 +101,8 @@ namespace lipsync_editor
 			{
 				_phoneConverter.LanguageId = 1033; // US English (default)
 				Audiopath = AudioConverter.deterAudiopath(wavefile);
+
+				logfile.Log(". Audiopath= " + Audiopath);
 			}
 		}
 		#endregion cTor

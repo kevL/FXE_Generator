@@ -15,7 +15,7 @@ namespace lipsync_editor
 		static int _y = -1;
 
 		static int _vol = 100;
-		static int _rat = 0;
+		static int _rat; // default 0 standard (range -10..10).
 		#endregion fields (static)
 
 
@@ -30,7 +30,7 @@ namespace lipsync_editor
 		internal VoiceSynthF(FxeGeneratorF f, string text)
 		{
 			InitializeComponent();
-			bar_rat.Minimum = -5; // NOTE: The designer doesn't like negative values apparently.
+			bar_rat.Minimum = -10; // NOTE: The designer doesn't like negative values apparently.
 
 			_f = f;
 
@@ -132,7 +132,6 @@ namespace lipsync_editor
 			this.bar_rat.LargeChange = 1;
 			this.bar_rat.Location = new System.Drawing.Point(5, 75);
 			this.bar_rat.Margin = new System.Windows.Forms.Padding(0);
-			this.bar_rat.Maximum = 5;
 			this.bar_rat.Name = "bar_rat";
 			this.bar_rat.Size = new System.Drawing.Size(285, 40);
 			this.bar_rat.TabIndex = 1;
