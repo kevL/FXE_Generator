@@ -23,6 +23,26 @@ namespace lipsync_editor
 			return ConflateSpaces(text).Trim();
 		}
 
+		internal static string StripDialogText(string text)
+		{
+			var sb = new StringBuilder(text.Length);
+			char c;
+			for (int i = 0; i != text.Length; ++i)
+			{
+				c = text[i];
+				if (   Char.IsLetter(c)
+//					|| Char.IsNumber(c)
+//					|| Char.IsDigit(c)
+//					|| Char.IsSymbol(c)
+					|| c == ' '
+					|| c == '\'')
+//					&& !Char.IsPunctuation(c)
+				{
+					sb.Append(c);
+				}
+			}
+			return sb.ToString().ToLower();
+		}
 /*		/// <summary>
 		/// Parses a user-typed text string into something better for the TTS
 		/// (text-to-speech) Voice/Speech SAPI.
@@ -81,10 +101,13 @@ namespace lipsync_editor
 			for (int i = 0; i != text.Length; ++i)
 			{
 				c = text[i];
-				if (Char.IsWhiteSpace(c)) // this replaces line- and paragraph-separators also
-					sb.Append(' ');
-				else
-					sb.Append(c);
+				if (!Char.IsControl(c))
+				{
+					if (Char.IsWhiteSpace(c)) // this replaces line- and paragraph-separators also
+						sb.Append(' ');
+					else
+						sb.Append(c);
+				}
 			}
 			return sb.ToString();
 		}

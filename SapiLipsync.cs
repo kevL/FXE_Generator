@@ -393,7 +393,9 @@ namespace lipsync_editor
 			{
 				logfile.Log(". call calculate ratios");
 
-				CalculateWordRatios();
+//				CalculateWordRatios();
+				CalculateWordRatio_def();
+				CalculateWordRatio_enh();
 				CalculatePhonRatios();
 
 				logfile.Log(". fire Recognition");
@@ -494,10 +496,83 @@ namespace lipsync_editor
 			}
 		}
 
-		void CalculateWordRatios()
+		void CalculateWordRatio_def()
 		{
 			logfile.Log();
-			logfile.Log("CalculateWordRatio()");
+			logfile.Log("CalculateWordRatio_def()");
+
+			string text = TypedText.StripDialogText(_text);
+			logfile.Log(". text= " + text);
+
+			var words = new List<string>(text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+			if (words.Count != 0)
+			{
+				var words_def = new List<string>();
+
+				foreach (var ar in _ars_def)
+				{
+					if (ar.Orthography != String.Empty)
+					{
+						logfile.Log(". . add " + ar.Orthography);
+						words_def.Add(ar.Orthography);
+					}
+				}
+
+				int count_def = 0;
+				foreach (string word in words)
+				{
+					if (words_def.Contains(word))
+					{
+						++count_def;
+						words_def.Remove(word);
+					}
+				}
+
+				logfile.Log(". " + count_def + " / " + words.Count);
+				RatioWords_def = (double)count_def / words.Count;
+			}
+		}
+
+		void CalculateWordRatio_enh()
+		{
+			logfile.Log();
+			logfile.Log("CalculateWordRatio()_enh");
+
+			logfile.Log(". _text= " + _text);
+
+			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+			if (words.Count != 0)
+			{
+				var words_enh = new List<string>();
+
+				foreach (var ar in _ars_enh)
+				{
+					if (ar.Orthography != String.Empty)
+					{
+						logfile.Log(". . add " + ar.Orthography);
+						words_enh.Add(ar.Orthography);
+					}
+				}
+
+				int count_enh = 0;
+				foreach (string word in words)
+				{
+					if (words_enh.Contains(word))
+					{
+						++count_enh;
+						words_enh.Remove(word);
+					}
+				}
+
+				logfile.Log(". " + count_enh + " / " + words.Count);
+				RatioWords_enh = (double)count_enh / words.Count;
+			}
+		}
+
+/*		void CalculateWordRatios()
+		{
+			logfile.Log();
+			logfile.Log("CalculateWordRatios()");
 
 			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
@@ -546,7 +621,7 @@ namespace lipsync_editor
 				RatioWords_def = (double)count_def / words.Count;
 				RatioWords_enh = (double)count_enh / words.Count;
 			}
-		}
+		} */
 
 		void CalculatePhonRatios()
 		{
