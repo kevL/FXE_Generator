@@ -150,7 +150,7 @@ namespace lipsync_editor
 			this.bu_open.TabIndex = 0;
 			this.bu_open.Text = "open";
 			this.bu_open.UseVisualStyleBackColor = true;
-			this.bu_open.Click += new System.EventHandler(this.btnOpen_Click);
+			this.bu_open.Click += new System.EventHandler(this.click_Open);
 			// 
 			// bu_generate
 			// 
@@ -162,7 +162,7 @@ namespace lipsync_editor
 			this.bu_generate.TabIndex = 6;
 			this.bu_generate.Text = "Generate";
 			this.bu_generate.UseVisualStyleBackColor = true;
-			this.bu_generate.Click += new System.EventHandler(this.btnGenerate_Click);
+			this.bu_generate.Click += new System.EventHandler(this.click_Generate);
 			// 
 			// tb_def_phons
 			// 
@@ -375,7 +375,7 @@ namespace lipsync_editor
 			this.bu_createfxe.TabIndex = 9;
 			this.bu_createfxe.Text = "Create FXE";
 			this.bu_createfxe.UseVisualStyleBackColor = true;
-			this.bu_createfxe.Click += new System.EventHandler(this.btnCreateFxe_Click);
+			this.bu_createfxe.Click += new System.EventHandler(this.click_CreateFxe);
 			// 
 			// co_headtype
 			// 
@@ -441,7 +441,7 @@ namespace lipsync_editor
 			this.bu_play.TabIndex = 4;
 			this.bu_play.Text = "play";
 			this.bu_play.UseVisualStyleBackColor = true;
-			this.bu_play.Click += new System.EventHandler(this.btnPlay_Click);
+			this.bu_play.Click += new System.EventHandler(this.click_Play);
 			// 
 			// la_blocks
 			// 
@@ -486,7 +486,7 @@ namespace lipsync_editor
 			this.bu_synth.TabIndex = 5;
 			this.bu_synth.Text = "voice";
 			this.bu_synth.UseVisualStyleBackColor = true;
-			this.bu_synth.Click += new System.EventHandler(this.btnSynth_Click);
+			this.bu_synth.Click += new System.EventHandler(this.click_Synth);
 			// 
 			// FxeGeneratorF
 			// 

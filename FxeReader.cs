@@ -19,7 +19,7 @@ namespace lipsync_editor
 		#region write methods (static)
 		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxeData)
 		{
-			logfile.Log("LoadFxeFile()");
+			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
 			if (File.Exists(file))
@@ -83,7 +83,7 @@ namespace lipsync_editor
 
 		static string GetString()
 		{
-			logfile.Log("GetString() pos= " + _br.BaseStream.Position);
+			logfile.Log("FxeReader.GetString() pos= " + _br.BaseStream.Position);
 
 			_br.ReadInt16();
 

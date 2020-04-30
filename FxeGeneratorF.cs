@@ -201,7 +201,8 @@ namespace lipsync_editor
 			_lipsyncer.SetLanguage(langid.Id);
 		}
 
-		void btnOpen_Click(object sender, EventArgs e)
+
+		void click_Open(object sender, EventArgs e)
 		{
 			// debug ->
 //			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
@@ -241,7 +242,7 @@ namespace lipsync_editor
 						PopulateDataGrid();
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
-					logfile.Log("btnOpen_Click() _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
+					logfile.Log("click_Open() _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
 
 					bu_generate .Enabled =
 					bu_play     .Enabled =
@@ -264,9 +265,9 @@ namespace lipsync_editor
 			return String.Empty;
 		}
 
-		void btnGenerate_Click(object sender, EventArgs e)
+		void click_Generate(object sender, EventArgs e)
 		{
-			logfile.Log("btnGenerate_Click()");
+			logfile.Log("click_Generate()");
 
 			Cursor = Cursors.WaitCursor;
 
@@ -286,15 +287,15 @@ namespace lipsync_editor
 			_lipsyncer.Start(tb_text.Text);
 		}
 
-		void btnCreateFxe_Click(object sender, EventArgs e)
+		void click_CreateFxe(object sender, EventArgs e)
 		{
-			logfile.Log("btnCreateFxe_Click()");
+			logfile.Log("click_CreateFxe()");
 
 			_headtype = co_headtype.Text;
 			FxeWriter.WriteFile(_wavefile, _headtype, _fxeData);
 		}
 
-		void btnPlay_Click(object sender, EventArgs e)
+		void click_Play(object sender, EventArgs e)
 		{
 			using (var wavefile = new FileStream(_lipsyncer.Audiopath, FileMode.Open))
 			using (var player   = new SoundPlayer(wavefile))
@@ -304,7 +305,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void btnSynth_Click(object sender, EventArgs e)
+		void click_Synth(object sender, EventArgs e)
 		{
 			var synth = new VoiceSynthF(this, tb_text.Text);
 			synth.Show(this);
@@ -343,7 +344,7 @@ namespace lipsync_editor
 
 		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
 		{
-			logfile.Log("OnRecognitionResult() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
+			logfile.Log("OnSpeechRecognitionEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 
 			if (!isConsole)
 			{
