@@ -204,6 +204,9 @@ namespace lipsync_editor
 
 		void click_Open(object sender, EventArgs e)
 		{
+			logfile.Log();
+			logfile.Log("click_Open()");
+
 			// debug ->
 //			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
 //			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\ding.wav";
@@ -222,6 +225,7 @@ namespace lipsync_editor
 					_dt2.Clear();
 
 					tb_wavefile.Text = _wavefile = ofd.FileName;
+					logfile.Log(". _wavefile= " + _wavefile);
 
 					tb_text.Text = LoadTypedTextFile();
 
@@ -242,7 +246,7 @@ namespace lipsync_editor
 						PopulateDataGrid();
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
-					logfile.Log("click_Open() _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
+					logfile.Log(". _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
 
 					bu_generate .Enabled =
 					bu_play     .Enabled =
@@ -267,6 +271,7 @@ namespace lipsync_editor
 
 		void click_Generate(object sender, EventArgs e)
 		{
+			logfile.Log();
 			logfile.Log("click_Generate()");
 
 			Cursor = Cursors.WaitCursor;
@@ -289,6 +294,7 @@ namespace lipsync_editor
 
 		void click_CreateFxe(object sender, EventArgs e)
 		{
+			logfile.Log();
 			logfile.Log("click_CreateFxe()");
 
 			_headtype = co_headtype.Text;
@@ -339,11 +345,11 @@ namespace lipsync_editor
 			logfile.Log(". expected= " + expected);
 
 			tb_expected.Text = expected;
-//			bu_generate.Enabled = true;
 		}
 
 		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
 		{
+			logfile.Log();
 			logfile.Log("OnSpeechRecognitionEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 
 			if (!isConsole)
@@ -392,6 +398,7 @@ namespace lipsync_editor
 
 		void PrintResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
 		{
+			logfile.Log();
 			logfile.Log("PrintResults() ars.Count= " + ars.Count);
 
 			string words = String.Empty;

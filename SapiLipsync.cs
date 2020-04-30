@@ -85,6 +85,7 @@ namespace lipsync_editor
 		/// <param name="wavefile"></param>
 		internal SapiLipsync(string wavefile)
 		{
+			logfile.Log();
 			logfile.Log("SapiLipsync() cTor wavefile= " + wavefile);
 
 			_voice = new SpVoice();
@@ -109,6 +110,11 @@ namespace lipsync_editor
 
 
 		#region methods
+		/// <summary>
+		/// Sets the language-id when the language dropdown selection changes.
+		/// The language-id is used by both TTS and SpeechRecognition.
+		/// </summary>
+		/// <param name="id"></param>
 		internal void SetLanguage(int id)
 		{
 			_phoneConverter.LanguageId = id;
@@ -117,6 +123,7 @@ namespace lipsync_editor
 
 		internal void Start(string text)
 		{
+			logfile.Log();
 			logfile.Log("Start()");
 
 			// kL_clearall -> these don't all need to be cleared
@@ -141,7 +148,7 @@ namespace lipsync_editor
 
 			if (_text == String.Empty)
 			{
-				logfile.Log(". . default - call TtsParseText()");
+				logfile.Log(". . default - fire TtsParseText()");
 				if (TtsParseText != null)
 					TtsParseText();
 			}
@@ -159,6 +166,7 @@ namespace lipsync_editor
 			logfile.Log(". create (SpInprocRecognizer)_recognizer");
 			_recognizer = new SpInprocRecognizer();
 			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
+			logfile.Log(". create (SpInProcRecoContext)_recoContext");
 			_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
 			logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
 
@@ -179,11 +187,13 @@ namespace lipsync_editor
 			Generate(false);
 
 			logfile.Log("Start() DONE");
+			logfile.Log();
 		}
 
 
 		void Generate(bool ruler)
 		{
+			logfile.Log();
 			logfile.Log("Generate()");
 
 			_ruler = ruler;
@@ -228,7 +238,9 @@ namespace lipsync_editor
 
 			logfile.Log(". open audiostream and set Dictation ACTIVE");
 
+			logfile.Log(". create (SpFileStream)_input");
 			_input = new SpFileStream();
+			logfile.Log(". (SpFileStream)_input CREATED");
 //			_input.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
 			_input.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
 			_recognizer.AudioInputStream = _input;
@@ -253,7 +265,7 @@ namespace lipsync_editor
 			if (CurrentPhoneId > 9)
 			{
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
-				logfile.Log(". add id - phon= " + phon);
+				logfile.Log(". phon= " + phon);
 
 				Expected.Add(phon);
 			}
@@ -261,6 +273,7 @@ namespace lipsync_editor
 
 		void OnSpeechEndStream(int StreamNumber, object StreamPosition)
 		{
+			logfile.Log();
 			logfile.Log("OnSpeechEndStream()");
 
 			if (TtsParseText != null)
@@ -293,6 +306,7 @@ namespace lipsync_editor
 
 		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
+			logfile.Log();
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
@@ -361,6 +375,7 @@ namespace lipsync_editor
 
 		void Sapi_Lipsync_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
+			logfile.Log();
 			logfile.Log("Sapi_Lipsync_EndStream() _ruler= " + _ruler);
 
 			logfile.Log(". set Dictation INACTIVE and close audiostream");
@@ -390,6 +405,7 @@ namespace lipsync_editor
 
 		void FinalizeAlignments()
 		{
+			logfile.Log();
 			logfile.Log("FinalizeAlignments() _ruler= " + _ruler);
 
 			List<AlignmentResult> ars;
@@ -480,6 +496,7 @@ namespace lipsync_editor
 
 		void CalculateWordRatios()
 		{
+			logfile.Log();
 			logfile.Log("CalculateWordRatio()");
 
 			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
