@@ -6,17 +6,31 @@ namespace lipsync_editor
 {
 	/// <summary>
 	/// Parses a user-typed text string into something better for the TTS
-	/// (text-to-speech) Voice/Speech SAPI.
+	/// (text-to-speech) Voice/Speech SAPI. And to compare to Recognition output
+	/// orthemes against.
 	/// </summary>
 	static class TypedText
 	{
-		/// <summary>
+		internal static string SanitizeDialogText(string text)
+		{
+			text = Spaceout(text);
+
+			text = RemoveComment('<', '>', text);
+			text = RemoveComment('{', '}', text);
+			text = RemoveComment('[', ']', text);
+			text = RemoveComment('|', '|', text);
+
+			return ConflateSpaces(text).Trim();
+		}
+
+/*		/// <summary>
 		/// Parses a user-typed text string into something better for the TTS
 		/// (text-to-speech) Voice/Speech SAPI.
 		/// </summary>
 		/// <param name="text"></param>
+		/// <param name="keepPunctuation"></param>
 		/// <returns></returns>
-		internal static string ParseText(string text)
+		internal static string ParseText(string text, bool keepPunctuation = false)
 		{
 			//logfile.Log("ParseText() text= " + text);
 
@@ -27,20 +41,32 @@ namespace lipsync_editor
 			text = RemoveComment('[', ']', text);
 			text = RemoveComment('|', '|', text);
 
-			text = text.Replace("\t", " ");
-
+			var sb = new StringBuilder(text.Length);
+			char c;
 			for (int i = 0; i != text.Length; ++i)
 			{
-				if (   !char.IsLetter(text[i])
-					&& !char.IsNumber(text[i])
-					&& text[i] != ' '
-					&& text[i] != '\'')
+				c = text[i];
+				if (!Char.IsControl(c))
 				{
-					text = text.Replace(text[i], ' ');
+					if (   Char.IsLetter(c)
+						|| Char.IsNumber(c)
+						|| Char.IsDigit(c)
+						|| Char.IsSymbol(c)
+						|| c == ' '
+						|| c == '\''
+						|| (keepPunctuation && Char.IsPunctuation(c)))
+					{
+						sb.Append(c);
+					}
 				}
 			}
-			return Onespace(text).ToLower().Trim();
-		}
+			text = ConflateSpaces(sb.ToString()).Trim();
+
+			if (!keepPunctuation)
+				text = text.ToLower();
+
+			return text;
+		} */
 
 		/// <summary>
 		/// No tabs, no newlines, no funny stuff - just space.
@@ -50,10 +76,12 @@ namespace lipsync_editor
 		static string Spaceout(string text)
 		{
 			var sb = new StringBuilder(text.Length);
+
+			char c;
 			for (int i = 0; i != text.Length; ++i)
 			{
-				char c = text[i];
-				if (char.IsWhiteSpace(c))
+				c = text[i];
+				if (Char.IsWhiteSpace(c)) // this replaces line- and paragraph-separators also
 					sb.Append(' ');
 				else
 					sb.Append(c);
@@ -66,12 +94,14 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="text"></param>
 		/// <returns></returns>
-		static string Onespace(string text)
+		static string ConflateSpaces(string text)
 		{
 			var sb = new StringBuilder(text.Length);
+
+			char c;
 			for (int i = 0; i != text.Length; ++i)
 			{
-				char c = text[i];
+				c = text[i];
 				if (c != ' ' || i == 0 || text[i - 1] != ' ')
 					sb.Append(c);
 			}

@@ -249,7 +249,8 @@ namespace lipsync_editor
 			{
 				using (StreamReader sr = File.OpenText(file))
 				{
-					return TypedText.ParseText(sr.ReadToEnd());
+					return TypedText.SanitizeDialogText(sr.ReadToEnd());
+//					return TypedText.ParseText(sr.ReadToEnd());
 				}
 			}
 			return String.Empty;
@@ -286,12 +287,10 @@ namespace lipsync_editor
 		void btnPlay_Click(object sender, EventArgs e)
 		{
 			using (var wavefile = new FileStream(_lipsyncer.Audiopath, FileMode.Open))
+			using (var player   = new SoundPlayer(wavefile))
 			{
-				using (var player = new SoundPlayer(wavefile))
-				{
-					player.SoundLocation = _lipsyncer.Audiopath;
-					player.Play();
-				}
+				player.SoundLocation = _lipsyncer.Audiopath;
+				player.Play();
 			}
 		}
 
@@ -324,7 +323,7 @@ namespace lipsync_editor
 			logfile.Log(". expected= " + expected);
 
 			tb_expected.Text = expected;
-			bu_generate.Enabled = true;
+//			bu_generate.Enabled = true;
 		}
 
 		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)

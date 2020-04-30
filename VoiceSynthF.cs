@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 using SpeechLib;
@@ -9,6 +10,15 @@ namespace lipsync_editor
 	sealed class VoiceSynthF
 		: Form
 	{
+		#region fields (static)
+		static int _x = -1;
+		static int _y = -1;
+
+		static int _vol = 100;
+		static int _rat = 0;
+		#endregion fields (static)
+
+
 		#region fields
 		FxeGeneratorF _f;
 
@@ -20,21 +30,35 @@ namespace lipsync_editor
 		internal VoiceSynthF(FxeGeneratorF f, string text)
 		{
 			InitializeComponent();
+			bar_rat.Minimum = -5; // NOTE: The designer doesn't like negative values apparently.
 
 			_f = f;
 
 			tb_text.Text = text;
 
-			_voice.Volume = tb_vol.Value;
-			_voice.Rate   = tb_rat.Value;
+			if (_x == -1)
+			{
+				Location = new Point(_f.Location.X + 20, _f.Location.Y + 20);
+			}
+			else
+				Location = new Point(_x,_y);
 
-			la_vol.Text = tb_vol.Value.ToString();
-			la_rat.Text = tb_rat.Value.ToString();
+			_voice.Volume = bar_vol.Value = _vol;
+			_voice.Rate   = bar_rat.Value = _rat;
+
+			la_vol.Text = "vol "  + _vol;
+			la_rat.Text = "rate " + _rat;
 		}
 		#endregion cTor
 
 
 		#region handlers
+		void OnFormClosing(object sender, FormClosingEventArgs e)
+		{
+			_x = Math.Max(0, Location.X);
+			_y = Math.Max(0, Location.Y);
+		}
+
 		void OnClick_Play(object sender, EventArgs e)
 		{
 			_voice.Speak(tb_text.Text, SpeechVoiceSpeakFlags.SVSFlagsAsync);
@@ -53,21 +77,21 @@ namespace lipsync_editor
 
 		void OnValueChanged_Vol(object sender, EventArgs e)
 		{
-			_voice.Volume = tb_vol.Value;
-			la_vol.Text = tb_vol.Value.ToString();
+			_vol = _voice.Volume = bar_vol.Value;
+			la_vol.Text = "vol " + _vol;
 		}
 
 		void OnValueChanged_Rate(object sender, EventArgs e)
 		{
-			_voice.Rate = tb_rat.Value;
-			la_rat.Text = tb_rat.Value.ToString();
+			_rat = _voice.Rate = bar_rat.Value;
+			la_rat.Text = "rate " + _rat;
 		}
 		#endregion handlers
 
 
 		#region designer
-		TrackBar tb_vol;
-		TrackBar tb_rat;
+		TrackBar bar_vol;
+		TrackBar bar_rat;
 		Button bu_play;
 		Button bu_cancel;
 		TextBox tb_text;
@@ -77,44 +101,43 @@ namespace lipsync_editor
 
 		void InitializeComponent()
 		{
-			this.tb_vol = new System.Windows.Forms.TrackBar();
-			this.tb_rat = new System.Windows.Forms.TrackBar();
+			this.bar_vol = new System.Windows.Forms.TrackBar();
+			this.bar_rat = new System.Windows.Forms.TrackBar();
 			this.bu_play = new System.Windows.Forms.Button();
 			this.bu_cancel = new System.Windows.Forms.Button();
 			this.tb_text = new System.Windows.Forms.TextBox();
 			this.bu_ok = new System.Windows.Forms.Button();
 			this.la_vol = new System.Windows.Forms.Label();
 			this.la_rat = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this.tb_vol)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.tb_rat)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bar_vol)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.bar_rat)).BeginInit();
 			this.SuspendLayout();
 			// 
-			// tb_vol
+			// bar_vol
 			// 
-			this.tb_vol.LargeChange = 10;
-			this.tb_vol.Location = new System.Drawing.Point(5, 5);
-			this.tb_vol.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_vol.Maximum = 100;
-			this.tb_vol.Name = "tb_vol";
-			this.tb_vol.Size = new System.Drawing.Size(285, 40);
-			this.tb_vol.TabIndex = 0;
-			this.tb_vol.TickFrequency = 10;
-			this.tb_vol.TickStyle = System.Windows.Forms.TickStyle.Both;
-			this.tb_vol.Value = 100;
-			this.tb_vol.ValueChanged += new System.EventHandler(this.OnValueChanged_Vol);
+			this.bar_vol.LargeChange = 10;
+			this.bar_vol.Location = new System.Drawing.Point(5, 20);
+			this.bar_vol.Margin = new System.Windows.Forms.Padding(0);
+			this.bar_vol.Maximum = 100;
+			this.bar_vol.Name = "bar_vol";
+			this.bar_vol.Size = new System.Drawing.Size(285, 40);
+			this.bar_vol.TabIndex = 0;
+			this.bar_vol.TickFrequency = 10;
+			this.bar_vol.TickStyle = System.Windows.Forms.TickStyle.Both;
+			this.bar_vol.Value = 100;
+			this.bar_vol.ValueChanged += new System.EventHandler(this.OnValueChanged_Vol);
 			// 
-			// tb_rat
+			// bar_rat
 			// 
-			this.tb_rat.LargeChange = 1;
-			this.tb_rat.Location = new System.Drawing.Point(5, 45);
-			this.tb_rat.Margin = new System.Windows.Forms.Padding(0);
-			this.tb_rat.Maximum = 5;
-			this.tb_rat.Minimum = -5;
-			this.tb_rat.Name = "tb_rat";
-			this.tb_rat.Size = new System.Drawing.Size(285, 40);
-			this.tb_rat.TabIndex = 1;
-			this.tb_rat.TickStyle = System.Windows.Forms.TickStyle.Both;
-			this.tb_rat.ValueChanged += new System.EventHandler(this.OnValueChanged_Rate);
+			this.bar_rat.LargeChange = 1;
+			this.bar_rat.Location = new System.Drawing.Point(5, 75);
+			this.bar_rat.Margin = new System.Windows.Forms.Padding(0);
+			this.bar_rat.Maximum = 5;
+			this.bar_rat.Name = "bar_rat";
+			this.bar_rat.Size = new System.Drawing.Size(285, 40);
+			this.bar_rat.TabIndex = 1;
+			this.bar_rat.TickStyle = System.Windows.Forms.TickStyle.Both;
+			this.bar_rat.ValueChanged += new System.EventHandler(this.OnValueChanged_Rate);
 			// 
 			// bu_play
 			// 
@@ -141,11 +164,11 @@ namespace lipsync_editor
 			// 
 			// tb_text
 			// 
-			this.tb_text.Location = new System.Drawing.Point(10, 155);
+			this.tb_text.Location = new System.Drawing.Point(10, 150);
 			this.tb_text.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_text.Multiline = true;
 			this.tb_text.Name = "tb_text";
-			this.tb_text.Size = new System.Drawing.Size(275, 115);
+			this.tb_text.Size = new System.Drawing.Size(275, 120);
 			this.tb_text.TabIndex = 7;
 			// 
 			// bu_ok
@@ -162,23 +185,21 @@ namespace lipsync_editor
 			// 
 			// la_vol
 			// 
-			this.la_vol.Location = new System.Drawing.Point(65, 95);
+			this.la_vol.Location = new System.Drawing.Point(10, 5);
 			this.la_vol.Margin = new System.Windows.Forms.Padding(0);
 			this.la_vol.Name = "la_vol";
-			this.la_vol.Size = new System.Drawing.Size(75, 20);
+			this.la_vol.Size = new System.Drawing.Size(75, 15);
 			this.la_vol.TabIndex = 2;
 			this.la_vol.Text = "vol";
-			this.la_vol.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// la_rat
 			// 
-			this.la_rat.Location = new System.Drawing.Point(155, 95);
+			this.la_rat.Location = new System.Drawing.Point(10, 60);
 			this.la_rat.Margin = new System.Windows.Forms.Padding(0);
 			this.la_rat.Name = "la_rat";
-			this.la_rat.Size = new System.Drawing.Size(75, 20);
+			this.la_rat.Size = new System.Drawing.Size(75, 15);
 			this.la_rat.TabIndex = 3;
 			this.la_rat.Text = "rate";
-			this.la_rat.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// VoiceSynthF
 			// 
@@ -191,17 +212,18 @@ namespace lipsync_editor
 			this.Controls.Add(this.tb_text);
 			this.Controls.Add(this.bu_cancel);
 			this.Controls.Add(this.bu_play);
-			this.Controls.Add(this.tb_rat);
-			this.Controls.Add(this.tb_vol);
+			this.Controls.Add(this.bar_rat);
+			this.Controls.Add(this.bar_vol);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "VoiceSynthF";
-			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Voice synthesizer";
-			((System.ComponentModel.ISupportInitialize)(this.tb_vol)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.tb_rat)).EndInit();
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.OnFormClosing);
+			((System.ComponentModel.ISupportInitialize)(this.bar_vol)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.bar_rat)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
