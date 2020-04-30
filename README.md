@@ -10,4 +10,6 @@ I have reworked it extensively, partly because I just like doing things like tha
 
 Unfortunately (or fortunately) I do not have a Windows10 system, therefore identifying and fixing the issues, or just helping users set up their operating system to play friendly with this application is a beyond my capability.
 
-Consider that a request for assistance by a Windows10 user who can debug and compile c#/.net on his or her own system. It would be nice to get this working because people still use it.
+Consider that a request for assistance from a Windows10 user who can debug and compile c#/.net on his or her own system. It would be nice to get this working because people still use it.
+
+Beware that the problems could have something to do with Windows that have been set up with languages other than US English.
