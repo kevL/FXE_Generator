@@ -398,7 +398,7 @@ namespace lipsync_editor
 				CalculateWordRatio_enh();
 				CalculatePhonRatios();
 
-				logfile.Log(". fire Recognition");
+				logfile.Log(". fire SpeechRecognitionEnded");
 
 				if (SpeechRecognitionEnded != null)
 					SpeechRecognitionEnded(_ars_def, _ars_enh);
@@ -625,6 +625,9 @@ namespace lipsync_editor
 
 		void CalculatePhonRatios()
 		{
+			logfile.Log();
+			logfile.Log("CalculatePhonRatios()");
+
 			if (Expected.Count != 0)
 			{
 				var phon_def = new List<string>();
