@@ -242,6 +242,9 @@ namespace lipsync_editor
 					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
 
+					rb_def.Checked =
+					rb_enh.Checked = false;
+
 					if (FxeReader.ReadFile(_wavefile, _fxeData))
 						PopulateDataGrid();
 
@@ -285,6 +288,12 @@ namespace lipsync_editor
 			la_enh_word_pct.Text =
 			tb_enh_phons   .Text =
 			la_enh_phon_pct.Text = String.Empty;
+
+			rb_def.Checked =
+			rb_enh.Checked = false;
+
+			rb_def.Visible =
+			rb_enh.Visible = true;
 
 			_dt1.Clear();
 			_dt2.Clear();
@@ -378,11 +387,21 @@ namespace lipsync_editor
 
 			List<AlignmentResult> ars;
 			if (_lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
+			{
 				ars = ars_def;
+
+				rb_def.Checked = true;
+				rb_enh.Checked = false;
+			}
 			else
+			{
 				ars = ars_enh;
 
-			GenerateFxeData(ars);
+				rb_def.Checked = false;
+				rb_enh.Checked = true;
+			}
+
+			GenerateData(ars);
 
 			if (!isConsole)
 			{
@@ -544,7 +563,7 @@ namespace lipsync_editor
 
 
 		#region methods (generate FXE data)
-		void GenerateFxeData(List<AlignmentResult> arList)
+		void GenerateData(List<AlignmentResult> arList)
 		{
 			var vices = new List<KeyValuePair<string, decimal>>();
 

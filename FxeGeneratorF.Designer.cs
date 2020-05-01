@@ -64,6 +64,9 @@ namespace lipsync_editor
 		Label la_blocks;
 		DataGridView dg_blocks;
 
+		RadioButton rb_def;
+		RadioButton rb_enh;
+
 
 		#region Windows Form Designer generated code
 		/// <summary>
@@ -102,6 +105,8 @@ namespace lipsync_editor
 			this.la_version = new System.Windows.Forms.Label();
 			this.co_langId = new System.Windows.Forms.ComboBox();
 			this.bu_synth = new System.Windows.Forms.Button();
+			this.rb_def = new System.Windows.Forms.RadioButton();
+			this.rb_enh = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).BeginInit();
 			this.SuspendLayout();
@@ -297,10 +302,10 @@ namespace lipsync_editor
 			// la_def_word_pct
 			// 
 			this.la_def_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_def_word_pct.Location = new System.Drawing.Point(410, 210);
+			this.la_def_word_pct.Location = new System.Drawing.Point(415, 210);
 			this.la_def_word_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_word_pct.Name = "la_def_word_pct";
-			this.la_def_word_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_def_word_pct.Size = new System.Drawing.Size(50, 15);
 			this.la_def_word_pct.TabIndex = 15;
 			this.la_def_word_pct.Text = "pct";
 			this.la_def_word_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -308,10 +313,10 @@ namespace lipsync_editor
 			// la_def_phon_pct
 			// 
 			this.la_def_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_def_phon_pct.Location = new System.Drawing.Point(410, 270);
+			this.la_def_phon_pct.Location = new System.Drawing.Point(415, 270);
 			this.la_def_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_phon_pct.Name = "la_def_phon_pct";
-			this.la_def_phon_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_def_phon_pct.Size = new System.Drawing.Size(50, 15);
 			this.la_def_phon_pct.TabIndex = 18;
 			this.la_def_phon_pct.Text = "pct";
 			this.la_def_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -319,10 +324,10 @@ namespace lipsync_editor
 			// la_enh_word_pct
 			// 
 			this.la_enh_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_enh_word_pct.Location = new System.Drawing.Point(410, 350);
+			this.la_enh_word_pct.Location = new System.Drawing.Point(415, 350);
 			this.la_enh_word_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_word_pct.Name = "la_enh_word_pct";
-			this.la_enh_word_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_enh_word_pct.Size = new System.Drawing.Size(50, 15);
 			this.la_enh_word_pct.TabIndex = 21;
 			this.la_enh_word_pct.Text = "pct";
 			this.la_enh_word_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -330,10 +335,10 @@ namespace lipsync_editor
 			// la_enh_phon_pct
 			// 
 			this.la_enh_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_enh_phon_pct.Location = new System.Drawing.Point(410, 410);
+			this.la_enh_phon_pct.Location = new System.Drawing.Point(415, 410);
 			this.la_enh_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_phon_pct.Name = "la_enh_phon_pct";
-			this.la_enh_phon_pct.Size = new System.Drawing.Size(55, 15);
+			this.la_enh_phon_pct.Size = new System.Drawing.Size(50, 15);
 			this.la_enh_phon_pct.TabIndex = 24;
 			this.la_enh_phon_pct.Text = "pct";
 			this.la_enh_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -488,11 +493,37 @@ namespace lipsync_editor
 			this.bu_synth.UseVisualStyleBackColor = true;
 			this.bu_synth.Click += new System.EventHandler(this.click_Synth);
 			// 
+			// rb_def
+			// 
+			this.rb_def.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.rb_def.Location = new System.Drawing.Point(395, 270);
+			this.rb_def.Margin = new System.Windows.Forms.Padding(0);
+			this.rb_def.Name = "rb_def";
+			this.rb_def.Size = new System.Drawing.Size(15, 15);
+			this.rb_def.TabIndex = 30;
+			this.rb_def.TabStop = true;
+			this.rb_def.UseVisualStyleBackColor = true;
+			this.rb_def.Visible = false;
+			// 
+			// rb_enh
+			// 
+			this.rb_enh.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.rb_enh.Location = new System.Drawing.Point(395, 410);
+			this.rb_enh.Margin = new System.Windows.Forms.Padding(0);
+			this.rb_enh.Name = "rb_enh";
+			this.rb_enh.Size = new System.Drawing.Size(15, 15);
+			this.rb_enh.TabIndex = 31;
+			this.rb_enh.TabStop = true;
+			this.rb_enh.UseVisualStyleBackColor = true;
+			this.rb_enh.Visible = false;
+			// 
 			// FxeGeneratorF
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1052, 486);
+			this.Controls.Add(this.rb_enh);
+			this.Controls.Add(this.rb_def);
 			this.Controls.Add(this.bu_synth);
 			this.Controls.Add(this.co_langId);
 			this.Controls.Add(this.bu_createfxe);
