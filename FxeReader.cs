@@ -17,14 +17,14 @@ namespace lipsync_editor
 
 
 		#region write methods (static)
-		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxeData)
+		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
 			if (File.Exists(file))
 			{
-				StaticData.AddFxeCodewords(fxeData);
+				StaticData.AddCodewords(fxedata);
 
 				using (FileStream fs = File.Open(file, FileMode.Open))
 				{
@@ -70,7 +70,7 @@ namespace lipsync_editor
 							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
 							var block = new FxeDataBlock(codeword, val1, val2, 0,0);
-							fxeData[codeword].Add(block);
+							fxedata[codeword].Add(block);
 						}
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 					}

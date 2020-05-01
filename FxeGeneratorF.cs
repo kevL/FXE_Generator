@@ -13,19 +13,6 @@ namespace lipsync_editor
 	sealed partial class FxeGeneratorF
 		: Form
 	{
-		#region structs
-		/// <summary>
-		/// For values of 'TriGramTable.dat'
-		/// </summary>
-		struct DataVal
-		{
-			internal float length;
-			internal float val;
-			internal short count;
-		}
-		#endregion structs
-
-
 		#region fields (static)
 		internal const string EXT_FXE = "fxe";
 				 const string EXT_TXT = "txt";
@@ -43,21 +30,16 @@ namespace lipsync_editor
 
 
 		#region fields
-		SapiLipsync _lipsyncer;
+		readonly SapiLipsync _lipsyncer;
 
 		string _wavefile = String.Empty;
 		string _headtype = String.Empty;
 
-			Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
-		new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
+		readonly Dictionary<string, List<FxeDataBlock>> _fxedata =
+			 new Dictionary<string, List<FxeDataBlock>>();
 
-		Dictionary<string, string> _phon2vis = new Dictionary<string, string>();
-
-			Dictionary<string, List<FxeDataBlock>> _fxeData =
-		new Dictionary<string, List<FxeDataBlock>>();
-
-		DataTable _dt1 = new DataTable();
-		DataTable _dt2 = new DataTable();
+		readonly DataTable _dt1 = new DataTable();
+		readonly DataTable _dt2 = new DataTable();
 		#endregion fields
 
 
@@ -78,8 +60,8 @@ namespace lipsync_editor
 		{
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
-			StaticData.AddPhon2VisMap(_phon2vis);
-			LoadTrigramTable();
+			StaticData.FillPhon2VisMap();
+			FxeData.LoadTrigramTable();
 
 			if (wavefile == String.Empty) // is GUI interface ->
 			{
@@ -245,7 +227,7 @@ namespace lipsync_editor
 					rb_def.Checked =
 					rb_enh.Checked = false;
 
-					if (FxeReader.ReadFile(_wavefile, _fxeData))
+					if (FxeReader.ReadFile(_wavefile, _fxedata))
 						PopulateDataGrid();
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
@@ -307,7 +289,7 @@ namespace lipsync_editor
 			logfile.Log("click_CreateFxe()");
 
 			_headtype = co_headtype.Text;
-			FxeWriter.WriteFile(_wavefile, _headtype, _fxeData);
+			FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
 		}
 
 		void click_Play(object sender, EventArgs e)
@@ -401,7 +383,7 @@ namespace lipsync_editor
 				rb_enh.Checked = true;
 			}
 
-			GenerateData(ars);
+			FxeData.GenerateData(ars, _fxedata);
 
 			if (!isConsole)
 			{
@@ -410,7 +392,7 @@ namespace lipsync_editor
 			}
 			else
 			{
-				FxeWriter.WriteFile(_wavefile, _headtype, _fxeData);
+				FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
 				Application.Exit();
 			}
 		}
@@ -481,7 +463,7 @@ namespace lipsync_editor
 
 					string phon = ar.Phons[i];
 
-					_dt1.Rows.Add(new object[] { phon, stop, _phon2vis[phon] });
+					_dt1.Rows.Add(new object[] { phon, stop, StaticData.PhonToVis[phon] });
 				}
 			}
 			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
@@ -493,7 +475,7 @@ namespace lipsync_editor
 			logfile.Log("PopulateDataGrid()");
 
 			var blocks = new List<FxeDataBlock>();
-			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxeData)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxedata)
 			{
 				blocks.AddRange(pair.Value);
 			}
@@ -508,164 +490,5 @@ namespace lipsync_editor
 			dg_blocks.ClearSelection();
 		}
 		#endregion lipsync handlers
-
-
-		#region methods (load trigram table)
-		void LoadTrigramTable()
-		{
-			InitTrigramTable();
-
-			using (FileStream fs = File.OpenRead("TriGramTable.dat"))
-			{
-				var br = new BinaryReader(fs);
-				while (br.BaseStream.Position < br.BaseStream.Length)
-				{
-					string[] codewords = br.ReadString().Split(',');
-
-					var dataval = new DataVal();
-					dataval.length = br.ReadSingle();
-					dataval.val    = br.ReadSingle();
-					dataval.count  = br.ReadInt16();
-
-					TriGramTable[codewords[0]][codewords[1]][codewords[2]] = dataval;
-				}
-				br.Close();
-			}
-		}
-
-		void InitTrigramTable()
-		{
-			List<string> codewords = StaticData.AddCodewords();
-			foreach (string c2 in codewords)
-			{
-				var bigram = new Dictionary<string, Dictionary<string, DataVal>>();
-				TriGramTable.Add(c2, bigram);
-
-				foreach (string c1 in codewords)
-				{
-					if (c1 != "S" || c2 == "S")
-					{
-						var unigram = new Dictionary<string, DataVal>();
-						bigram.Add(c1, unigram);
-
-						foreach (string c0 in codewords)
-						{
-							if (c0 != "S")
-							{
-								unigram.Add(c0, new DataVal());
-							}
-						}
-					}
-				}
-			}
-		}
-		#endregion methods (load trigram table)
-
-
-		#region methods (generate FXE data)
-		void GenerateData(List<AlignmentResult> arList)
-		{
-			var vices = new List<KeyValuePair<string, decimal>>();
-
-			string phon;
-			foreach (AlignmentResult ar in arList)
-			{
-				for (int i = 0; i != ar.Phons.Count; ++i)
-				{
-					if ((phon = ar.Phons[i]) != "x")
-					{
-						decimal stop = (decimal)ar.Stops[i] / 10000000;
-						vices.Add(new KeyValuePair<string, decimal>(_phon2vis[phon], stop));
-					}
-				}
-			}
-
-
-			var blocks = new List<FxeDataBlock>(); // viseme start, mid, end points
-
-			DataVal dataval;
-			string c2 = "S";
-			string c1 = "S";
-			int id = 0;
-
-			foreach (KeyValuePair<string, decimal> vis in vices)
-			{
-				string c0 = vis.Key;
-
-				float stop = (float)vis.Value;
-
-				dataval = GetTrigramValue(c2, c1, c0);
-				float strt = stop - dataval.length;
-				float midl = strt + dataval.length / 2f;
-
-				blocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
-				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
-				blocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
-				++id;
-
-				c2 = c1;
-				c1 = c0;
-			}
-
-			blocks.Sort();
-			AddDatablocks(blocks);
-			SmoothFxeData();
-		}
-
-		DataVal GetTrigramValue(string c2, string c1, string c0)
-		{
-			DataVal dataval = TriGramTable[c2][c1][c0];
-			if (Math.Abs(dataval.length) < StaticData.EPSILON)
-			{
-				DataVal dataval0;
-				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> pair in TriGramTable)
-				{
-					dataval0 = pair.Value[c1][c0];
-					if (dataval0.count > dataval.count)
-						dataval = dataval0;
-				}
-			}
-			return dataval;
-		}
-
-		void AddDatablocks(IList<FxeDataBlock> datablocks)
-		{
-			StaticData.AddFxeCodewords(_fxeData);
-
-			FxeDataBlock datablock0 = null;
-
-			for (int i = 0; i != datablocks.Count; ++i)
-			{
-				FxeDataBlock datablock = datablocks[i];
-
-				if (datablock0 != null)
-				{
-					if (Math.Abs(datablock.Val1 - datablock0.Val1) < StaticData.EPSILON)
-					{
-						// force the x-values (stop values) to never be equal
-						if (i + 1 < datablocks.Count)
-						{
-							datablock.Val1 += Math.Min(StaticData.STOP_INCR,
-													  (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
-						}
-						else
-							datablock.Val1 += StaticData.STOP_INCR;
-					}
-				}
-
-				_fxeData[datablock.Viseme].Add(datablock);
-				datablock0 = datablock;
-			}
-		}
-
-		void SmoothFxeData()
-		{
-			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxeData)
-			{
-				if (pair.Value.Count > 0)
-					VisemeSmoother.Smooth(pair.Key, pair.Value);
-			}
-		}
-		#endregion methods (generate FXE data)
 	}
 }

@@ -7,10 +7,6 @@ namespace lipsync_editor
 	sealed class FxeDataBlock
 		: IComparable
 	{
-		#region fields
-		#endregion fields
-
-
 		#region properties
 		internal string Viseme
 		{ get; private set; }

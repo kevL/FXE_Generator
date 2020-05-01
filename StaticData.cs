@@ -6,56 +6,71 @@ namespace lipsync_editor
 {
 	static class StaticData
 	{
-		internal static float EPSILON   = 0.000005f;
-		internal static float STOP_INCR = 0.0000001f;
+		#region fields (static)
+		internal const float EPSILON   = 0.000005f;
+		internal const float STOP_INCR = 0.0000001f;
+		#endregion fields (static)
 
 
-		internal static void AddPhon2VisMap(IDictionary<string, string> phon2vis)
+		#region properties (static)
+		static readonly Dictionary<string, string> _phon2vis =
+					new Dictionary<string, string>();
+		internal static Dictionary<string, string> PhonToVis
 		{
-			phon2vis.Add( "x", String.Empty);
-			phon2vis.Add("iy", "Eat");
-			phon2vis.Add("ih", "If");
-			phon2vis.Add("eh", "If");
-			phon2vis.Add("ey", "If");
-			phon2vis.Add("ae", "If");
-			phon2vis.Add("aa", "Ox");
-			phon2vis.Add("aw", "If");
-			phon2vis.Add("ay", "If");
-			phon2vis.Add("ah", "If");
-			phon2vis.Add("ao", "Ox");
-			phon2vis.Add("oy", "Oat");
-			phon2vis.Add("ow", "Oat");
-			phon2vis.Add("uh", "Oat");
-			phon2vis.Add("uw", "Oat");
-			phon2vis.Add("er", "Earth");
-			phon2vis.Add("ax", "If");
-			phon2vis.Add( "s", "Size");
-			phon2vis.Add("sh", "Church");
-			phon2vis.Add( "z", "Size");
-			phon2vis.Add("zh", "Church");
-			phon2vis.Add( "f", "Fave");
-			phon2vis.Add("th", "Though");
-			phon2vis.Add( "v", "Fave");
-			phon2vis.Add("dh", "Though");
-			phon2vis.Add( "m", "Bump");
-			phon2vis.Add( "n", "New");
-			phon2vis.Add("ng", "New");
-			phon2vis.Add( "l", "Told");
-			phon2vis.Add( "r", "Roar");
-			phon2vis.Add( "w", "Wet");
-			phon2vis.Add( "y", "Wet");
-			phon2vis.Add( "h", "If");
-			phon2vis.Add( "b", "Bump");
-			phon2vis.Add( "d", "Told");
-			phon2vis.Add("jh", "Church");
-			phon2vis.Add( "g", "Cage");
-			phon2vis.Add( "p", "Bump");
-			phon2vis.Add( "t", "Told");
-			phon2vis.Add( "k", "Cage");
-			phon2vis.Add("ch", "Church");
+			get { return _phon2vis; }
+		}
+		#endregion properties (static)
+
+
+		// TODO: Phon2Vis etc ought rely on LanguageId. This is for US English.
+
+		#region methods (static)
+		internal static void FillPhon2VisMap()
+		{
+			PhonToVis.Add( "x", String.Empty);
+			PhonToVis.Add("iy", "Eat");
+			PhonToVis.Add("ih", "If");
+			PhonToVis.Add("eh", "If");
+			PhonToVis.Add("ey", "If");
+			PhonToVis.Add("ae", "If");
+			PhonToVis.Add("aa", "Ox");
+			PhonToVis.Add("aw", "If");
+			PhonToVis.Add("ay", "If");
+			PhonToVis.Add("ah", "If");
+			PhonToVis.Add("ao", "Ox");
+			PhonToVis.Add("oy", "Oat");
+			PhonToVis.Add("ow", "Oat");
+			PhonToVis.Add("uh", "Oat");
+			PhonToVis.Add("uw", "Oat");
+			PhonToVis.Add("er", "Earth");
+			PhonToVis.Add("ax", "If");
+			PhonToVis.Add( "s", "Size");
+			PhonToVis.Add("sh", "Church");
+			PhonToVis.Add( "z", "Size");
+			PhonToVis.Add("zh", "Church");
+			PhonToVis.Add( "f", "Fave");
+			PhonToVis.Add("th", "Though");
+			PhonToVis.Add( "v", "Fave");
+			PhonToVis.Add("dh", "Though");
+			PhonToVis.Add( "m", "Bump");
+			PhonToVis.Add( "n", "New");
+			PhonToVis.Add("ng", "New");
+			PhonToVis.Add( "l", "Told");
+			PhonToVis.Add( "r", "Roar");
+			PhonToVis.Add( "w", "Wet");
+			PhonToVis.Add( "y", "Wet");
+			PhonToVis.Add( "h", "If");
+			PhonToVis.Add( "b", "Bump");
+			PhonToVis.Add( "d", "Told");
+			PhonToVis.Add("jh", "Church");
+			PhonToVis.Add( "g", "Cage");
+			PhonToVis.Add( "p", "Bump");
+			PhonToVis.Add( "t", "Told");
+			PhonToVis.Add( "k", "Cage");
+			PhonToVis.Add("ch", "Church");
 		}
 
-		internal static List<string> AddCodewords()
+		internal static List<string> GetCodewords()
 		{
 			var codewords = new List<string>();
 
@@ -79,35 +94,36 @@ namespace lipsync_editor
 			return codewords;
 		}
 
-		internal static void AddFxeCodewords(IDictionary<string, List<FxeDataBlock>> fxeData)
+		internal static void AddCodewords(IDictionary<string, List<FxeDataBlock>> fxedata)
 		{
-			fxeData.Clear();
+			fxedata.Clear();
 
-			fxeData.Add("Eat",                    new List<FxeDataBlock>());
-			fxeData.Add("If",                     new List<FxeDataBlock>());
-			fxeData.Add("Ox",                     new List<FxeDataBlock>());
-			fxeData.Add("Oat",                    new List<FxeDataBlock>());
-			fxeData.Add("Earth",                  new List<FxeDataBlock>());
-			fxeData.Add("Size",                   new List<FxeDataBlock>());
-			fxeData.Add("Church",                 new List<FxeDataBlock>());
-			fxeData.Add("Fave",                   new List<FxeDataBlock>());
-			fxeData.Add("Though",                 new List<FxeDataBlock>());
-			fxeData.Add("Bump",                   new List<FxeDataBlock>());
-			fxeData.Add("New",                    new List<FxeDataBlock>());
-			fxeData.Add("Told",                   new List<FxeDataBlock>());
-			fxeData.Add("Roar",                   new List<FxeDataBlock>());
-			fxeData.Add("Wet",                    new List<FxeDataBlock>());
-			fxeData.Add("Cage",                   new List<FxeDataBlock>());
-			fxeData.Add("Orientation Head Pitch", new List<FxeDataBlock>());
-			fxeData.Add("Orientation Head Roll",  new List<FxeDataBlock>());
-			fxeData.Add("Orientation Head Yaw",   new List<FxeDataBlock>());
-			fxeData.Add("Gaze Eye Pitch",         new List<FxeDataBlock>());
-			fxeData.Add("Gaze Eye Yaw",           new List<FxeDataBlock>());
-			fxeData.Add("Emphasis Head Pitch",    new List<FxeDataBlock>());
-			fxeData.Add("Emphasis Head Roll",     new List<FxeDataBlock>());
-			fxeData.Add("Emphasis Head Yaw",      new List<FxeDataBlock>());
-			fxeData.Add("Eyebrow Raise",          new List<FxeDataBlock>());
-			fxeData.Add("Blink",                  new List<FxeDataBlock>());
+			fxedata.Add("Eat",                    new List<FxeDataBlock>());
+			fxedata.Add("If",                     new List<FxeDataBlock>());
+			fxedata.Add("Ox",                     new List<FxeDataBlock>());
+			fxedata.Add("Oat",                    new List<FxeDataBlock>());
+			fxedata.Add("Earth",                  new List<FxeDataBlock>());
+			fxedata.Add("Size",                   new List<FxeDataBlock>());
+			fxedata.Add("Church",                 new List<FxeDataBlock>());
+			fxedata.Add("Fave",                   new List<FxeDataBlock>());
+			fxedata.Add("Though",                 new List<FxeDataBlock>());
+			fxedata.Add("Bump",                   new List<FxeDataBlock>());
+			fxedata.Add("New",                    new List<FxeDataBlock>());
+			fxedata.Add("Told",                   new List<FxeDataBlock>());
+			fxedata.Add("Roar",                   new List<FxeDataBlock>());
+			fxedata.Add("Wet",                    new List<FxeDataBlock>());
+			fxedata.Add("Cage",                   new List<FxeDataBlock>());
+			fxedata.Add("Orientation Head Pitch", new List<FxeDataBlock>());
+			fxedata.Add("Orientation Head Roll",  new List<FxeDataBlock>());
+			fxedata.Add("Orientation Head Yaw",   new List<FxeDataBlock>());
+			fxedata.Add("Gaze Eye Pitch",         new List<FxeDataBlock>());
+			fxedata.Add("Gaze Eye Yaw",           new List<FxeDataBlock>());
+			fxedata.Add("Emphasis Head Pitch",    new List<FxeDataBlock>());
+			fxedata.Add("Emphasis Head Roll",     new List<FxeDataBlock>());
+			fxedata.Add("Emphasis Head Yaw",      new List<FxeDataBlock>());
+			fxedata.Add("Eyebrow Raise",          new List<FxeDataBlock>());
+			fxedata.Add("Blink",                  new List<FxeDataBlock>());
 		}
+		#endregion methods (static)
 	}
 }
