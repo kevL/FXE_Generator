@@ -22,6 +22,8 @@ namespace lipsync_editor
 			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
+			logfile.Log(". file= " + file);
+
 			if (File.Exists(file))
 			{
 				StaticData.AddCodewords(fxedata);
@@ -69,7 +71,7 @@ namespace lipsync_editor
 
 							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
-							var block = new FxeDataBlock(codeword, val1, val2, 0,0);
+							var block = new FxeDataBlock(codeword, val1,val2, 0,0);
 							fxedata[codeword].Add(block);
 						}
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes

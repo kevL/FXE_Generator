@@ -14,9 +14,13 @@ namespace lipsync_editor
 
 
 		#region write methods (static)
-		internal static void WriteFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxeData)
+		internal static void WriteFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+			logfile.Log("FxeWriter.WriteFile()");
+
 			string file = wavefile.Substring(0, wavefile.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
+			logfile.Log(". file= " + file);
+
 			using (FileStream fs = File.Open(file, FileMode.Create))
 			{
 				_bw = new BinaryWriter(fs);
@@ -31,7 +35,7 @@ namespace lipsync_editor
 
 				_bw.Write(0);
 
-				WriteString(String.Empty);
+				WriteString(String.Empty); // wtf
 
 				_bw.Write(0);
 
@@ -48,7 +52,7 @@ namespace lipsync_editor
 				_bw.Write((short)25);
 				_bw.Write(0L);
 
-				WriteData(fxeData);
+				WriteData(fxedata);
 				WriteFooter(fileLengthOffsetLocation);
 
 				_bw.Close();
@@ -93,22 +97,22 @@ namespace lipsync_editor
 			_bw.Write(0);
 		}
 
-		static void WriteData(Dictionary<string, List<FxeDataBlock>> fxeData)
+		static void WriteData(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
-			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxeData)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
 				WriteString(pair.Key); // key=codeword
 
 				_bw.Write(0L);
 
-				List<FxeDataBlock> dataList = pair.Value;
-				_bw.Write((short)dataList.Count);
+				List<FxeDataBlock> data = pair.Value;
+				_bw.Write((short)data.Count);
 
 				_bw.Write(0);
 
-				dataList.Sort();
+				data.Sort();
 
-				foreach (FxeDataBlock datablock in dataList)
+				foreach (FxeDataBlock datablock in data)
 				{
 					_bw.Write(datablock.Val1);
 					_bw.Write(datablock.Val2);

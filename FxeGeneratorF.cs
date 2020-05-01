@@ -33,7 +33,7 @@ namespace lipsync_editor
 		readonly SapiLipsync _lipsyncer;
 
 		string _wavefile = String.Empty;
-		string _headtype = String.Empty;
+		string _headtype = String.Empty; // used by Console only.
 
 		readonly Dictionary<string, List<FxeDataBlock>> _fxedata =
 			 new Dictionary<string, List<FxeDataBlock>>();
@@ -61,7 +61,7 @@ namespace lipsync_editor
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
 			StaticData.FillPhon2VisMap();
-			FxeData.LoadTrigramTable();
+			FxeData.LoadTrigrams();
 
 			if (wavefile == String.Empty) // is GUI interface ->
 			{
@@ -225,7 +225,9 @@ namespace lipsync_editor
 					bu_createfxe.Enabled = false;
 
 					rb_def.Checked =
-					rb_enh.Checked = false;
+					rb_enh.Checked =
+					rb_def.Visible =
+					rb_enh.Visible = false;
 
 					if (FxeReader.ReadFile(_wavefile, _fxedata))
 						PopulateDataGrid();
@@ -272,10 +274,9 @@ namespace lipsync_editor
 			la_enh_phon_pct.Text = String.Empty;
 
 			rb_def.Checked =
-			rb_enh.Checked = false;
-
+			rb_enh.Checked =
 			rb_def.Visible =
-			rb_enh.Visible = true;
+			rb_enh.Visible = false;
 
 			_dt1.Clear();
 			_dt2.Clear();
@@ -288,8 +289,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("click_CreateFxe()");
 
-			_headtype = co_headtype.Text;
-			FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
+			FxeWriter.WriteFile(_wavefile, co_headtype.Text, _fxedata);
 		}
 
 		void click_Play(object sender, EventArgs e)
@@ -359,6 +359,9 @@ namespace lipsync_editor
 				{
 					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P1");
 					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P1");
+
+					rb_def.Visible =
+					rb_enh.Visible = true;
 				}
 
 				ColorPercents();
@@ -383,7 +386,8 @@ namespace lipsync_editor
 				rb_enh.Checked = true;
 			}
 
-			FxeData.GenerateData(ars, _fxedata);
+			_fxedata.Clear();
+			FxeData.GenerateData(ars, _fxedata); // generate FXE-data from the AlignmentResults
 
 			if (!isConsole)
 			{

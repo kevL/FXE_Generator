@@ -23,17 +23,21 @@ namespace lipsync_editor
 	/// </summary>
 	static class FxeData
 	{
+		#region fields (static)
+		const string TRIGRAMTABLE = "TriGramTable.dat";
+
 		static readonly Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
 					new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
+		#endregion fields (static)
 
 
 		#region methods (static)
-		internal static void GenerateData(List<AlignmentResult> arList, Dictionary<string, List<FxeDataBlock>> fxedata)
+		internal static void GenerateData(List<AlignmentResult> ars, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			var vices = new List<KeyValuePair<string, decimal>>();
 
 			string phon;
-			foreach (AlignmentResult ar in arList)
+			foreach (AlignmentResult ar in ars)
 			{
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
@@ -71,10 +75,10 @@ namespace lipsync_editor
 				c2 = c1;
 				c1 = c0;
 			}
-
 			blocks.Sort();
+
 			AddDatablocks(blocks, fxedata);
-			SmoothFxeData(fxedata);
+			Smooth(fxedata);
 		}
 
 		static DataVal GetTrigramValue(string c2, string c1, string c0)
@@ -123,7 +127,7 @@ namespace lipsync_editor
 			}
 		}
 
-		static void SmoothFxeData(Dictionary<string, List<FxeDataBlock>> fxedata)
+		static void Smooth(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
@@ -135,11 +139,11 @@ namespace lipsync_editor
 
 
 		#region methods (trigram table)
-		internal static void LoadTrigramTable()
+		internal static void LoadTrigrams()
 		{
-			InitTrigramTable();
+			InitTrigrams();
 
-			using (FileStream fs = File.OpenRead("TriGramTable.dat"))
+			using (FileStream fs = File.OpenRead(TRIGRAMTABLE))
 			{
 				var br = new BinaryReader(fs);
 				while (br.BaseStream.Position < br.BaseStream.Length)
@@ -157,7 +161,7 @@ namespace lipsync_editor
 			}
 		}
 
-		static void InitTrigramTable()
+		static void InitTrigrams()
 		{
 			List<string> codewords = StaticData.GetCodewords();
 			foreach (string c2 in codewords)

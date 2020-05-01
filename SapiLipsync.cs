@@ -7,8 +7,8 @@ using SpeechLib;
 namespace lipsync_editor
 {
 	internal delegate void TtsParseTextEvent();
-	internal delegate void SpeechRecognitionEndedEvent(List<AlignmentResult> arListDef,
-													   List<AlignmentResult> arListEnh);
+	internal delegate void SpeechRecognitionEndedEvent(List<AlignmentResult> ars_def,
+													   List<AlignmentResult> ars_enh);
 
 
 	/// <summary>

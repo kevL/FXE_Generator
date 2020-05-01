@@ -1,7 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("nwn2 FXE Generator")]
+
+[assembly: AssemblyTitle("FXE LipSyncer")]
 [assembly: AssemblyDescription("kL_build")]
 #if DEBUG
 [assembly: AssemblyConfiguration("debug")]
@@ -10,7 +11,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("0100010 Industries")]
 [assembly: AssemblyProduct("nwn2 FXE Generator/LipSyncer")]
-[assembly: AssemblyCopyright("2020 apr 28")]
+[assembly: AssemblyCopyright("2020 may 1")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -18,5 +19,5 @@ using System.Runtime.InteropServices;
 
 [assembly: Guid("6cce54fb-ce5e-4384-bd3b-0a88b226ee66")]
 
-[assembly: AssemblyVersion("2.1.4.0")]
-[assembly: AssemblyFileVersion("2.1.4.0")]
+[assembly: AssemblyVersion("2.1.5.0")]
+[assembly: AssemblyFileVersion("2.1.5.0")]
