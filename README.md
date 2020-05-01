@@ -4,7 +4,7 @@ Creates FXE lipsync files for Neverwinter Nights 2
 
 c# .net 3.5
 
-The original author of this code is 0100010.
+The original author of this code is 0100010.  
 [FXE Generator Tool](https://neverwintervault.org/project/nwn2/other/tool/fxe-generator-tool)
 
 I have reworked it extensively, partly because I just like doing things like that. But the primary impetus for this rewrite is an attempt to get it working on Windows10 systems. While it worked fine, and continues to work fine, on my Windows7 system it has various problems on Windows10. The issues may or may not be with respect to how the user has his/her Windows10 system setup for TextToSpeech and SpeechRecognition.
