@@ -35,7 +35,13 @@ namespace lipsync_editor
 		string _wavefile = String.Empty;
 		string _headtype = String.Empty; // used by Console only.
 
-		readonly Dictionary<string, List<FxeDataBlock>> _fxedata =
+			Dictionary<string, List<FxeDataBlock>> _fxedata =
+		new Dictionary<string, List<FxeDataBlock>>();
+
+		readonly Dictionary<string, List<FxeDataBlock>> _fxedata_def =
+			 new Dictionary<string, List<FxeDataBlock>>();
+
+		readonly Dictionary<string, List<FxeDataBlock>> _fxedata_enh =
 			 new Dictionary<string, List<FxeDataBlock>>();
 
 		readonly DataTable _dt1 = new DataTable();
@@ -229,8 +235,19 @@ namespace lipsync_editor
 					rb_def.Visible =
 					rb_enh.Visible = false;
 
+
+					_dt1.Clear();
+					_dt2.Clear();
+
+					_fxedata    .Clear();
+					_fxedata_def.Clear();
+					_fxedata_enh.Clear();
+
+//					_ars_def.Clear();
+//					_ars_enh.Clear();
+
 					if (FxeReader.ReadFile(_wavefile, _fxedata))
-						PopulateDataGrid();
+						PopulateDataGrid(_fxedata);
 
 					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
 					logfile.Log(". _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
@@ -278,8 +295,16 @@ namespace lipsync_editor
 			rb_def.Visible =
 			rb_enh.Visible = false;
 
+
 			_dt1.Clear();
 			_dt2.Clear();
+
+			_fxedata    .Clear();
+			_fxedata_def.Clear();
+			_fxedata_enh.Clear();
+
+//			_ars_def.Clear();
+//			_ars_enh.Clear();
 
 			_lipsyncer.Start(tb_text.Text);
 		}
@@ -317,6 +342,38 @@ namespace lipsync_editor
 		{
 			tb_text.Text = text;
 		}
+
+
+		void checkedchanged_Radio(object sender, EventArgs e)
+		{
+			var rb = sender as RadioButton;
+			if (rb.Checked)
+			{
+				if (rb == rb_def)
+				{
+					PopulatePhonGrid(_ars_def);
+					PopulateDataGrid(_fxedata_def);
+				}
+				else //if (rb == rb_enh)
+				{
+					PopulatePhonGrid(_ars_enh);
+					PopulateDataGrid(_fxedata_enh);
+				}
+			}
+		}
+
+		void click_pct(object sender, EventArgs e)
+		{
+			var la = sender as Label;
+			if (la == la_def_phon_pct)
+			{
+				rb_def.Checked = true;
+			}
+			else //if (la == la_enh_phon_pct)
+			{
+				rb_enh.Checked = true;
+			}
+		}
 		#endregion control handlers
 
 
@@ -338,10 +395,18 @@ namespace lipsync_editor
 			tb_expected.Text = expected;
 		}
 
+
+		List<AlignmentResult> _ars_def;// = new List<AlignmentResult>();
+		List<AlignmentResult> _ars_enh;// = new List<AlignmentResult>();
+
 		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
 		{
 			logfile.Log();
 			logfile.Log("OnSpeechRecognitionEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
+
+			_ars_def = ars_def;
+			_ars_enh = ars_enh;
+
 
 			if (!isConsole)
 			{
@@ -370,27 +435,65 @@ namespace lipsync_editor
 				co_headtype .Enabled = true;
 			}
 
-			List<AlignmentResult> ars;
+
+//			_fxedata_def.Clear();
+//			_fxedata_enh.Clear();
+			FxeData.GenerateData(ars_def, _fxedata_def);
+			FxeData.GenerateData(ars_enh, _fxedata_enh);
+
+//			_fxedata.Clear();
+			if (_lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
+			{
+				_fxedata = _fxedata_def;
+
+				if (!isConsole)
+					rb_def.Checked = true; // fire rb_CheckChanged
+			}
+			else
+			{
+				_fxedata = _fxedata_enh;
+
+				if (!isConsole)
+					rb_enh.Checked = true; // fire rb_CheckChanged
+			}
+
+
+			if (isConsole)
+			{
+				FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
+				Application.Exit();
+			}
+
+/*			List<AlignmentResult> ars;
 			if (_lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
 			{
 				ars = ars_def;
 
-				rb_def.Checked = true;
-				rb_enh.Checked = false;
+//				if (!isConsole)
+//				{
+//					rb_def.Checked = true;
+//					rb_enh.Checked = false;
+//				}
 			}
 			else
 			{
 				ars = ars_enh;
 
-				rb_def.Checked = false;
-				rb_enh.Checked = true;
-			}
+//				if (!isConsole)
+//				{
+//					rb_def.Checked = false;
+//					rb_enh.Checked = true;
+//				}
+			} */
 
-			_fxedata.Clear();
-			FxeData.GenerateData(ars, _fxedata); // generate FXE-data from the AlignmentResults
+//			_fxedata.Clear();
+//			FxeData.GenerateData(ars, _fxedata); // generate FXE-data from the AlignmentResults
 
-			if (!isConsole)
+/*			if (!isConsole)
 			{
+				rb_def.Checked = (ars == ars_def);
+				rb_enh.Checked = (ars == ars_enh);
+
 				PopulatePhonGrid(ars);
 				PopulateDataGrid();
 			}
@@ -398,7 +501,7 @@ namespace lipsync_editor
 			{
 				FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
 				Application.Exit();
-			}
+			} */
 		}
 
 		void PrintResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
@@ -474,12 +577,12 @@ namespace lipsync_editor
 			dg_phons.ClearSelection();
 		}
 
-		void PopulateDataGrid()
+		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			logfile.Log("PopulateDataGrid()");
 
 			var blocks = new List<FxeDataBlock>();
-			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxedata)
+			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
 				blocks.AddRange(pair.Value);
 			}

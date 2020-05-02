@@ -320,6 +320,7 @@ namespace lipsync_editor
 			this.la_def_phon_pct.TabIndex = 18;
 			this.la_def_phon_pct.Text = "pct";
 			this.la_def_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.la_def_phon_pct.Click += new System.EventHandler(this.click_pct);
 			// 
 			// la_enh_word_pct
 			// 
@@ -342,6 +343,7 @@ namespace lipsync_editor
 			this.la_enh_phon_pct.TabIndex = 24;
 			this.la_enh_phon_pct.Text = "pct";
 			this.la_enh_phon_pct.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.la_enh_phon_pct.Click += new System.EventHandler(this.click_pct);
 			// 
 			// la_phons
 			// 
@@ -499,11 +501,12 @@ namespace lipsync_editor
 			this.rb_def.Location = new System.Drawing.Point(395, 270);
 			this.rb_def.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_def.Name = "rb_def";
-			this.rb_def.Size = new System.Drawing.Size(15, 15);
+			this.rb_def.Size = new System.Drawing.Size(20, 15);
 			this.rb_def.TabIndex = 30;
 			this.rb_def.TabStop = true;
 			this.rb_def.UseVisualStyleBackColor = true;
 			this.rb_def.Visible = false;
+			this.rb_def.CheckedChanged += new System.EventHandler(this.checkedchanged_Radio);
 			// 
 			// rb_enh
 			// 
@@ -511,11 +514,12 @@ namespace lipsync_editor
 			this.rb_enh.Location = new System.Drawing.Point(395, 410);
 			this.rb_enh.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_enh.Name = "rb_enh";
-			this.rb_enh.Size = new System.Drawing.Size(15, 15);
+			this.rb_enh.Size = new System.Drawing.Size(20, 15);
 			this.rb_enh.TabIndex = 31;
 			this.rb_enh.TabStop = true;
 			this.rb_enh.UseVisualStyleBackColor = true;
 			this.rb_enh.Visible = false;
+			this.rb_enh.CheckedChanged += new System.EventHandler(this.checkedchanged_Radio);
 			// 
 			// FxeGeneratorF
 			// 
