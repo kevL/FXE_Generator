@@ -115,7 +115,7 @@ namespace lipsync_editor
 			// 
 			this.tb_def_words.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_def_words.Location = new System.Drawing.Point(5, 226);
+			this.tb_def_words.Location = new System.Drawing.Point(5, 225);
 			this.tb_def_words.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_def_words.Multiline = true;
 			this.tb_def_words.Name = "tb_def_words";
@@ -126,7 +126,7 @@ namespace lipsync_editor
 			// 
 			// la_def_words
 			// 
-			this.la_def_words.Location = new System.Drawing.Point(5, 210);
+			this.la_def_words.Location = new System.Drawing.Point(5, 208);
 			this.la_def_words.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_words.Name = "la_def_words";
 			this.la_def_words.Size = new System.Drawing.Size(305, 15);
@@ -173,7 +173,7 @@ namespace lipsync_editor
 			// 
 			this.tb_def_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_def_phons.Location = new System.Drawing.Point(5, 286);
+			this.tb_def_phons.Location = new System.Drawing.Point(5, 285);
 			this.tb_def_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_def_phons.Multiline = true;
 			this.tb_def_phons.Name = "tb_def_phons";
@@ -184,7 +184,7 @@ namespace lipsync_editor
 			// 
 			// la_def_phons
 			// 
-			this.la_def_phons.Location = new System.Drawing.Point(5, 270);
+			this.la_def_phons.Location = new System.Drawing.Point(5, 268);
 			this.la_def_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_phons.Name = "la_def_phons";
 			this.la_def_phons.Size = new System.Drawing.Size(305, 15);
@@ -196,13 +196,14 @@ namespace lipsync_editor
 			// 
 			this.tb_text.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_text.Location = new System.Drawing.Point(5, 81);
+			this.tb_text.Location = new System.Drawing.Point(5, 83);
 			this.tb_text.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_text.Multiline = true;
 			this.tb_text.Name = "tb_text";
 			this.tb_text.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.tb_text.Size = new System.Drawing.Size(460, 40);
 			this.tb_text.TabIndex = 11;
+			this.tb_text.TextChanged += new System.EventHandler(this.textchanged_Text);
 			// 
 			// dg_phons
 			// 
@@ -222,7 +223,7 @@ namespace lipsync_editor
 			// 
 			// la_text
 			// 
-			this.la_text.Location = new System.Drawing.Point(5, 65);
+			this.la_text.Location = new System.Drawing.Point(5, 66);
 			this.la_text.Margin = new System.Windows.Forms.Padding(0);
 			this.la_text.Name = "la_text";
 			this.la_text.Size = new System.Drawing.Size(460, 15);
@@ -232,7 +233,7 @@ namespace lipsync_editor
 			// 
 			// la_expected
 			// 
-			this.la_expected.Location = new System.Drawing.Point(5, 125);
+			this.la_expected.Location = new System.Drawing.Point(5, 126);
 			this.la_expected.Margin = new System.Windows.Forms.Padding(0);
 			this.la_expected.Name = "la_expected";
 			this.la_expected.Size = new System.Drawing.Size(460, 15);
@@ -244,7 +245,7 @@ namespace lipsync_editor
 			// 
 			this.tb_expected.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_expected.Location = new System.Drawing.Point(5, 141);
+			this.tb_expected.Location = new System.Drawing.Point(5, 143);
 			this.tb_expected.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_expected.Multiline = true;
 			this.tb_expected.Name = "tb_expected";
@@ -255,7 +256,7 @@ namespace lipsync_editor
 			// 
 			// la_enh_phons
 			// 
-			this.la_enh_phons.Location = new System.Drawing.Point(5, 410);
+			this.la_enh_phons.Location = new System.Drawing.Point(5, 407);
 			this.la_enh_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_phons.Name = "la_enh_phons";
 			this.la_enh_phons.Size = new System.Drawing.Size(305, 15);
@@ -267,7 +268,7 @@ namespace lipsync_editor
 			// 
 			this.tb_enh_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_enh_phons.Location = new System.Drawing.Point(5, 426);
+			this.tb_enh_phons.Location = new System.Drawing.Point(5, 424);
 			this.tb_enh_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_enh_phons.Multiline = true;
 			this.tb_enh_phons.Name = "tb_enh_phons";
@@ -278,7 +279,7 @@ namespace lipsync_editor
 			// 
 			// la_enh_words
 			// 
-			this.la_enh_words.Location = new System.Drawing.Point(5, 350);
+			this.la_enh_words.Location = new System.Drawing.Point(5, 347);
 			this.la_enh_words.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_words.Name = "la_enh_words";
 			this.la_enh_words.Size = new System.Drawing.Size(305, 15);
@@ -290,7 +291,7 @@ namespace lipsync_editor
 			// 
 			this.tb_enh_words.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.tb_enh_words.Location = new System.Drawing.Point(5, 366);
+			this.tb_enh_words.Location = new System.Drawing.Point(5, 364);
 			this.tb_enh_words.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_enh_words.Multiline = true;
 			this.tb_enh_words.Name = "tb_enh_words";
@@ -302,7 +303,7 @@ namespace lipsync_editor
 			// la_def_word_pct
 			// 
 			this.la_def_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_def_word_pct.Location = new System.Drawing.Point(415, 210);
+			this.la_def_word_pct.Location = new System.Drawing.Point(415, 208);
 			this.la_def_word_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_word_pct.Name = "la_def_word_pct";
 			this.la_def_word_pct.Size = new System.Drawing.Size(50, 15);
@@ -313,7 +314,7 @@ namespace lipsync_editor
 			// la_def_phon_pct
 			// 
 			this.la_def_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_def_phon_pct.Location = new System.Drawing.Point(415, 270);
+			this.la_def_phon_pct.Location = new System.Drawing.Point(415, 268);
 			this.la_def_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_def_phon_pct.Name = "la_def_phon_pct";
 			this.la_def_phon_pct.Size = new System.Drawing.Size(50, 15);
@@ -325,7 +326,7 @@ namespace lipsync_editor
 			// la_enh_word_pct
 			// 
 			this.la_enh_word_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_enh_word_pct.Location = new System.Drawing.Point(415, 350);
+			this.la_enh_word_pct.Location = new System.Drawing.Point(415, 347);
 			this.la_enh_word_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_word_pct.Name = "la_enh_word_pct";
 			this.la_enh_word_pct.Size = new System.Drawing.Size(50, 15);
@@ -336,7 +337,7 @@ namespace lipsync_editor
 			// la_enh_phon_pct
 			// 
 			this.la_enh_phon_pct.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_enh_phon_pct.Location = new System.Drawing.Point(415, 410);
+			this.la_enh_phon_pct.Location = new System.Drawing.Point(415, 407);
 			this.la_enh_phon_pct.Margin = new System.Windows.Forms.Padding(0);
 			this.la_enh_phon_pct.Name = "la_enh_phon_pct";
 			this.la_enh_phon_pct.Size = new System.Drawing.Size(50, 15);
@@ -497,8 +498,9 @@ namespace lipsync_editor
 			// 
 			// rb_def
 			// 
+			this.rb_def.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.rb_def.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.rb_def.Location = new System.Drawing.Point(395, 270);
+			this.rb_def.Location = new System.Drawing.Point(396, 268);
 			this.rb_def.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_def.Name = "rb_def";
 			this.rb_def.Size = new System.Drawing.Size(20, 15);
@@ -510,8 +512,9 @@ namespace lipsync_editor
 			// 
 			// rb_enh
 			// 
+			this.rb_enh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.rb_enh.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.rb_enh.Location = new System.Drawing.Point(395, 410);
+			this.rb_enh.Location = new System.Drawing.Point(396, 407);
 			this.rb_enh.Margin = new System.Windows.Forms.Padding(0);
 			this.rb_enh.Name = "rb_enh";
 			this.rb_enh.Size = new System.Drawing.Size(20, 15);

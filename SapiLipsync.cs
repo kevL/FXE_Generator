@@ -30,6 +30,8 @@ namespace lipsync_editor
 		#region fields
 		SpInprocRecognizer _recognizer;
 		SpInProcRecoContext _recoContext;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public SpInProcRecoContext _recoContext;
 
 		SpFileStream _input;
 		SpVoice _voice;
@@ -43,6 +45,7 @@ namespace lipsync_editor
 
 		bool _ruler;
 		string _results = String.Empty;
+		ulong _offset;
 		#endregion fields
 
 
@@ -175,7 +178,10 @@ namespace lipsync_editor
 //			_input.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
 //			_recognizer.AudioInputStream = _input;
 
-//			_recoContext.Hypothesis  += Sapi_Lipsync_Hypothesis;
+#if DEBUG
+			_recoContext.FalseRecognition += Sapi_Lipsync_FalseRecogntion;
+			_recoContext.Hypothesis       += Sapi_Lipsync_Hypothesis;
+#endif
 			_recoContext.Recognition += Sapi_Lipsync_Recognition;
 			_recoContext.EndStream   += Sapi_Lipsync_EndStream;
 
@@ -195,6 +201,8 @@ namespace lipsync_editor
 		{
 			logfile.Log();
 			logfile.Log("Generate()");
+
+			_offset = 0L;
 
 			_ruler = ruler;
 			logfile.Log(". _ruler= " + _ruler);
@@ -283,12 +291,13 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
-/*		void Sapi_Lipsync_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
+#if DEBUG
+		void Sapi_Lipsync_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log("Sapi_Lipsync_Hypothesis() _ruler= " + _ruler);
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
-			if (_ruler)
+/*			if (_ruler)
 			{
 				logfile.Log("Sapi_Lipsync_Hypothesis()");
 
@@ -301,41 +310,60 @@ namespace lipsync_editor
 					_results = results;
 //					GenerateResults(Result);
 				}
-			}
-		} */
+			} */
+		}
+
+		void Sapi_Lipsync_FalseRecogntion(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
+		{
+			logfile.Log();
+			logfile.Log("Sapi_Lipsync_FalseRecogntion() _ruler= " + _ruler);
+			logfile.Log(". " + Result.PhraseInfo.GetText());
+		}
+#endif
 
 		void Sapi_Lipsync_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
 			logfile.Log();
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
+			logfile.Log(". duration= " + Result.PhraseInfo.AudioSizeTime);
+			//logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
 //			GenerateResults(Result); ->
-			if (Result.PhraseInfo != null)
+//			if (Result.PhraseInfo != null) // I have not seen a null PhraseInfo yet.
+//			{
+			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
+			logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
+			logfile.Log(". . . _offset= " + _offset);
+
+			List<AlignmentResult> ars;
+			if (!_ruler) ars = _ars_def;
+			else         ars = _ars_enh;
+
+			for (int i = 0; i != wordcount; ++i)
 			{
-				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
-				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
+				var ar = new AlignmentResult();
 
-				List<AlignmentResult> ars;
-				if (!_ruler) ars = _ars_def;
-				else         ars = _ars_enh;
+				ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
+				ar.Orthography = word.DisplayText;
 
-				for (int i = 0; i != wordcount; ++i)
-				{
-					var ar = new AlignmentResult();
+				string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
 
-					ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
-					ar.Orthography = word.DisplayText;
+				logfile.Log(". . . word.AudioTimeOffset= " + word.AudioTimeOffset);
 
-					string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
+				ar.Phons = new List<string>(phons.Split(' '));
+				ar.Start = _offset + (ulong)(word.AudioTimeOffset);							// start of the ortheme/word
+				ar.Stop  = _offset + (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
 
-					ar.Phons = new List<string>(phons.Split(' '));
-					ar.Start = (ulong)(word.AudioTimeOffset);						// start of the ortheme/word
-					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
-
-					ars.Add(ar);
-				}
+				ars.Add(ar);
 			}
+
+			// NOTE: Recognition could be fired before the entire audiofile has
+			// completed, which means it's going to fire again but the AudioTimeOffsets
+			// will be completely borked obviously. So add this time-offset to any
+			// second or subsequent Recognition event that happens on this stream
+			_offset += (ulong)Result.PhraseInfo.AudioSizeTime;
+//			}
 		}
 
 /*		void GenerateResults(ISpeechRecoResult Result)
@@ -391,8 +419,6 @@ namespace lipsync_editor
 			}					// The 2nd pass should be bypassed if there is no typed-text.
 			else
 			{
-				logfile.Log(". call calculate ratios");
-
 //				CalculateWordRatios();
 				CalculateWordRatio_def();
 				CalculateWordRatio_enh();

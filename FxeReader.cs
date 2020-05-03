@@ -13,12 +13,15 @@ namespace lipsync_editor
 	{
 		#region fields (static)
 		static BinaryReader _br;
+
+		static bool _d = false; // debug.
 		#endregion fields (static)
 
 
 		#region write methods (static)
 		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+			_d = false;
 			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
@@ -31,7 +34,7 @@ namespace lipsync_editor
 				using (FileStream fs = File.Open(file, FileMode.Open))
 				{
 					_br = new BinaryReader(fs);
-					logfile.Log(". _br.length= " + _br.BaseStream.Length);
+					if (_d) logfile.Log(". _br.length= " + _br.BaseStream.Length);
 
 					fs.Seek(85, SeekOrigin.Begin);
 					string headtype = GetString();
@@ -49,25 +52,25 @@ namespace lipsync_editor
 
 					for (short i = 0; i != (short)15; ++i)
 					{
-						logfile.Log(". . i= " + i);
+						if (_d) logfile.Log(". . i= " + i);
 
 						string codeword = GetString();
-						logfile.Log(". . codeword= " + codeword);
+						if (_d) logfile.Log(". . codeword= " + codeword);
 
 						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
 						short datablockcount = _br.ReadInt16();
-						logfile.Log(". . datablockcount= " + datablockcount);
+						if (_d) logfile.Log(". . datablockcount= " + datablockcount);
 
 						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
 
 						for (short j = 0; j != datablockcount; ++j)
 						{
-							logfile.Log(". . . j= " + j);
+							if (_d) logfile.Log(". . . j= " + j);
 
 							float val1 = _br.ReadSingle();
 							float val2 = _br.ReadSingle();
-							logfile.Log(". . . val1= " + val1);
-							logfile.Log(". . . val2= " + val2);
+							if (_d) logfile.Log(". . . val1= " + val1);
+							if (_d) logfile.Log(". . . val2= " + val2);
 
 							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
 
@@ -85,17 +88,17 @@ namespace lipsync_editor
 
 		static string GetString()
 		{
-			logfile.Log("FxeReader.GetString() pos= " + _br.BaseStream.Position);
+			if (_d) logfile.Log("FxeReader.GetString() pos= " + _br.BaseStream.Position);
 
 			_br.ReadInt16();
 
-			logfile.Log(". pos of Int32= " + _br.BaseStream.Position);
+			if (_d) logfile.Log(". pos of Int32= " + _br.BaseStream.Position);
 			int len = _br.ReadInt32();
 
-			logfile.Log(". pos of Chars= " + _br.BaseStream.Position);
-			logfile.Log(". length of Chars= " + len);
+			if (_d) logfile.Log(". pos of Chars= " + _br.BaseStream.Position);
+			if (_d) logfile.Log(". length of Chars= " + len);
 			string str = new string(_br.ReadChars(len));
-			logfile.Log(". str= " + str);
+			if (_d) logfile.Log(". str= " + str);
 
 			return str;
 		}
