@@ -327,10 +327,29 @@ namespace lipsync_editor
 			//logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 
+			logfile.Log(". words= " + Result.PhraseInfo.Elements.Count);
+			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
+			{
+				logfile.Log(". . word= "             + word.DisplayText);
+				//logfile.Log(". . LexicalForm= "      + word.LexicalForm);
+				//logfile.Log(". . Pronunciation= "    + word.Pronunciation);
+				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
+				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
+			}
+
 //			GenerateResults(Result); ->
 //			if (Result.PhraseInfo != null) // I have not seen a null PhraseInfo yet.
 //			{
-			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
+			//logfile.Log(". Result.PhraseInfo.Rule.Parent.Name= "      + Result.PhraseInfo.Rule.Parent.Name); // breaks the funct.
+			//logfile.Log(". Result.PhraseInfo.Rule.Children.Count= "   + Result.PhraseInfo.Rule.Children.Count); // breaks the funct.
+			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
+			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
+			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
+			//logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name);
+			//logfile.Log(". Result.PhraseInfo.Rule.NumberOfElements= " + Result.PhraseInfo.Rule.NumberOfElements);
+
+//			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
+			int wordcount = Result.PhraseInfo.Elements.Count;
 			logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
 			logfile.Log(". . . _offset= " + _offset);
 
@@ -349,9 +368,11 @@ namespace lipsync_editor
 
 				logfile.Log(". . . word.AudioTimeOffset= " + word.AudioTimeOffset);
 
-				ar.Phons = new List<string>(phons.Split(' '));
-				ar.Start = _offset + (ulong)(word.AudioTimeOffset);							// start of the ortheme/word
-				ar.Stop  = _offset + (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
+				ar.Phons      = new List<string>(phons.Split(' ')); // remove empty entries ...
+				ar.Confidence = word.EngineConfidence;
+				ar.Level      = word.ActualConfidence.ToString().Replace("SEC", String.Empty).Replace("Confidence", String.Empty);
+				ar.Start      = _offset + (ulong)(word.AudioTimeOffset);
+				ar.Stop       = _offset + (ulong)(word.AudioTimeOffset + word.AudioSizeTime);
 
 				ars.Add(ar);
 			}
@@ -440,7 +461,7 @@ namespace lipsync_editor
 			AlignmentResult ar;
 			ulong stop = 0;
 
-			for (int i = 0; i < ars.Count; ++i)
+			for (int i = 0; i != ars.Count; ++i)
 			{
 				ar = ars[i];
 
@@ -459,13 +480,16 @@ namespace lipsync_editor
 					logfile.Log(". . insert silence");
 					var silence = new AlignmentResult();
 
-					silence.Start = stop;
-					silence.Stop  = ar.Start;
+					silence.Orthography = String.Empty;
 
 					silence.Phons = new List<string>();
 					silence.Phons.Add("x");
 
-					silence.Orthography = String.Empty;
+					silence.Confidence = 1f;
+					silence.Level = String.Empty;
+
+					silence.Start = stop;
+					silence.Stop  = ar.Start;
 
 					silence.Stops.Add(silence.Stop);
 

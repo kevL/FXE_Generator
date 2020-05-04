@@ -20,6 +20,8 @@ namespace lipsync_editor
 		const string HEAD_PHONS_0 = "phoneme"; // headers for the phonemes table ->
 		const string HEAD_PHONS_1 = "stop (secs)";
 		const string HEAD_PHONS_2 = "viseme";
+		const string HEAD_PHONS_3 = "confidence";
+		const string HEAD_PHONS_4 = "level";
 
 		const string HEAD_BLOCKS_0 = "viseme"; // headers for the datablocks table ->
 		const string HEAD_BLOCKS_1 = "frame stop";
@@ -52,13 +54,13 @@ namespace lipsync_editor
 		/// The list of AlignmentResults calculated by default SpeechRecognition
 		/// (w/out typed-text).
 		/// </summary>
-		List<AlignmentResult> _ars_def;// = new List<AlignmentResult>();
+		List<AlignmentResult> _ars_def;
 
 		/// <summary>
 		/// The list of AlignmentResults calculated by enhanced SpeechRecognition
 		/// (w/ typed-text).
 		/// </summary>
-		List<AlignmentResult> _ars_enh;// = new List<AlignmentResult>();
+		List<AlignmentResult> _ars_enh;
 
 		/// <summary>
 		/// The user-selected data-set: def or enh. The data-set can be toggled
@@ -148,10 +150,20 @@ namespace lipsync_editor
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
+				col = new DataColumn(HEAD_PHONS_3, typeof(string));
+				col.ReadOnly = true;
+				_dt1.Columns.Add(col);
+
+				col = new DataColumn(HEAD_PHONS_4, typeof(string));
+				col.ReadOnly = true;
+				_dt1.Columns.Add(col);
+
 				dg_phons.DataSource = _dt1;
 				dg_phons.Columns[0].Width =  80;
 				dg_phons.Columns[1].Width = 115;
 				dg_phons.Columns[2].Width =  82;
+				dg_phons.Columns[3].Width =  90;
+				dg_phons.Columns[4].Width =  70;
 
 				col = new DataColumn(HEAD_BLOCKS_0, typeof(string));
 				col.ReadOnly = true;
@@ -598,7 +610,8 @@ namespace lipsync_editor
 					string phon = ar.Phons[i];
 
 //					_dt1.Rows.Add(new object[] { phon, stop, StaticData.PhonToVis[phon] });
-					_dt1.Rows.Add(new object[] { "[" + j + "][" + i + "] " + phon, stop, StaticData.PhonToVis[phon] });
+//					_dt1.Rows.Add(new object[] { "[" + j + "][" + i + "] " + phon, stop, StaticData.PhonToVis[phon] });
+					_dt1.Rows.Add(new object[] { "[" + j + "][" + i + "] " + phon, stop, StaticData.PhonToVis[phon], ar.Confidence.ToString("F3"), ar.Level });
 				}
 			}
 //			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
