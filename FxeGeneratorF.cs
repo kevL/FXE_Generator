@@ -392,11 +392,15 @@ namespace lipsync_editor
 
 		void checkedchanged_Radio(object sender, EventArgs e)
 		{
+			//logfile.Log("checkedchanged_Radio()");
+
 			var rb = sender as RadioButton;
 			if (rb.Checked)
 			{
 				if (rb == rb_def)
 				{
+					//logfile.Log(". rb_def");
+
 					_fxedata = _fxedata_def;
 
 					PopulatePhonGrid(_ars_def);
@@ -404,6 +408,8 @@ namespace lipsync_editor
 				}
 				else //if (rb == rb_enh)
 				{
+					//logfile.Log(". rb_enh");
+
 					_fxedata = _fxedata_enh;
 
 					PopulatePhonGrid(_ars_enh);
@@ -489,13 +495,11 @@ namespace lipsync_editor
 			}
 
 
-//			_fxedata_def.Clear();
-//			_fxedata_enh.Clear();
 			FxeData.GenerateData(_ars_def, _fxedata_def);
 			FxeData.GenerateData(_ars_enh, _fxedata_enh);
 
-//			_fxedata.Clear();
-			if (_lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
+			if (tb_text.Text == String.Empty
+				|| _lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
 			{
 				_fxedata = _fxedata_def;
 

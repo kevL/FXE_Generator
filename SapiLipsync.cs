@@ -211,11 +211,9 @@ namespace lipsync_editor
 			// conditional expression below. It causes an infinite loop ...
 			// since '_ruler' will NOT be set true despite 'ruler' being true.
 			//
-			// And that, friends, took all day to figure out.
+			// And that, friends, took a day to figure out.
 
-			if (_ruler
-				&& _text != String.Empty
-				&& _recoGrammar.Rules.FindRule(RULE) == null)
+			if (_ruler)// && _recoGrammar.Rules.FindRule(RULE) == null)
 			{
 				logfile.Log(". . add TextLipsync rule and set Rule ACTIVE");
 				ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
@@ -412,14 +410,13 @@ namespace lipsync_editor
 
 			FinalizeAlignments();
 
-			if (!_ruler)
+			if (!_ruler && _text != String.Empty)
 			{
 				logfile.Log(". call Generate() w/ ruler");
-				Generate(true);	// TODO: not a good way to initiate 2nd pass w/ ruler.
-			}					// The 2nd pass should be bypassed if there is no typed-text.
+				Generate(true);
+			}
 			else
 			{
-//				CalculateWordRatios();
 				CalculateWordRatio_def();
 				CalculateWordRatio_enh();
 				CalculatePhonRatios();
@@ -594,60 +591,6 @@ namespace lipsync_editor
 				RatioWords_enh = (double)count_enh / words.Count;
 			}
 		}
-
-/*		void CalculateWordRatios()
-		{
-			logfile.Log();
-			logfile.Log("CalculateWordRatios()");
-
-			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
-			if (words.Count != 0)
-			{
-				var words_def = new List<string>();
-				var words_enh = new List<string>();
-
-				logfile.Log(". words_def");
-				foreach (var ar in _ars_def)
-				{
-					if (ar.Orthography != String.Empty)
-					{
-						logfile.Log(". . add " + ar.Orthography);
-						words_def.Add(ar.Orthography);
-					}
-				}
-
-				logfile.Log(". words_enh");
-				foreach (var ar in _ars_enh)
-				{
-					if (ar.Orthography != String.Empty)
-					{
-						logfile.Log(". . add " + ar.Orthography);
-						words_enh.Add(ar.Orthography);
-					}
-				}
-
-				int count_def = 0;
-				int count_enh = 0;
-
-				foreach (string word in words)
-				{
-					if (words_def.Contains(word))
-					{
-						++count_def;
-						words_def.Remove(word);
-					}
-
-					if (words_enh.Contains(word))
-					{
-						++count_enh;
-						words_enh.Remove(word);
-					}
-				}
-
-				RatioWords_def = (double)count_def / words.Count;
-				RatioWords_enh = (double)count_enh / words.Count;
-			}
-		} */
 
 		void CalculatePhonRatios()
 		{
