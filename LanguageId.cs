@@ -29,53 +29,59 @@ namespace lipsync_editor
 	{
 		internal static void AddLanguages(ComboBox co)
 		{
-			var list = new List<LanguageId>();
+//			System.Globalization.CultureInfo[] cultures = System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes.AllCultures);
+//			foreach (System.Globalization.CultureInfo culture in cultures)
+//			{
+//				logfile.Log(culture.DisplayName); // holy f8ck what use is that exactly
+//			}
+
+			var languages = new List<LanguageId>();
 
 			// msoLanguageIDNone			0	No language specified
 //			list.Add(new LanguageId("None - 0000", 0));
 
 			// msoLanguageIDEnglishUS		1033	The English US language
-			list.Add(new LanguageId("English US - 1033", 1033));
+			languages.Add(new LanguageId("English US - 1033", 1033));
 
 			// msoLanguageIDEnglishUK		2057	The English UK language
-			list.Add(new LanguageId("English UK - 2057", 2057));
+			languages.Add(new LanguageId("English UK - 2057", 2057));
 			// msoLanguageIDEnglishCanadian	4105	The English Canadian language
-			list.Add(new LanguageId("English Canadian - 4105", 4105));
+			languages.Add(new LanguageId("English Canadian - 4105", 4105));
 
 			// msoLanguageIDCzech			1029	The Czech language
-			list.Add(new LanguageId("Czech - 1029", 1029));
+			languages.Add(new LanguageId("Czech - 1029", 1029));
 			// msoLanguageIDDanish			1030	The Danish language
-			list.Add(new LanguageId("Danish - 1030", 1030));
+			languages.Add(new LanguageId("Danish - 1030", 1030));
 			// msoLanguageIDFinnish			1035	The Finnish language
-			list.Add(new LanguageId("Finnish - 1035", 1035));
+			languages.Add(new LanguageId("Finnish - 1035", 1035));
 			// msoLanguageIDFrench			1036	The French language
-			list.Add(new LanguageId("French - 1036", 1036));
+			languages.Add(new LanguageId("French - 1036", 1036));
 			// msoLanguageIDGerman			1031	The German language
-			list.Add(new LanguageId("German - 1031", 1031));
+			languages.Add(new LanguageId("German - 1031", 1031));
 			// msoLanguageIDHungarian		1038	The Hungarian language
-			list.Add(new LanguageId("Hungarian - 1038", 1038));
+			languages.Add(new LanguageId("Hungarian - 1038", 1038));
 			// msoLanguageIDIcelandic		1039	The Icelandic language
-			list.Add(new LanguageId("Icelandic - 1039", 1039));
+			languages.Add(new LanguageId("Icelandic - 1039", 1039));
 			// msoLanguageIDItalian			1040	The Italian language
-			list.Add(new LanguageId("Italian - 1040", 1040));
+			languages.Add(new LanguageId("Italian - 1040", 1040));
 			// msoLanguageIDMexicanSpanish	2058	The Mexican Spanish language
-			list.Add(new LanguageId("Mexican Spanish - 2058", 2058));
+			languages.Add(new LanguageId("Mexican Spanish - 2058", 2058));
 			// msoLanguageIDPolish			1045	The Polish language
-			list.Add(new LanguageId("Polish - 1045", 1045));
+			languages.Add(new LanguageId("Polish - 1045", 1045));
 			// msoLanguageIDPortuguese		2070	The Portuguese language
-			list.Add(new LanguageId("Portuguese - 2070", 2070));
+			languages.Add(new LanguageId("Portuguese - 2070", 2070));
 			// msoLanguageIDRomanian		1048	The Romanian language
-			list.Add(new LanguageId("Romanian - 1048", 1048));
+			languages.Add(new LanguageId("Romanian - 1048", 1048));
 			// msoLanguageIDRussian			1049	The Russian language
-			list.Add(new LanguageId("Russian - 1049", 1049));
+			languages.Add(new LanguageId("Russian - 1049", 1049));
 			// msoLanguageIDSpanish			1034	The Spanish language
-			list.Add(new LanguageId("Spanish - 1034", 1034));
+			languages.Add(new LanguageId("Spanish - 1034", 1034));
 			// msoLanguageIDSwedish			1053	The Swedish language
-			list.Add(new LanguageId("Swedish - 1053", 1053));
+			languages.Add(new LanguageId("Swedish - 1053", 1053));
 			// msoLanguageIDZulu			1077	The Zulu language
-			list.Add(new LanguageId("Zulu - 1077", 1077));
+			languages.Add(new LanguageId("Zulu - 1077", 1077));
 
-			co.DataSource = list;
+			co.DataSource = languages;
 			co.SelectedIndex = 0;
 		}
 	}
