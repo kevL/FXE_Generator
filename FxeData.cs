@@ -32,12 +32,12 @@ namespace lipsync_editor
 
 
 		#region methods (static)
-		internal static void GenerateData(List<AlignmentResult> ars, Dictionary<string, List<FxeDataBlock>> fxedata)
+		internal static void GenerateData(List<OrthographicResult> ars, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			var vices = new List<KeyValuePair<string, decimal>>();
 
 			string phon;
-			foreach (AlignmentResult ar in ars)
+			foreach (OrthographicResult ar in ars)
 			{
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{

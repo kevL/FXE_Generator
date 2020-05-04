@@ -7,8 +7,8 @@ using SpeechLib;
 namespace lipsync_editor
 {
 	internal delegate void TtsParseTextEvent();
-	internal delegate void SpeechRecognitionEndedEvent(List<AlignmentResult> ars_def,
-													   List<AlignmentResult> ars_enh);
+	internal delegate void SpeechRecognitionEndedEvent(List<OrthographicResult> ars_def,
+													   List<OrthographicResult> ars_enh);
 
 
 	/// <summary>
@@ -40,8 +40,8 @@ namespace lipsync_editor
 
 		string _text = String.Empty;
 
-		readonly List<AlignmentResult> _ars_def = new List<AlignmentResult>(); // default
-		readonly List<AlignmentResult> _ars_enh = new List<AlignmentResult>(); // enhanced w/ TypedText
+		readonly List<OrthographicResult> _ars_def = new List<OrthographicResult>(); // default
+		readonly List<OrthographicResult> _ars_enh = new List<OrthographicResult>(); // enhanced w/ TypedText
 
 		bool _ruler;
 		string _results = String.Empty;
@@ -353,13 +353,13 @@ namespace lipsync_editor
 			logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
 			logfile.Log(". . . _offset= " + _offset);
 
-			List<AlignmentResult> ars;
+			List<OrthographicResult> ars;
 			if (!_ruler) ars = _ars_def;
 			else         ars = _ars_enh;
 
 			for (int i = 0; i != wordcount; ++i)
 			{
-				var ar = new AlignmentResult();
+				var ar = new OrthographicResult();
 
 				ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
 				ar.Orthography = word.DisplayText;
@@ -396,13 +396,13 @@ namespace lipsync_editor
 				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
 				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
 
-				List<AlignmentResult> ars;
+				List<OrthographicResult> ars;
 				if (!_ruler) ars = _ars_def;
 				else         ars = _ars_enh;
 
 				for (int i = 0; i != wordcount; ++i)
 				{
-					var ar = new AlignmentResult();
+					var ar = new OrthographicResult();
 
 					ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
 					ar.Orthography = word.DisplayText;
@@ -454,11 +454,11 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("FinalizeAlignments() _ruler= " + _ruler);
 
-			List<AlignmentResult> ars;
+			List<OrthographicResult> ars;
 			if (!_ruler) ars = _ars_def;
 			else         ars = _ars_enh;
 
-			AlignmentResult ar;
+			OrthographicResult ar;
 			ulong stop = 0;
 
 			for (int i = 0; i != ars.Count; ++i)
@@ -478,7 +478,7 @@ namespace lipsync_editor
 				if (ar.Start > stop)
 				{
 					logfile.Log(". . insert silence");
-					var silence = new AlignmentResult();
+					var silence = new OrthographicResult();
 
 					silence.Orthography = String.Empty;
 
@@ -504,7 +504,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void TallyStops(AlignmentResult ar)
+		void TallyStops(OrthographicResult ar)
 		{
 			//logfile.Log("TallyStops()");
 

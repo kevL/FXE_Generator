@@ -8,7 +8,7 @@ namespace lipsync_editor
 	/// <summary>
 	/// A word basically.
 	/// </summary>
-	sealed class AlignmentResult
+	sealed class OrthographicResult
 	{
 		/// <summary>
 		/// The word.

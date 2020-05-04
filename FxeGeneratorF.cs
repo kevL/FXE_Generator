@@ -54,13 +54,13 @@ namespace lipsync_editor
 		/// The list of AlignmentResults calculated by default SpeechRecognition
 		/// (w/out typed-text).
 		/// </summary>
-		List<AlignmentResult> _ars_def;
+		List<OrthographicResult> _ars_def;
 
 		/// <summary>
 		/// The list of AlignmentResults calculated by enhanced SpeechRecognition
 		/// (w/ typed-text).
 		/// </summary>
-		List<AlignmentResult> _ars_enh;
+		List<OrthographicResult> _ars_enh;
 
 		/// <summary>
 		/// The user-selected data-set: def or enh. The data-set can be toggled
@@ -160,7 +160,7 @@ namespace lipsync_editor
 
 				dg_phons.DataSource = _dt1;
 				dg_phons.Columns[0].Width =  80;
-				dg_phons.Columns[1].Width = 115;
+				dg_phons.Columns[1].Width = 110;
 				dg_phons.Columns[2].Width =  82;
 				dg_phons.Columns[3].Width =  90;
 				dg_phons.Columns[4].Width =  70;
@@ -470,7 +470,7 @@ namespace lipsync_editor
 			tb_expected.Text = expected;
 		}
 
-		void OnSpeechRecognitionEnded(List<AlignmentResult> ars_def, List<AlignmentResult> ars_enh)
+		void OnSpeechRecognitionEnded(List<OrthographicResult> ars_def, List<OrthographicResult> ars_enh)
 		{
 			logfile.Log();
 			logfile.Log("OnSpeechRecognitionEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
@@ -534,7 +534,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void PrintResults(IList<AlignmentResult> ars, Control tb_words, Control tb_phons)
+		void PrintResults(IList<OrthographicResult> ars, Control tb_words, Control tb_phons)
 		{
 			logfile.Log();
 			logfile.Log("PrintResults() ars.Count= " + ars.Count);
@@ -542,7 +542,7 @@ namespace lipsync_editor
 			string words = String.Empty;
 			string phons = String.Empty;
 
-			AlignmentResult ar;
+			OrthographicResult ar;
 			for (int i = 0; i != ars.Count; ++i)
 			{
 				if (!String.IsNullOrEmpty((ar = ars[i]).Orthography))
@@ -584,7 +584,7 @@ namespace lipsync_editor
 			else                                       la_enh_phon_pct.ForeColor = SystemColors.ControlText;
 		}
 
-		void PopulatePhonGrid(List<AlignmentResult> ars)
+		void PopulatePhonGrid(List<OrthographicResult> ars)
 		{
 			logfile.Log();
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
@@ -599,7 +599,7 @@ namespace lipsync_editor
 			_dt1.Rows.Clear();
 
 			int j = -1; // debug
-			foreach (AlignmentResult ar in ars)
+			foreach (OrthographicResult ar in ars)
 			{
 				++j;
 				for (int i = 0; i != ar.Phons.Count; ++i)

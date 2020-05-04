@@ -41,7 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AlignmentResult.cs" />
+    <Compile Include="OrthographicResult.cs" />
     <Compile Include="AudioConverter.cs" />
     <Compile Include="Exergist_VoiceAttack.cs" />
     <Compile Include="FxeData.cs" />
