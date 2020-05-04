@@ -220,6 +220,7 @@ namespace lipsync_editor
 			this.dg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.dg_phons.Size = new System.Drawing.Size(280, 420);
 			this.dg_phons.TabIndex = 27;
+			this.dg_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgphons_RowPrePaint);
 			// 
 			// la_text
 			// 

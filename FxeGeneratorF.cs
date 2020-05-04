@@ -424,6 +424,13 @@ namespace lipsync_editor
 				rb_enh.Checked = true;
 			}
 		}
+
+
+		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
+		{
+			if (dg_phons.Rows[e.RowIndex].Cells[0].Value.ToString().Contains(" x"))
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.MistyRose;
+		}
 		#endregion control handlers
 
 
@@ -566,6 +573,13 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
 
+			int col = -1, row = -1;
+			if (dg_phons.CurrentCell != null)
+			{
+				col = dg_phons.CurrentCell.ColumnIndex;
+				row = dg_phons.CurrentCell.RowIndex;
+			}
+
 			_dt1.Rows.Clear();
 
 			int j = -1; // debug
@@ -583,14 +597,30 @@ namespace lipsync_editor
 					_dt1.Rows.Add(new object[] { "[" + j + "][" + i + "] " + phon, stop, StaticData.PhonToVis[phon] });
 				}
 			}
-			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
-			dg_phons.ClearSelection();
+//			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
+
+			// NOTE: If cell[0,0] is currently selected it will not get re-selected.
+			// ... for whatever arbitrary .net reason. Unless you do this:
+			if (col != 0 && row != 0)
+				dg_phons.ClearSelection();
+
+			if (row != -1 && dg_phons.Rows.Count > row)
+			{
+				dg_phons.CurrentCell = dg_phons[col,row];
+			}
 		}
 
 		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			logfile.Log();
 			logfile.Log("PopulateDataGrid() fxedata.Count= " + fxedata.Count);
+
+			int col = -1, row = -1;
+			if (dg_blocks.CurrentCell != null)
+			{
+				col = dg_blocks.CurrentCell.ColumnIndex;
+				row = dg_blocks.CurrentCell.RowIndex;
+			}
 
 			var blocks = new List<FxeDataBlock>();
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
@@ -607,8 +637,17 @@ namespace lipsync_editor
 //				_dt2.Rows.Add(new object[] { block.Viseme, block.Val1, block.Val2 });
 				_dt2.Rows.Add(new object[] { "[" + j + "] " + block.Viseme, block.Val1, block.Val2 });
 			}
-			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
-			dg_blocks.ClearSelection();
+//			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
+
+			// NOTE: If cell[0,0] is currently selected it will not get re-selected.
+			// ... for whatever arbitrary .net reason. Unless you do this:
+			if (col != 0 && row != 0)
+				dg_blocks.ClearSelection();
+
+			if (row != -1 && dg_blocks.Rows.Count > row)
+			{
+				dg_blocks.CurrentCell = dg_blocks[col,row];
+			}
 		}
 		#endregion lipsync handlers
 	}
