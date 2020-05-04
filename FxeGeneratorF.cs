@@ -574,10 +574,10 @@ namespace lipsync_editor
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
 
 			int col = -1, row = -1;
-			if (dg_phons.CurrentCell != null)
+			if (dg_phons.SelectedCells.Count != 0)
 			{
-				col = dg_phons.CurrentCell.ColumnIndex;
-				row = dg_phons.CurrentCell.RowIndex;
+				col = dg_phons.SelectedCells[0].ColumnIndex;
+				row = dg_phons.SelectedCells[0].RowIndex;
 			}
 
 			_dt1.Rows.Clear();
@@ -599,15 +599,12 @@ namespace lipsync_editor
 			}
 //			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
 
-			// NOTE: If cell[0,0] is currently selected it will not get re-selected.
-			// ... for whatever arbitrary .net reason. Unless you do this:
-			if (col != 0 && row != 0)
-				dg_phons.ClearSelection();
-
 			if (row != -1 && dg_phons.Rows.Count > row)
 			{
 				dg_phons.CurrentCell = dg_phons[col,row];
 			}
+			else
+				dg_phons.ClearSelection();
 		}
 
 		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
@@ -616,10 +613,10 @@ namespace lipsync_editor
 			logfile.Log("PopulateDataGrid() fxedata.Count= " + fxedata.Count);
 
 			int col = -1, row = -1;
-			if (dg_blocks.CurrentCell != null)
+			if (dg_blocks.SelectedCells.Count != 0)
 			{
-				col = dg_blocks.CurrentCell.ColumnIndex;
-				row = dg_blocks.CurrentCell.RowIndex;
+				col = dg_blocks.SelectedCells[0].ColumnIndex;
+				row = dg_blocks.SelectedCells[0].RowIndex;
 			}
 
 			var blocks = new List<FxeDataBlock>();
@@ -639,15 +636,12 @@ namespace lipsync_editor
 			}
 //			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 
-			// NOTE: If cell[0,0] is currently selected it will not get re-selected.
-			// ... for whatever arbitrary .net reason. Unless you do this:
-			if (col != 0 && row != 0)
-				dg_blocks.ClearSelection();
-
 			if (row != -1 && dg_blocks.Rows.Count > row)
 			{
 				dg_blocks.CurrentCell = dg_blocks[col,row];
 			}
+			else
+				dg_blocks.ClearSelection();
 		}
 		#endregion lipsync handlers
 	}
