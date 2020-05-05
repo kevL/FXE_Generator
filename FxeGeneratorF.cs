@@ -221,6 +221,9 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Prints the current version of this LipSyncer app.
+		/// </summary>
 		void printversion()
 		{
 			var an = System.Reflection.Assembly.GetExecutingAssembly().GetName();
@@ -245,6 +248,12 @@ namespace lipsync_editor
 
 
 		#region control handlers
+		/// <summary>
+		/// Handles the language dropdown box.
+		/// TODO: Implement languages.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void OnLanguageChanged(object sender, EventArgs e)
 		{
 			var langid = co_langId.SelectedItem as LanguageId;
@@ -252,14 +261,15 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Opens an audio-file w/out processing it.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Open(object sender, EventArgs e)
 		{
 			logfile.Log();
 			logfile.Log("click_Open()");
-
-			// debug ->
-//			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\belueth_00.wav";
-//			tb_wavefile.Text = _wavefile = @"C:\GIT\FXE_Generator\bin\Debug\ding.wav";
 
 			using (var ofd = new OpenFileDialog())
 			{
@@ -302,9 +312,6 @@ namespace lipsync_editor
 					_fxedata_def.Clear();
 					_fxedata_enh.Clear();
 
-//					_ars_def.Clear();
-//					_ars_enh.Clear();
-
 					if (FxeReader.ReadFile(_wavefile, _fxedata))
 						PopulateDataGrid(_fxedata);
 
@@ -313,11 +320,14 @@ namespace lipsync_editor
 
 					bu_generate .Enabled =
 					bu_play     .Enabled = (_lipsyncer.Audiopath != String.Empty);
-//					bu_synth    .Enabled =
 				}
 			}
 		}
 
+		/// <summary>
+		/// Loads a user-prepared file w/ typed-text.
+		/// </summary>
+		/// <returns></returns>
 		string LoadTypedTextFile()
 		{
 			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_TXT;
@@ -326,12 +336,16 @@ namespace lipsync_editor
 				using (StreamReader sr = File.OpenText(file))
 				{
 					return TypedText.SanitizeDialogText(sr.ReadToEnd());
-//					return TypedText.ParseText(sr.ReadToEnd());
 				}
 			}
 			return String.Empty;
 		}
 
+		/// <summary>
+		/// Generates data for an FXE file.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Generate(object sender, EventArgs e)
 		{
 			logfile.Log();
@@ -368,6 +382,11 @@ namespace lipsync_editor
 			_lipsyncer.Start(tb_text.Text);
 		}
 
+		/// <summary>
+		/// Writes an FXE file.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_CreateFxe(object sender, EventArgs e)
 		{
 			logfile.Log();
@@ -376,6 +395,11 @@ namespace lipsync_editor
 			FxeWriter.WriteFile(_wavefile, co_headtype.Text, _fxedata);
 		}
 
+		/// <summary>
+		/// Plays the audio-file.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Play(object sender, EventArgs e)
 		{
 			using (var wavefile = new FileStream(_lipsyncer.Audiopath, FileMode.Open))
@@ -386,6 +410,11 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Opens the synth-player.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Synth(object sender, EventArgs e)
 		{
 			bu_synth.Enabled = false;
@@ -394,6 +423,10 @@ namespace lipsync_editor
 			synth.Show(this);
 		}
 
+		/// <summary>
+		/// Re-enables the synth-button when the synth closes (as long as there
+		/// is still typed-text).
+		/// </summary>
 		internal void EnableSynth()
 		{
 			bu_synth.Enabled = (tb_text.Text != String.Empty);
@@ -409,12 +442,23 @@ namespace lipsync_editor
 			tb_text.Text = TypedText.SanitizeDialogText(text);
 		}
 
+		/// <summary>
+		/// Determines if the synth-button should be enabled.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void textchanged_Text(object sender, EventArgs e)
 		{
 			bu_synth.Enabled = !String.IsNullOrEmpty(tb_text.Text);
 		}
 
 
+		/// <summary>
+		/// Toggles the data in the datagrids between default and enhanced
+		/// generations.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void checkedchanged_Radio(object sender, EventArgs e)
 		{
 			//logfile.Log("checkedchanged_Radio()");
@@ -443,6 +487,12 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Toggles the data in the datagrids between default and enhanced
+		/// generations.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_pct(object sender, EventArgs e)
 		{
 			var la = sender as Label;
@@ -457,6 +507,11 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Draws rows in the PHONEMES datagrid with suitable background colors.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
 			if (dg_phons.Rows[e.RowIndex].Cells[1].Value.ToString() == "x")
@@ -483,6 +538,10 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
+		/// <summary>
+		/// If there is typed-text its phonemes are displayed after the TTS
+		/// (text-to-speech) stream finishes.
+		/// </summary>
 		void OnTtsParseText()
 		{
 			logfile.Log("OnTtsParseText()");
@@ -500,6 +559,12 @@ namespace lipsync_editor
 			tb_expected.Text = expected;
 		}
 
+		/// <summary>
+		/// This is the biggie. Generates and prints data after the
+		/// SpeechRecognition stream of an audio-file finishes.
+		/// </summary>
+		/// <param name="ars_def"></param>
+		/// <param name="ars_enh"></param>
 		void OnSpeechRecognitionEnded(List<OrthographicResult> ars_def, List<OrthographicResult> ars_enh)
 		{
 			logfile.Log();
@@ -564,6 +629,12 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Prints the results.
+		/// </summary>
+		/// <param name="ars"></param>
+		/// <param name="tb_words"></param>
+		/// <param name="tb_phons"></param>
 		void PrintResults(IList<OrthographicResult> ars, Control tb_words, Control tb_phons)
 		{
 			logfile.Log();
@@ -595,6 +666,9 @@ namespace lipsync_editor
 			tb_phons.Text = phons;
 		}
 
+		/// <summary>
+		/// Colors the percents.
+		/// </summary>
 		void ColorPercents()
 		{
 //			if      (_lipsyncer.RatioWords_def < 0.65) la_def_word_pct.ForeColor = Color.Red;
@@ -614,6 +688,10 @@ namespace lipsync_editor
 			else                                       la_enh_phon_pct.ForeColor = SystemColors.ControlText;
 		}
 
+		/// <summary>
+		/// Populates the PHONEMES datagrid.
+		/// </summary>
+		/// <param name="ars"></param>
 		void PopulatePhonGrid(List<OrthographicResult> ars)
 		{
 			logfile.Log();
@@ -661,6 +739,10 @@ namespace lipsync_editor
 				dg_phons.ClearSelection();
 		}
 
+		/// <summary>
+		/// Populates the Data Blocks datagrid.
+		/// </summary>
+		/// <param name="fxedata"></param>
 		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			logfile.Log();
