@@ -454,7 +454,7 @@ namespace lipsync_editor
 		{
 			if (dg_phons.Rows[e.RowIndex].Cells[1].Value.ToString() == "x")
 			{
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.PowderBlue;
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
 			}
 			else if (dg_phons.Rows[e.RowIndex].Cells[5].Value.ToString() == "Low")
 			{
