@@ -388,8 +388,15 @@ namespace lipsync_editor
 
 		void click_Synth(object sender, EventArgs e)
 		{
+			bu_synth.Enabled = false;
+
 			var synth = new VoiceSynthF(this, tb_text.Text);
 			synth.Show(this);
+		}
+
+		internal void EnableSynth()
+		{
+			bu_synth.Enabled = (tb_text.Text != String.Empty);
 		}
 
 		/// <summary>
@@ -399,7 +406,7 @@ namespace lipsync_editor
 		/// <param name="text"></param>
 		internal void SetText(string text)
 		{
-			tb_text.Text = text;
+			tb_text.Text = TypedText.SanitizeDialogText(text);
 		}
 
 		void textchanged_Text(object sender, EventArgs e)

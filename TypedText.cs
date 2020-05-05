@@ -43,50 +43,6 @@ namespace lipsync_editor
 			}
 			return sb.ToString().ToLower();
 		}
-/*		/// <summary>
-		/// Parses a user-typed text string into something better for the TTS
-		/// (text-to-speech) Voice/Speech SAPI.
-		/// </summary>
-		/// <param name="text"></param>
-		/// <param name="keepPunctuation"></param>
-		/// <returns></returns>
-		internal static string ParseText(string text, bool keepPunctuation = false)
-		{
-			//logfile.Log("ParseText() text= " + text);
-
-			text = Spaceout(text);
-
-			text = RemoveComment('<', '>', text);
-			text = RemoveComment('{', '}', text);
-			text = RemoveComment('[', ']', text);
-			text = RemoveComment('|', '|', text);
-
-			var sb = new StringBuilder(text.Length);
-			char c;
-			for (int i = 0; i != text.Length; ++i)
-			{
-				c = text[i];
-				if (!Char.IsControl(c))
-				{
-					if (   Char.IsLetter(c)
-						|| Char.IsNumber(c)
-						|| Char.IsDigit(c)
-						|| Char.IsSymbol(c)
-						|| c == ' '
-						|| c == '\''
-						|| (keepPunctuation && Char.IsPunctuation(c)))
-					{
-						sb.Append(c);
-					}
-				}
-			}
-			text = ConflateSpaces(sb.ToString()).Trim();
-
-			if (!keepPunctuation)
-				text = text.ToLower();
-
-			return text;
-		} */
 
 		/// <summary>
 		/// No tabs, no newlines, no funny stuff - just space.
