@@ -447,7 +447,21 @@ namespace lipsync_editor
 		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
 			if (dg_phons.Rows[e.RowIndex].Cells[0].Value.ToString().Contains(" x"))
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.MistyRose;
+			{
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.PowderBlue;
+			}
+			else if (dg_phons.Rows[e.RowIndex].Cells[4].Value.ToString() == "Low")
+			{
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
+			}
+			else if (dg_phons.Rows[e.RowIndex].Cells[4].Value.ToString() == "Normal")
+			{
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
+			}
+			else if (dg_phons.Rows[e.RowIndex].Cells[4].Value.ToString() == "High")
+			{
+				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Aquamarine;
+			}
 		}
 		#endregion control handlers
 
