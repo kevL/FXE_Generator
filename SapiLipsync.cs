@@ -429,7 +429,7 @@ namespace lipsync_editor
 			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 			_input.Close();
 
-			FinalizeAlignments();
+			Orthography();
 
 			if (!_ruler && _text != String.Empty)
 			{
@@ -449,10 +449,10 @@ namespace lipsync_editor
 			}
 		}
 
-		void FinalizeAlignments()
+		void Orthography()
 		{
 			logfile.Log();
-			logfile.Log("FinalizeAlignments() _ruler= " + _ruler);
+			logfile.Log("Orthography() _ruler= " + _ruler);
 
 			List<OrthographicResult> ars;
 			if (!_ruler) ars = _ars_def;
@@ -464,16 +464,6 @@ namespace lipsync_editor
 			for (int i = 0; i != ars.Count; ++i)
 			{
 				ar = ars[i];
-
-				logfile.Log(". ar.Orthography= " + ar.Orthography);
-				string phons = String.Empty;
-				foreach (var phon in ar.Phons)
-				{
-					if (phons != String.Empty) phons += " ";
-					phons += phon;
-				}
-				logfile.Log(". ar.Phons= " + phons);
-
 
 				if (ar.Start > stop)
 				{
@@ -495,20 +485,29 @@ namespace lipsync_editor
 
 					ars.Insert(i, silence);
 
-					stop = ar.Start;
 					++i;
 				}
 
-				TallyStops(ar);
+				logfile.Log(". ar.Orthography= " + ar.Orthography);
+				string phons = String.Empty;
+				foreach (var phon in ar.Phons)
+				{
+					if (phons != String.Empty) phons += " ";
+					phons += phon;
+				}
+				logfile.Log(". ar.Phons= " + phons);
+
+				AddStops(ar);
 				stop = ar.Stop;
 			}
 		}
 
-		void TallyStops(OrthographicResult ar)
+		void AddStops(OrthographicResult ar)
 		{
-			//logfile.Log("TallyStops()");
+			//logfile.Log("AddStops()");
 
 			var stops = new List<decimal>();
+
 			decimal stop = 0;
 			foreach (var phon in ar.Phons)
 			{
@@ -542,6 +541,7 @@ namespace lipsync_editor
 				}
 			}
 		}
+
 
 		void CalculateWordRatio_def()
 		{
