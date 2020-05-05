@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-//using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -376,9 +375,6 @@ namespace lipsync_editor
 			_fxedata_def.Clear();
 			_fxedata_enh.Clear();
 
-//			_ars_def.Clear();
-//			_ars_enh.Clear();
-
 			_lipsyncer.Start(tb_text.Text);
 		}
 
@@ -461,15 +457,11 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void checkedchanged_Radio(object sender, EventArgs e)
 		{
-			//logfile.Log("checkedchanged_Radio()");
-
 			var rb = sender as RadioButton;
 			if (rb.Checked)
 			{
 				if (rb == rb_def)
 				{
-					//logfile.Log(". rb_def");
-
 					_fxedata = _fxedata_def;
 
 					PopulatePhonGrid(_ars_def);
@@ -477,8 +469,6 @@ namespace lipsync_editor
 				}
 				else //if (rb == rb_enh)
 				{
-					//logfile.Log(". rb_enh");
-
 					_fxedata = _fxedata_enh;
 
 					PopulatePhonGrid(_ars_enh);
@@ -671,17 +661,9 @@ namespace lipsync_editor
 		/// </summary>
 		void ColorPercents()
 		{
-//			if      (_lipsyncer.RatioWords_def < 0.65) la_def_word_pct.ForeColor = Color.Red;
-//			else if (_lipsyncer.RatioWords_def > 0.80) la_def_word_pct.ForeColor = Color.LimeGreen;
-//			else                                       la_def_word_pct.ForeColor = SystemColors.ControlText;
-
 			if      (_lipsyncer.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Red;
 			else if (_lipsyncer.RatioPhons_def > 0.80) la_def_phon_pct.ForeColor = Color.LimeGreen;
 			else                                       la_def_phon_pct.ForeColor = SystemColors.ControlText;
-
-//			if      (_lipsyncer.RatioWords_enh < 0.65) la_enh_word_pct.ForeColor = Color.Red;
-//			else if (_lipsyncer.RatioWords_enh > 0.80) la_enh_word_pct.ForeColor = Color.LimeGreen;
-//			else                                       la_enh_word_pct.ForeColor = SystemColors.ControlText;
 
 			if      (_lipsyncer.RatioPhons_enh < 0.65) la_enh_phon_pct.ForeColor = Color.Red;
 			else if (_lipsyncer.RatioPhons_enh > 0.80) la_enh_phon_pct.ForeColor = Color.LimeGreen;
@@ -766,9 +748,7 @@ namespace lipsync_editor
 			int j = -1; // debug
 			foreach (FxeDataBlock block in blocks)
 			{
-				++j;
-//				_dt2.Rows.Add(new object[] { block.Viseme, block.Val1, block.Val2 });
-				_dt2.Rows.Add(new object[] { "[" + j + "] " + block.Viseme, block.Val1, block.Val2 });
+				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Viseme, block.Val1, block.Val2 });
 			}
 //			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 
