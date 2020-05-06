@@ -142,7 +142,7 @@ namespace lipsync_editor
 
 			// TODO: a better way to do this, try
 			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK\Attributes -> Language
-			// _recognizer.Tok -> Attributes -> Language (would need to decode those ##)
+			// _recognizer.Tok -> Attributes -> Language (the language-values are in hex)
 			int langid;
 			if (!Int32.TryParse(recognizer.Id.Substring(3,4), out langid))
 			{

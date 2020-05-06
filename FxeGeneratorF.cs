@@ -7,6 +7,8 @@ using System.Media;
 using System.Reflection;
 using System.Windows.Forms;
 
+using Microsoft.Win32;
+
 #if DEBUG
 using System.Speech.Recognition;
 #endif
@@ -355,14 +357,50 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void OnRecognizerChanged(object sender, EventArgs e)
 		{
+			logfile.Log("OnRecognizerChanged()");
+
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
 			_lipsyncer.SetRecognizer(recognizer);
 
 			tssl_token.Text = recognizer.Tok.Id;
+			tssl_langids.Text = String.Empty;
+
+			string keyid = @"SOFTWARE\Microsoft\Speech\Recognizers\Tokens\"
+						 + recognizer.Id
+						 + @"\Attributes";
+
+			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyid))
+			{
+				if (key != null)
+				{
+					Object o = key.GetValue("Language");
+					if (o != null)
+					{
+						string val = o as String;
+
+						var list = new List<string>();
+
+						string[] langids = val.Split(';');
+						foreach (var langid in langids)
+						{
+							logfile.Log("langid= " + langid);
+							list.Add(Int32.Parse(langid, System.Globalization.NumberStyles.HexNumber).ToString());
+						}
+
+						string text = String.Empty;
+						foreach (var id in list)
+						{
+							if (text != String.Empty) text += "  ";
+							text += id;
+						}
+
+						tssl_langids.Text = text;
+					}
+				}
+			}
 
 			Text = TITLE + recognizer.Id;
 		}
-
 
 		/// <summary>
 		/// Opens an audio-file w/out processing it.

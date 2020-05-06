@@ -92,7 +92,7 @@ namespace lipsync_editor
 			var recognizers = new List<Recognizer>();
 			foreach (ISpeechObjectToken tok in toks)
 			{
-				if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other speech engines
+				if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other speech engines incl/ 3rd-party
 				{
 					recognizers.Add(new Recognizer(tok));
 

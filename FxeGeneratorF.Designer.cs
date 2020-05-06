@@ -69,6 +69,8 @@ namespace lipsync_editor
 
 		StatusStrip ss_bot;
 		ToolStripStatusLabel tssl_token;
+		ToolStripStatusLabel tssl_langids_;
+		ToolStripStatusLabel tssl_langids;
 
 
 		#region Windows Form Designer generated code
@@ -112,6 +114,8 @@ namespace lipsync_editor
 			this.rb_enh = new System.Windows.Forms.RadioButton();
 			this.ss_bot = new System.Windows.Forms.StatusStrip();
 			this.tssl_token = new System.Windows.Forms.ToolStripStatusLabel();
+			this.tssl_langids = new System.Windows.Forms.ToolStripStatusLabel();
+			this.tssl_langids_ = new System.Windows.Forms.ToolStripStatusLabel();
 			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).BeginInit();
 			this.ss_bot.SuspendLayout();
@@ -537,7 +541,9 @@ namespace lipsync_editor
 			// 
 			this.ss_bot.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
 			this.ss_bot.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-			this.tssl_token});
+			this.tssl_token,
+			this.tssl_langids_,
+			this.tssl_langids});
 			this.ss_bot.Location = new System.Drawing.Point(0, 487);
 			this.ss_bot.Name = "ss_bot";
 			this.ss_bot.Size = new System.Drawing.Size(1212, 22);
@@ -553,6 +559,26 @@ namespace lipsync_editor
 			this.tssl_token.Size = new System.Drawing.Size(600, 22);
 			this.tssl_token.Text = "tssl_token";
 			this.tssl_token.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tssl_langids
+			// 
+			this.tssl_langids.AutoSize = false;
+			this.tssl_langids.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.tssl_langids.Margin = new System.Windows.Forms.Padding(0);
+			this.tssl_langids.Name = "tssl_langids";
+			this.tssl_langids.Size = new System.Drawing.Size(509, 22);
+			this.tssl_langids.Spring = true;
+			this.tssl_langids.Text = "tssl_langids";
+			this.tssl_langids.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			// 
+			// tssl_langids_
+			// 
+			this.tssl_langids_.AutoSize = false;
+			this.tssl_langids_.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+			this.tssl_langids_.Margin = new System.Windows.Forms.Padding(0);
+			this.tssl_langids_.Name = "tssl_langids_";
+			this.tssl_langids_.Size = new System.Drawing.Size(55, 22);
+			this.tssl_langids_.Text = "languages";
 			// 
 			// FxeGeneratorF
 			// 
