@@ -2,10 +2,126 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+using SpeechLib;
+
 
 namespace lipsync_editor
 {
-	sealed class LanguageId
+	/// <summary>
+	/// An object that contains information for the Recognizers combobox.
+	/// </summary>
+	sealed class Recognizer
+	{
+		internal ISpeechObjectToken Tok
+		{ get; private set; }
+
+		internal string Id
+		{ get; private set; }
+
+		string Label
+		{ get; set; }
+
+
+		/// <summary>
+		/// cTor.
+		/// </summary>
+		/// <param name="tok"></param>
+		internal Recognizer(ISpeechObjectToken tok)
+		{
+			Tok = tok;
+
+			Id = Tok.Id;
+			int pos = Id.LastIndexOf('\\');
+			Id = Id.Substring(pos + 1);
+
+			Label = Tok.GetDescription();
+		}
+
+
+		/// <summary>
+		/// Used by the Recognizers combobox to list the speech-recognition
+		/// engines that user has available in the windoz ControlPanel.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return Label;
+		}
+	}
+
+
+	/// <summary>
+	/// An object that handles SpeechRecognizers.
+	/// </summary>
+	static class SpeechRecognizerLister
+	{
+		/// <summary>
+		/// Adds the user's installed SAPI-compliant SpeechRecognizers (speech
+		/// recognition engines) to a specified combobox.
+		/// </summary>
+		/// <param name="co"></param>
+		/// <returns>true if a Recognizer was found and added to the list;
+		/// false if user is SoL</returns>
+		internal static bool AddSpeechRecognizers(ComboBox co)
+		{
+			logfile.Log();
+			logfile.Log("SpeechRecognizerLister.AddSpeechRecognizers()");
+
+			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+			// NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface.
+			// good luck!
+			var sr_default = new SpInprocRecognizer();
+
+			logfile.Log();
+			logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);
+			logfile.Log("Recognizer.GetDescription()= " + sr_default.Recognizer.GetDescription());
+			logfile.Log();
+
+			ISpeechObjectTokens toks = sr_default.GetRecognizers();
+			foreach (ISpeechObjectToken tok in toks)
+			{
+				logfile.Log(". installed.Id= "               + tok.Id);
+				logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
+			}
+			logfile.Log();
+
+
+			int  id_default = -1;
+			bool id_default_found = false;
+
+			var recognizers = new List<Recognizer>();
+			foreach (ISpeechObjectToken tok in toks)
+			{
+				if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other speech engines
+				{
+					recognizers.Add(new Recognizer(tok));
+
+					if (!id_default_found)
+					{
+						++id_default;
+
+						if (tok.Id == sr_default.Recognizer.Id)
+							id_default_found = true;
+					}
+				}
+			}
+
+			if (recognizers.Count != 0)
+			{
+				co.DataSource = recognizers;
+				co.SelectedIndex = id_default;
+
+				return true;
+			}
+
+			logfile.Log(". RECOGNIZER NOT FOUND");
+			return false;
+		}
+	}
+
+
+
+/*	sealed class LanguageId
 	{
 		string Label
 		{ get; set; }
@@ -84,7 +200,7 @@ namespace lipsync_editor
 			co.DataSource = languages;
 			co.SelectedIndex = 0;
 		}
-	}
+	} */
 }
 
 /*

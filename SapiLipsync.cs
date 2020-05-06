@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 using SpeechLib;
 
@@ -28,15 +29,26 @@ namespace lipsync_editor
 
 
 		#region fields
-		SpInprocRecognizer _recognizer;
-		SpInProcRecoContext _recoContext;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public SpInprocRecognizer _recognizer;
 //		[System.Runtime.InteropServices.ComVisible(true)]
 //		public SpInProcRecoContext _recoContext;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public SpFileStream _input;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public SpVoice _voice;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public ISpeechRecoGrammar _recoGrammar;
+//		[System.Runtime.InteropServices.ComVisible(true)]
+//		public SpPhoneConverter _phoneConverter;
 
+		SpInprocRecognizer _recognizer;
+		SpInProcRecoContext _recoContext;
 		SpFileStream _input;
 		SpVoice _voice;
 		ISpeechRecoGrammar _recoGrammar;
 		SpPhoneConverter _phoneConverter;
+
 
 		string _text = String.Empty;
 
@@ -101,6 +113,10 @@ namespace lipsync_editor
 			_phoneConverter = new SpPhoneConverter();
 			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
 
+			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+			_recognizer = new SpInprocRecognizer(); // NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface. good luck!
+			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
+
 			if (wavefile != String.Empty) // is Console ->
 			{
 				_phoneConverter.LanguageId = 1033; // US English (default)
@@ -114,13 +130,32 @@ namespace lipsync_editor
 
 		#region methods
 		/// <summary>
-		/// Sets the language-id when the language dropdown selection changes.
-		/// The language-id is used by both TTS and SpeechRecognition.
+		/// Sets the Recognizer and LanguageId when the Recognizers combobox
+		/// selection changes.
+		/// @note The LanguageId is used by both TTS and SpeechRecognition.
 		/// </summary>
-		/// <param name="id"></param>
-		internal void SetLanguage(int id)
+		/// <param name="recognizer"></param>
+		internal void SetRecognizer(Recognizer recognizer)
 		{
-			_phoneConverter.LanguageId = id;
+			_recognizer = new SpInprocRecognizer();
+			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
+
+			// TODO: a better way to do this, try
+			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK\Attributes -> Language
+			// _recognizer.Tok -> Attributes -> Language (would need to decode those ##)
+			int langid;
+			if (!Int32.TryParse(recognizer.Id.Substring(3,4), out langid))
+			{
+				MessageBox.Show(" Did not parse a Language from the registry's token."
+								+ Environment.NewLine + Environment.NewLine
+								+ " LipSyncer will bork off.",
+								" Error",
+								MessageBoxButtons.OK,
+								MessageBoxIcon.Error,
+								MessageBoxDefaultButton.Button1);
+				Environment.Exit(0);
+			}
+			_phoneConverter.LanguageId = langid;
 		}
 
 
@@ -129,7 +164,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("Start()");
 
-			// kL_clearall -> these don't all need to be cleared
+			// these don't all need to be cleared ->
 			_ruler = false;
 
 			_results = String.Empty;
@@ -143,7 +178,6 @@ namespace lipsync_editor
 
 			_ars_def.Clear();
 			_ars_enh.Clear();
-			// kL_end.
 
 
 			_text = text;
@@ -164,11 +198,6 @@ namespace lipsync_editor
 			}
 
 
-//			_recoContext = new SpInProcRecoContext();
-
-			logfile.Log(". create (SpInprocRecognizer)_recognizer");
-			_recognizer = new SpInprocRecognizer();
-			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 			logfile.Log(". create (SpInProcRecoContext)_recoContext");
 			_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
 			logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
@@ -185,16 +214,49 @@ namespace lipsync_editor
 			_recoContext.Recognition += Sapi_Lipsync_Recognition;
 			_recoContext.EndStream   += Sapi_Lipsync_EndStream;
 
-			_recoGrammar = _recoContext.CreateGrammar(2);	// was "2" but MS doc says not needed on its end.
+
+			logfile.Log("_recoContext.EventInterests= " + _recoContext.EventInterests);
+
+
+			_recoGrammar = _recoContext.CreateGrammar();	// was "2" but MS doc says not needed on its end.
 			_recoGrammar.DictationLoad();					// and I don't see grammar id #2 defined on this end either.
 //			_recoGrammar.DictationLoad("Pronunciation");	// Load pronunciation dictation topic into the grammar so that the raw (unfiltered) phonemes may be retrieved.
 //			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
+
+//			DictationGrammar dictationGrammar = new DictationGrammar("grammar:dictation");
+//			dictationGrammar.Name = "DictationQuestion";
+//			recognizer.LoadGrammar(dictationGrammar);
+//			recognizer.RequestRecognizerUpdate();
+//			recognizer.SetInputToDefaultAudioDevice();
 
 			Generate(false);
 
 			logfile.Log("Start() DONE");
 			logfile.Log();
 		}
+
+/*		/// <summary>
+		/// Instantiates a SpeechRecognitionEngine based on a specified culture
+		/// and id.
+		/// </summary>
+		/// <param name="requiredCulture"></param>
+		/// <param name="requiredId"></param>
+		/// <returns>a SpeechRecognitionEngine that meets the criteria (if user
+		/// has one installed) else null</returns>
+		SpeechRecognitionEngine CreateSre(object requiredCulture, string requiredId)   
+		{
+			SpeechRecognitionEngine sre = null;
+
+			foreach (RecognizerInfo info in SpeechRecognitionEngine.InstalledRecognizers())
+			{
+				if (info.Culture.Equals(requiredCulture) && info.Id == requiredId)
+				{
+					sre = new SpeechRecognitionEngine(info); // TODO: Dispose()
+					break;
+				}
+			}
+			return sre;
+		} */
 
 
 		void Generate(bool ruler)
@@ -240,6 +302,8 @@ namespace lipsync_editor
 				_recoGrammar.Rules.Commit();
 				_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
 			}
+			else
+				_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive); // huh
 
 
 			logfile.Log(". open audiostream and set Dictation ACTIVE");
@@ -251,7 +315,7 @@ namespace lipsync_editor
 			_input.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
 			_recognizer.AudioInputStream = _input;
 
-			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
+//			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
 			logfile.Log("Generate() DONE");
 		}
@@ -350,13 +414,14 @@ namespace lipsync_editor
 
 //			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
 			int wordcount = Result.PhraseInfo.Elements.Count;
-			logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount + " langid= " + _phoneConverter.LanguageId);
-			logfile.Log(". . . _offset= " + _offset);
+			logfile.Log(". . Result.PhraseInfo VALID langid= " + _phoneConverter.LanguageId);
+			logfile.Log(". . _offset= " + _offset);
 
 			List<OrthographicResult> ars;
 			if (!_ruler) ars = _ars_def;
 			else         ars = _ars_enh;
 
+			logfile.Log(". wordcount= " + wordcount);
 			for (int i = 0; i != wordcount; ++i)
 			{
 				var ar = new OrthographicResult();
@@ -546,7 +611,7 @@ namespace lipsync_editor
 		void CalculateWordRatio_def()
 		{
 			logfile.Log();
-			logfile.Log("CalculateWordRatio_def()");
+			logfile.Log("CalculateWordRatio_def() _ars_def.Count= " + _ars_def.Count);
 
 			string text = TypedText.StripDialogText(_text);
 			logfile.Log(". text= " + text);
@@ -583,7 +648,7 @@ namespace lipsync_editor
 		void CalculateWordRatio_enh()
 		{
 			logfile.Log();
-			logfile.Log("CalculateWordRatio()_enh");
+			logfile.Log("CalculateWordRatio()_enh _ars_enh.Count= " + _ars_enh.Count);
 
 			logfile.Log(". _text= " + _text);
 

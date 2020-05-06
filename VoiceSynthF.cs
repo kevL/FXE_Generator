@@ -22,9 +22,9 @@ namespace lipsync_editor
 
 
 		#region fields
-		FxeGeneratorF _f;
+		readonly FxeGeneratorF _f;
 
-		SpVoice _voice = new SpVoice();
+		readonly SpVoice _voice = new SpVoice();
 		#endregion fields
 
 

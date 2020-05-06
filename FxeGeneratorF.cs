@@ -4,7 +4,12 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Media;
+using System.Reflection;
 using System.Windows.Forms;
+
+#if DEBUG
+using System.Speech.Recognition;
+#endif
 
 
 namespace lipsync_editor
@@ -13,6 +18,8 @@ namespace lipsync_editor
 		: Form
 	{
 		#region fields (static)
+		const string TITLE = "0x22 - FXE LipSyncer - ";
+
 		internal const string EXT_FXE = "fxe";
 				 const string EXT_TXT = "txt";
 
@@ -95,6 +102,13 @@ namespace lipsync_editor
 		#endregion fields
 
 
+
+//		// Handle the SpeechRecognized event.
+//		static void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
+//		{
+//			Console.WriteLine("Recognized text: " + e.Result.Text);
+//		}
+
 		#region cTor
 		/// <summary>
 		/// cTor for GUI interface.
@@ -110,6 +124,32 @@ namespace lipsync_editor
 		/// <param name="headtype"></param>
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
+#if DEBUG
+			LogSpeechRecognitionEngines();
+#endif
+//			// Create an in-process speech recognizer for the en-US locale.
+//			using (var recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US")))
+//			{
+//				// Create and load a dictation grammar.
+//				recognizer.LoadGrammar(new DictationGrammar());
+//
+//				// Add a handler for the speech recognized event.
+//				recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
+//
+//				// Configure input to the speech recognizer.
+//				recognizer.SetInputToDefaultAudioDevice();
+//
+//				// Start asynchronous, continuous speech recognition.
+//				recognizer.RecognizeAsync(RecognizeMode.Multiple);
+//
+//				// Keep the console window open.
+//				while (true)
+//				{
+//					Console.ReadLine();
+//				}
+//			}
+
+
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
 			StaticData.FillPhon2VisMap();
@@ -192,11 +232,29 @@ namespace lipsync_editor
 
 				printversion();
 
+
+				// initialize SAPI
 				_lipsyncer = new SapiLipsync();
-				_lipsyncer.TtsParseText += OnTtsParseText;
+				_lipsyncer.TtsParseText           += OnTtsParseText;
 				_lipsyncer.SpeechRecognitionEnded += OnSpeechRecognitionEnded;
 
-				LanguageLister.AddLanguages(co_langId); // this will set '_lipsyncer._phoneConverter.LanguageId'
+				// this will set '_lipsyncer._recognizer'
+				// this will set '_lipsyncer._phoneConverter.LanguageId'
+				// and the Titletext
+				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
+				{
+					MessageBox.Show("FATAL"
+									+ Environment.NewLine + Environment.NewLine
+									+ "FXE LipSyncer requires a SAPI 5.4 compliant SpeechRecognitionEngine"
+									+ " installed in Windows' Control Panel | Speech Recognition."
+									+ Environment.NewLine + Environment.NewLine
+									+ "None was found ...",
+									" Error",
+									MessageBoxButtons.OK,
+									MessageBoxIcon.Error,
+									MessageBoxDefaultButton.Button1);
+					Environment.Exit(0);
+				}
 			}
 			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
 			{
@@ -220,12 +278,55 @@ namespace lipsync_editor
 		}
 
 
+#if DEBUG
+		static void LogSpeechRecognitionEngines()
+		{
+			logfile.Log("--- SpeechRecognitionEngines LOCALLY INSTALLED ---");
+			logfile.Log("System.Speech.Recognition");
+
+			int i = -1;
+			var recs = SpeechRecognitionEngine.InstalledRecognizers();
+			foreach (var rec in recs)
+			{
+				logfile.Log();
+
+				logfile.Log((++i) + "= " + rec.Id + " : " + rec.Name);
+				logfile.Log("culture= " + rec.Culture);
+				logfile.Log("desc= "    + rec.Description);
+
+				foreach (var info in rec.AdditionalInfo)
+					logfile.Log(". info= " + info.Key + " : " + info.Value);
+
+				if (rec.SupportedAudioFormats.Count != 0)
+				{
+					logfile.Log("Supported audio formats");
+					int j = -1;
+					foreach (var format in rec.SupportedAudioFormats)
+					{
+						logfile.Log(". " + (++j));
+						logfile.Log(". format= "   + format.EncodingFormat);
+						logfile.Log(". freq= "     + format.SamplesPerSecond);
+						logfile.Log(". bits= "     + format.BitsPerSample);
+						logfile.Log(". bps= "      + format.AverageBytesPerSecond);
+						logfile.Log(". chans= "    + format.ChannelCount);
+						logfile.Log(". blockaln= " + format.BlockAlign);
+					}
+				}
+				else logfile.Log("No supported audio formats");
+			}
+			logfile.Log();
+			logfile.Log("--- SpeechRecognitionEngines END ---");
+			logfile.Log();
+			logfile.Log();
+		}
+#endif
+
 		/// <summary>
 		/// Prints the current version of this LipSyncer app.
 		/// </summary>
 		void printversion()
 		{
-			var an = System.Reflection.Assembly.GetExecutingAssembly().GetName();
+			var an = Assembly.GetExecutingAssembly().GetName();
 			string ver = "ver " + an.Version.Major
 					   + "."    + an.Version.Minor;
 
@@ -247,7 +348,7 @@ namespace lipsync_editor
 
 
 		#region control handlers
-		/// <summary>
+/*		/// <summary>
 		/// Handles the language dropdown box.
 		/// TODO: Implement languages.
 		/// </summary>
@@ -255,8 +356,20 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void OnLanguageChanged(object sender, EventArgs e)
 		{
-			var langid = co_langId.SelectedItem as LanguageId;
+			var langid = co_recognizers.SelectedItem as LanguageId;
 			_lipsyncer.SetLanguage(langid.Id);
+		} */
+		/// <summary>
+		/// Handles changing the Recognizer combobox.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void OnRecognizerChanged(object sender, EventArgs e)
+		{
+			var recognizer = co_recognizers.SelectedItem as Recognizer;
+			_lipsyncer.SetRecognizer(recognizer);
+
+			Text = TITLE + ((Recognizer)co_recognizers.SelectedItem).Id;
 		}
 
 
