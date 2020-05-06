@@ -369,7 +369,9 @@ namespace lipsync_editor
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
 			_lipsyncer.SetRecognizer(recognizer);
 
-			Text = TITLE + ((Recognizer)co_recognizers.SelectedItem).Id;
+			tssl_token.Text = recognizer.Tok.Id;
+
+			Text = TITLE + recognizer.Id;
 		}
 
 
