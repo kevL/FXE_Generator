@@ -49,7 +49,7 @@
     <Compile Include="Exergist_VoiceAttack.cs" />
     <Compile Include="FxeData.cs" />
     <Compile Include="FxeReader.cs" />
-    <Compile Include="LanguageId.cs" />
+    <Compile Include="Recognizer.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="FxeDataBlock.cs" />
     <Compile Include="FxeGeneratorF.cs" />

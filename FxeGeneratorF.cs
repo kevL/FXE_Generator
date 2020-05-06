@@ -348,17 +348,6 @@ namespace lipsync_editor
 
 
 		#region control handlers
-/*		/// <summary>
-		/// Handles the language dropdown box.
-		/// TODO: Implement languages.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void OnLanguageChanged(object sender, EventArgs e)
-		{
-			var langid = co_recognizers.SelectedItem as LanguageId;
-			_lipsyncer.SetLanguage(langid.Id);
-		} */
 		/// <summary>
 		/// Handles changing the Recognizer combobox.
 		/// </summary>
