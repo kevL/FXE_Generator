@@ -333,7 +333,7 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void OnRecognizerChanged(object sender, EventArgs e)
 		{
-			logfile.Log("OnRecognizerChanged()");
+			//logfile.Log("OnRecognizerChanged()");
 
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
 			_lipsyncer.SetRecognizer(recognizer);

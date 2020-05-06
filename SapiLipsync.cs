@@ -137,10 +137,12 @@ namespace lipsync_editor
 		/// <param name="recognizer"></param>
 		internal void SetRecognizer(Recognizer recognizer)
 		{
+			//logfile.Log("SetRecognizer()");
+
 			_recognizer = new SpInprocRecognizer();
 			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
 
-			// TODO: a better way to do this, try
+/*			// TODO: a better way to do this, try
 			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK\Attributes -> Language
 			// _recognizer.Tok -> Attributes -> Language (the language-values are in hex)
 			int langid;
@@ -154,8 +156,18 @@ namespace lipsync_editor
 								MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1);
 				Environment.Exit(0);
-			}
-			_phoneConverter.LanguageId = langid;
+			} */
+
+			//logfile.Log(". langids= " + recognizer.Langids);
+
+			string langid = recognizer.Langids;
+			int pos = recognizer.Langids.IndexOf(' ');
+			if (pos != -1)
+				langid = langid.Substring(0, pos);
+
+			//logfile.Log(". langid= " + langid);
+
+			_phoneConverter.LanguageId = Int32.Parse(langid);
 		}
 
 
