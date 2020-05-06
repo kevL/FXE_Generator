@@ -2,26 +2,50 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 
+using Microsoft.Win32;
+
 using SpeechLib;
 
 
 namespace lipsync_editor
 {
 	/// <summary>
-	/// An object that contains information for the Recognizers combobox.
+	/// An object that contains information about SAPI Recognizers.
 	/// </summary>
 	sealed class Recognizer
 	{
+		#region properties
+		/// <summary>
+		/// The registry token.
+		/// </summary>
 		internal ISpeechObjectToken Tok
 		{ get; private set; }
 
+		/// <summary>
+		/// The parsed id. Eg, "MS-1033-80-DESK"
+		/// @note 'Tok.Id' is the full registry path:
+		/// "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK"
+		/// </summary>
 		internal string Id
 		{ get; private set; }
 
+		/// <summary>
+		/// The descriptive label. This appears in the Recognizers combobox.
+		/// Eg. "Microsoft Speech Recognizer 8.0 for Windows (English - US)"
+		/// </summary>
 		string Label
 		{ get; set; }
 
+		/// <summary>
+		/// The languages supported.
+		/// @note "Languages" appears in the subkey "Attributes" in the registry.
+		/// </summary>
+		internal string Langids
+		{ get; private set; }
+		#endregion properties
 
+
+		#region cTor
 		/// <summary>
 		/// cTor.
 		/// </summary>
@@ -35,23 +59,52 @@ namespace lipsync_editor
 			Id = Id.Substring(pos + 1);
 
 			Label = Tok.GetDescription();
+
+			Langids = String.Empty;
+
+			string keyid = @"SOFTWARE\Microsoft\Speech\Recognizers\Tokens\"
+						 + Id
+						 + @"\Attributes";
+
+			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyid))
+			{
+				if (key != null)
+				{
+					Object o = key.GetValue("Language");
+					if (o != null)
+					{
+						string val = o as String;
+
+						string[] langids = val.Split(';');
+						foreach (var langid in langids)
+						{
+							if (Langids != String.Empty) Langids += "  ";
+							Langids += Int32.Parse(langid, System.Globalization.NumberStyles.HexNumber).ToString();
+						}
+					}
+				}
+			}
 		}
+		#endregion cTor
 
 
+		#region methods (override)
 		/// <summary>
 		/// Used by the Recognizers combobox to list the speech-recognition
-		/// engines that user has available in the windoz ControlPanel.
+		/// engines that user has available in his/her windoz ControlPanel under
+		/// Speech Recognition.
 		/// </summary>
 		/// <returns></returns>
 		public override string ToString()
 		{
 			return Label;
 		}
+		#endregion methods (override)
 	}
 
 
 	/// <summary>
-	/// An object that handles SpeechRecognizers.
+	/// A static object that determines the user's available SpeechRecognizers.
 	/// </summary>
 	static class SpeechRecognizerLister
 	{

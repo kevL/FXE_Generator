@@ -7,8 +7,6 @@ using System.Media;
 using System.Reflection;
 using System.Windows.Forms;
 
-using Microsoft.Win32;
-
 #if DEBUG
 using System.Speech.Recognition;
 #endif
@@ -129,28 +127,6 @@ namespace lipsync_editor
 #if DEBUG
 			LogSpeechRecognitionEngines();
 #endif
-//			// Create an in-process speech recognizer for the en-US locale.
-//			using (var recognizer = new SpeechRecognitionEngine(new System.Globalization.CultureInfo("en-US")))
-//			{
-//				// Create and load a dictation grammar.
-//				recognizer.LoadGrammar(new DictationGrammar());
-//
-//				// Add a handler for the speech recognized event.
-//				recognizer.SpeechRecognized += new EventHandler<SpeechRecognizedEventArgs>(recognizer_SpeechRecognized);
-//
-//				// Configure input to the speech recognizer.
-//				recognizer.SetInputToDefaultAudioDevice();
-//
-//				// Start asynchronous, continuous speech recognition.
-//				recognizer.RecognizeAsync(RecognizeMode.Multiple);
-//
-//				// Keep the console window open.
-//				while (true)
-//				{
-//					Console.ReadLine();
-//				}
-//			}
-
 
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
@@ -362,42 +338,8 @@ namespace lipsync_editor
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
 			_lipsyncer.SetRecognizer(recognizer);
 
-			tssl_token.Text = recognizer.Tok.Id;
-			tssl_langids.Text = String.Empty;
-
-			string keyid = @"SOFTWARE\Microsoft\Speech\Recognizers\Tokens\"
-						 + recognizer.Id
-						 + @"\Attributes";
-
-			using (RegistryKey key = Registry.LocalMachine.OpenSubKey(keyid))
-			{
-				if (key != null)
-				{
-					Object o = key.GetValue("Language");
-					if (o != null)
-					{
-						string val = o as String;
-
-						var list = new List<string>();
-
-						string[] langids = val.Split(';');
-						foreach (var langid in langids)
-						{
-							logfile.Log("langid= " + langid);
-							list.Add(Int32.Parse(langid, System.Globalization.NumberStyles.HexNumber).ToString());
-						}
-
-						string text = String.Empty;
-						foreach (var id in list)
-						{
-							if (text != String.Empty) text += "  ";
-							text += id;
-						}
-
-						tssl_langids.Text = text;
-					}
-				}
-			}
+			tssl_token  .Text = recognizer.Tok.Id;
+			tssl_langids.Text = recognizer.Langids;
 
 			Text = TITLE + recognizer.Id;
 		}
