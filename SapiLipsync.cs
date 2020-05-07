@@ -145,10 +145,18 @@ namespace lipsync_editor
 			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
 			logfile.Log(". recognizer.Tok.Id= " + recognizer.Tok.Id);
 			logfile.Log(". recognizer.Description= " + recognizer.Tok.GetDescription());
-			logfile.Log();
 
-/*			int langid;
-			if (!Int32.TryParse(recognizer.Id.Substring(3,4), out langid))
+			logfile.Log(". recognizer.Langids= " + recognizer.Langids);
+			string langid = recognizer.Langids;
+			int pos = recognizer.Langids.IndexOf(' ');
+			if (pos != -1)
+				langid = langid.Substring(0, pos); // use 1st langid (perhaps)
+
+			// TODO: ComboBox dropdown for user to choose from if 2+ languages
+			// are supported by the current Recognizer.
+
+			int id;
+			if (!Int32.TryParse(langid, out id))
 			{
 				MessageBox.Show(" Did not parse a Language from the registry's token."
 								+ Environment.NewLine + Environment.NewLine
@@ -158,21 +166,13 @@ namespace lipsync_editor
 								MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1);
 				Environment.Exit(0);
-			} */
+			}
 
-			logfile.Log(". langids= " + recognizer.Langids);
-			string langid = recognizer.Langids;
-			int pos = recognizer.Langids.IndexOf(' ');
-			if (pos != -1)
-				langid = langid.Substring(0, pos); // use 1st langid (perhaps)
+			_phoneConverter.LanguageId = id;// Int32.Parse(langid);
+			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
+			logfile.Log();
 
-			// TODO: ComboBox dropdown for user to choose if 2+ languages are
-			// supported by the current Recognizer.
-			logfile.Log(". langid= " + langid);
-
-			_phoneConverter.LanguageId = Int32.Parse(langid);
-
-			StaticData.AddVices(_phoneConverter.LanguageId);
+			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
 		}
 
 

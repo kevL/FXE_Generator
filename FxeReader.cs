@@ -14,14 +14,14 @@ namespace lipsync_editor
 		#region fields (static)
 		static BinaryReader _br;
 
-		static bool _d = false; // debug.
+		static bool _d; // debug.
 		#endregion fields (static)
 
 
 		#region write methods (static)
 		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
-			_d = false;
+			_d = true;
 			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
