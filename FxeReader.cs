@@ -38,10 +38,12 @@ namespace lipsync_editor
 
 					fs.Seek(85, SeekOrigin.Begin);
 					string headtype = GetString();
+					if (headtype == null) return false;
 					logfile.Log(". headtype= " + headtype);
 
 					fs.Seek(34, SeekOrigin.Current);
 					string wavelabel = GetString();
+					if (wavelabel == null) return false;
 					logfile.Log(". wavelabel= " + wavelabel);
 
 					fs.Seek(8, SeekOrigin.Current);
@@ -55,6 +57,7 @@ namespace lipsync_editor
 						if (_d) logfile.Log(". . i= " + i);
 
 						string codeword = GetString();
+						if (codeword == null) return false;
 						if (_d) logfile.Log(". . codeword= " + codeword);
 
 						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
@@ -97,6 +100,13 @@ namespace lipsync_editor
 
 			if (_d) logfile.Log(". pos of Chars= " + _br.BaseStream.Position);
 			if (_d) logfile.Log(". length of Chars= " + len);
+
+			if (_br.BaseStream.Position + len > _br.BaseStream.Length)
+			{
+				logfile.Log(". . ReadChars() will overflow. ABORT ReadFxe");
+				return null;
+			}
+
 			string str = new string(_br.ReadChars(len));
 			if (_d) logfile.Log(". str= " + str);
 
