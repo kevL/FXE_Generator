@@ -379,7 +379,7 @@ namespace lipsync_editor
 			this.dg_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.dg_blocks.Name = "dg_blocks";
 			this.dg_blocks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_blocks.Size = new System.Drawing.Size(270, 420);
+			this.dg_blocks.Size = new System.Drawing.Size(290, 420);
 			this.dg_blocks.TabIndex = 28;
 			// 
 			// bu_createfxe
@@ -474,10 +474,10 @@ namespace lipsync_editor
 			// la_version
 			// 
 			this.la_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_version.Location = new System.Drawing.Point(390, 61);
+			this.la_version.Location = new System.Drawing.Point(380, 61);
 			this.la_version.Margin = new System.Windows.Forms.Padding(0);
 			this.la_version.Name = "la_version";
-			this.la_version.Size = new System.Drawing.Size(75, 20);
+			this.la_version.Size = new System.Drawing.Size(85, 20);
 			this.la_version.TabIndex = 29;
 			this.la_version.Text = "ver.";
 			this.la_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -544,7 +544,7 @@ namespace lipsync_editor
 			this.tssl_langids});
 			this.ss_bot.Location = new System.Drawing.Point(0, 484);
 			this.ss_bot.Name = "ss_bot";
-			this.ss_bot.Size = new System.Drawing.Size(1150, 22);
+			this.ss_bot.Size = new System.Drawing.Size(1170, 22);
 			this.ss_bot.TabIndex = 32;
 			// 
 			// tssl_token
@@ -573,7 +573,7 @@ namespace lipsync_editor
 			this.tssl_langids.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.tssl_langids.Margin = new System.Windows.Forms.Padding(0);
 			this.tssl_langids.Name = "tssl_langids";
-			this.tssl_langids.Size = new System.Drawing.Size(478, 22);
+			this.tssl_langids.Size = new System.Drawing.Size(498, 22);
 			this.tssl_langids.Spring = true;
 			this.tssl_langids.Text = "tssl_langids";
 			this.tssl_langids.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -582,7 +582,7 @@ namespace lipsync_editor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1150, 506);
+			this.ClientSize = new System.Drawing.Size(1170, 506);
 			this.Controls.Add(this.ss_bot);
 			this.Controls.Add(this.rb_enh);
 			this.Controls.Add(this.rb_def);

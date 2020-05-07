@@ -201,8 +201,8 @@ namespace lipsync_editor
 
 				dg_blocks.DataSource = _dt2;
 				dg_blocks.Columns[0].Width =  80; //  68
-				dg_blocks.Columns[1].Width =  87; //  87
-				dg_blocks.Columns[2].Width = 100; // 100
+				dg_blocks.Columns[1].Width =  97; //  87
+				dg_blocks.Columns[2].Width = 110; // 100
 
 				dg_phons .RowHeadersVisible =
 				dg_blocks.RowHeadersVisible = false;

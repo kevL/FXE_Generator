@@ -52,7 +52,7 @@ namespace lipsync_editor
 
 					fs.Seek(8, SeekOrigin.Current);
 
-					for (short i = 0; i != (short)15; ++i)
+					for (int i = 0; i != 15; ++i)
 					{
 						if (_d) logfile.Log(". . i= " + i);
 
@@ -95,20 +95,20 @@ namespace lipsync_editor
 
 			_br.ReadInt16();
 
-			if (_d) logfile.Log(". pos of Int32= " + _br.BaseStream.Position);
+			if (_d) logfile.Log(". pos of length  = " + _br.BaseStream.Position);
 			int len = _br.ReadInt32();
 
-			if (_d) logfile.Log(". pos of Chars= " + _br.BaseStream.Position);
+			if (_d) logfile.Log(". pos of Chars   = " + _br.BaseStream.Position);
 			if (_d) logfile.Log(". length of Chars= " + len);
 
 			if (_br.BaseStream.Position + len > _br.BaseStream.Length)
 			{
-				logfile.Log(". . ReadChars() will overflow. ABORT ReadFxe");
+				logfile.Log(". . _br.ReadChars() will overflow. ABORT ReadFxe");
 				return null;
 			}
 
 			string str = new string(_br.ReadChars(len));
-			if (_d) logfile.Log(". str= " + str);
+			if (_d) logfile.Log(); //". str= " + str
 
 			return str;
 		}
