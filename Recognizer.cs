@@ -52,15 +52,19 @@ namespace lipsync_editor
 		/// <param name="tok"></param>
 		internal Recognizer(ISpeechObjectToken tok)
 		{
+			logfile.Log("Recognizer() cTor");
+
 			Tok = tok;
 
 			Id = Tok.Id;
 			int pos = Id.LastIndexOf('\\');
 			Id = Id.Substring(pos + 1);
+			logfile.Log(". Id= " + Id);
 
 			Label = Tok.GetDescription();
+			logfile.Log(". Label= " + Label);
 
-			Langids = String.Empty;
+			Langids = "n/a";
 
 			string keyid = @"SOFTWARE\Microsoft\Speech\Recognizers\Tokens\"
 						 + Id
@@ -75,6 +79,8 @@ namespace lipsync_editor
 					{
 						string val = o as String;
 
+						Langids = String.Empty;
+
 						string[] langids = val.Split(';');
 						foreach (var langid in langids)
 						{
@@ -84,6 +90,7 @@ namespace lipsync_editor
 					}
 				}
 			}
+			logfile.Log(". Langids= " + Langids);
 		}
 		#endregion cTor
 
@@ -124,6 +131,7 @@ namespace lipsync_editor
 			// NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface.
 			// good luck!
 			var sr_default = new SpInprocRecognizer();
+			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 
 			logfile.Log();
 			logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);

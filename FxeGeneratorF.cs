@@ -130,7 +130,6 @@ namespace lipsync_editor
 
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
-			StaticData.FillPhon2VisMap();
 			FxeData.LoadTrigrams();
 
 			if (wavefile == String.Empty) // is GUI interface ->
@@ -789,7 +788,7 @@ namespace lipsync_editor
 					_dt1.Rows.Add(new object[] { j + "." + i,
 												 phon,
 												 (decimal)ar.Stops[i] / 10000000,
-												 StaticData.PhonToVis[phon],
+												 StaticData.Vices[phon],
 												 confidence,
 												 level });
 					confidence = level = String.Empty;

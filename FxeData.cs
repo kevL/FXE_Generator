@@ -44,7 +44,7 @@ namespace lipsync_editor
 					if ((phon = ar.Phons[i]) != "x")
 					{
 						decimal stop = (decimal)ar.Stops[i] / 10000000;
-						vices.Add(new KeyValuePair<string, decimal>(StaticData.PhonToVis[phon], stop));
+						vices.Add(new KeyValuePair<string, decimal>(StaticData.Vices[phon], stop));
 					}
 				}
 			}

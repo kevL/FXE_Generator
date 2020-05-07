@@ -137,10 +137,15 @@ namespace lipsync_editor
 		/// <param name="recognizer"></param>
 		internal void SetRecognizer(Recognizer recognizer)
 		{
-			//logfile.Log("SetRecognizer()");
+			logfile.Log("SetRecognizer()");
 
+			logfile.Log(". create (SpInprocRecognizer)_recognizer");
 			_recognizer = new SpInprocRecognizer();
+			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
+			logfile.Log(". recognizer.Tok.Id= " + recognizer.Tok.Id);
+			logfile.Log(". recognizer.Description= " + recognizer.Tok.GetDescription());
+			logfile.Log();
 
 /*			int langid;
 			if (!Int32.TryParse(recognizer.Id.Substring(3,4), out langid))
@@ -155,7 +160,7 @@ namespace lipsync_editor
 				Environment.Exit(0);
 			} */
 
-			//logfile.Log(". langids= " + recognizer.Langids);
+			logfile.Log(". langids= " + recognizer.Langids);
 			string langid = recognizer.Langids;
 			int pos = recognizer.Langids.IndexOf(' ');
 			if (pos != -1)
@@ -163,9 +168,11 @@ namespace lipsync_editor
 
 			// TODO: ComboBox dropdown for user to choose if 2+ languages are
 			// supported by the current Recognizer.
-			//logfile.Log(". langid= " + langid);
+			logfile.Log(". langid= " + langid);
 
 			_phoneConverter.LanguageId = Int32.Parse(langid);
+
+			StaticData.AddVices(_phoneConverter.LanguageId);
 		}
 
 
@@ -397,9 +404,15 @@ namespace lipsync_editor
 		{
 			logfile.Log();
 			logfile.Log("Sapi_Lipsync_Recognition() _ruler= " + _ruler);
-			logfile.Log(". duration= " + Result.PhraseInfo.AudioSizeTime);
+
+//			GenerateResults(Result); ->
+//			if (Result.PhraseInfo != null) // I have not seen a null PhraseInfo yet.
+//			{
+			//logfile.Log(". Result.PhraseInfo VALID");
 			//logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
+
 			logfile.Log(". " + Result.PhraseInfo.GetText());
+			logfile.Log(". PhraseInfo.AudioSizeTime= " + Result.PhraseInfo.AudioSizeTime);
 
 			logfile.Log(". words= " + Result.PhraseInfo.Elements.Count);
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
@@ -411,27 +424,23 @@ namespace lipsync_editor
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 			}
 
-//			GenerateResults(Result); ->
-//			if (Result.PhraseInfo != null) // I have not seen a null PhraseInfo yet.
-//			{
-			//logfile.Log(". Result.PhraseInfo.Rule.Parent.Name= "      + Result.PhraseInfo.Rule.Parent.Name); // breaks the funct.
-			//logfile.Log(". Result.PhraseInfo.Rule.Children.Count= "   + Result.PhraseInfo.Rule.Children.Count); // breaks the funct.
+			//logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
 			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
 			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
 			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
-			//logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name);
-			//logfile.Log(". Result.PhraseInfo.Rule.NumberOfElements= " + Result.PhraseInfo.Rule.NumberOfElements);
 
-//			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
-			int wordcount = Result.PhraseInfo.Elements.Count;
-			logfile.Log(". . Result.PhraseInfo VALID langid= " + _phoneConverter.LanguageId);
-			logfile.Log(". . _offset= " + _offset);
+			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 
 			List<OrthographicResult> ars;
 			if (!_ruler) ars = _ars_def;
 			else         ars = _ars_enh;
 
+			logfile.Log(". _offset= " + _offset);
+
+//			int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
+			int wordcount = Result.PhraseInfo.Elements.Count;
 			logfile.Log(". wordcount= " + wordcount);
+
 			for (int i = 0; i != wordcount; ++i)
 			{
 				var ar = new OrthographicResult();
@@ -439,9 +448,10 @@ namespace lipsync_editor
 				ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
 				ar.Orthography = word.DisplayText;
 
-				string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
+				string phons = _phoneConverter.IdToPhone(word.Pronunciation); // NOTE: object is a ushort[]
 
 				logfile.Log(". . . word.AudioTimeOffset= " + word.AudioTimeOffset);
+				logfile.Log(". . . word.AudioSizeTime= "   + word.AudioSizeTime);
 
 				ar.Phons      = new List<string>(phons.Split(' ')); // remove empty entries ...
 				ar.Confidence = word.EngineConfidence;
