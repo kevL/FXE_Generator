@@ -209,9 +209,10 @@ namespace lipsync_editor
 			else
 			{
 				logfile.Log(". . enhanced - call SpVoice.Speak()");
+				logfile.Log(". . _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 
 				_voice.Speak(_text); // -> fire TtsParseText when the TTS-stream ends.
-//				_voice.WaitUntilDone(-1);
+				_voice.WaitUntilDone(-1);
 			}
 
 
@@ -347,7 +348,7 @@ namespace lipsync_editor
 							 SpeechVisemeFeature Feature,
 							 short CurrentPhoneId)
 		{
-			logfile.Log("OnSpeechPhoneme() CurrentPhoneId= " + CurrentPhoneId + " langid= " + _phoneConverter.LanguageId);
+			logfile.Log("OnSpeechPhoneme() CurrentPhoneId= " + CurrentPhoneId);
 
 			if (CurrentPhoneId > 9)
 			{
@@ -451,7 +452,7 @@ namespace lipsync_editor
 				string phons = _phoneConverter.IdToPhone(word.Pronunciation); // NOTE: object is a ushort[]
 
 				logfile.Log(". . . word.AudioTimeOffset= " + word.AudioTimeOffset);
-				logfile.Log(". . . word.AudioSizeTime= "   + word.AudioSizeTime);
+				logfile.Log(". . . word.AudioSizeTime  = " + word.AudioSizeTime);
 
 				ar.Phons      = new List<string>(phons.Split(' ')); // remove empty entries ...
 				ar.Confidence = word.EngineConfidence;
