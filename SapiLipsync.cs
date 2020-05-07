@@ -142,10 +142,7 @@ namespace lipsync_editor
 			_recognizer = new SpInprocRecognizer();
 			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
 
-/*			// TODO: a better way to do this, try
-			// HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK\Attributes -> Language
-			// _recognizer.Tok -> Attributes -> Language (the language-values are in hex)
-			int langid;
+/*			int langid;
 			if (!Int32.TryParse(recognizer.Id.Substring(3,4), out langid))
 			{
 				MessageBox.Show(" Did not parse a Language from the registry's token."
@@ -159,12 +156,13 @@ namespace lipsync_editor
 			} */
 
 			//logfile.Log(". langids= " + recognizer.Langids);
-
 			string langid = recognizer.Langids;
 			int pos = recognizer.Langids.IndexOf(' ');
 			if (pos != -1)
-				langid = langid.Substring(0, pos);
+				langid = langid.Substring(0, pos); // use 1st langid (perhaps)
 
+			// TODO: ComboBox dropdown for user to choose if 2+ languages are
+			// supported by the current Recognizer.
 			//logfile.Log(". langid= " + langid);
 
 			_phoneConverter.LanguageId = Int32.Parse(langid);
