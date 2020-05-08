@@ -136,9 +136,9 @@ namespace lipsync_editor
 			_phoneConverter = new SpPhoneConverter();
 			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
 
-			logfile.Log(". create (SpInprocRecognizer)_recognizer");
-			_recognizer = new SpInprocRecognizer(); // NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface. good luck!
-			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
+//			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+//			_recognizer = new SpInprocRecognizer(); // NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface. good luck!
+//			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 
 			if (wavefile != String.Empty) // is Console ->
 			{
@@ -174,7 +174,7 @@ namespace lipsync_editor
 			string langid = recognizer.Langids;
 			int pos = recognizer.Langids.IndexOf(' ');
 			if (pos != -1)
-				langid = langid.Substring(0, pos); // use 1st langid (perhaps)
+				langid = langid.Substring(0, pos); // use 1st langid
 
 			// TODO: ComboBox dropdown for user to choose from if 2+ languages
 			// are supported by the current Recognizer.
@@ -195,6 +195,43 @@ namespace lipsync_editor
 			_phoneConverter.LanguageId = id;// Int32.Parse(langid);
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
+
+
+			// THESE MAKE ABSOLUTELY NO DIFFERENCE WHATSOEVER TO AUDIOFILE INPUT ->
+			// apparently.
+			// CFGConfidenceRejectionThreshold
+			// HighConfidenceThreshold
+			// NormalConfidenceThreshold
+			// LowConfidenceThreshold
+
+//			int val = 0;
+//			_recognizer.GetPropertyNumber("CFGConfidenceRejectionThreshold", ref val);	// default 60
+//			logfile.Log(". CFGConfidenceRejectionThreshold= " + val);
+//			_recognizer.GetPropertyNumber("HighConfidenceThreshold", ref val);			// default 80
+//			logfile.Log(". HighConfidenceThreshold= " + val);
+//			_recognizer.GetPropertyNumber("NormalConfidenceThreshold", ref val);		// default 50
+//			logfile.Log(". NormalConfidenceThreshold= " + val);
+//			_recognizer.GetPropertyNumber("LowConfidenceThreshold", ref val);			// default 20
+//			logfile.Log(". LowConfidenceThreshold= " + val);
+//			logfile.Log();
+//
+//			_recognizer.SetPropertyNumber("CFGConfidenceRejectionThreshold", 0); // tried 100 ... results are identical to 0.
+//			_recognizer.GetPropertyNumber("CFGConfidenceRejectionThreshold", ref val);
+//			logfile.Log(". CFGConfidenceRejectionThreshold= " + val);
+//
+//			_recognizer.SetPropertyNumber("HighConfidenceThreshold", 0);
+//			_recognizer.GetPropertyNumber("HighConfidenceThreshold", ref val);
+//			logfile.Log(". HighConfidenceThreshold= " + val);
+//
+//			_recognizer.SetPropertyNumber("NormalConfidenceThreshold", 0);
+//			_recognizer.GetPropertyNumber("NormalConfidenceThreshold", ref val);
+//			logfile.Log(". NormalConfidenceThreshold= " + val);
+//
+//			_recognizer.SetPropertyNumber("LowConfidenceThreshold", 0);
+//			_recognizer.GetPropertyNumber("LowConfidenceThreshold", ref val);
+//			logfile.Log(". LowConfidenceThreshold= " + val);
+//			logfile.Log();
+
 
 			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
 		}
@@ -421,19 +458,24 @@ namespace lipsync_editor
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
 			{
 				logfile.Log(". . word= "             + word.DisplayText);
-				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . id= " + id);
 				logfile.Log(". . LexicalForm= "      + word.LexicalForm);
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
+				var ids = (ushort[])word.Pronunciation;
+				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
 			}
 
-//			string alternates = String.Empty;
-//			logfile.Log(". alts.Count= "); // + alts.Count
+//			logfile.Log(". get Alternates");
+//			ISpeechPhraseAlternates alts = Result.Alternates(3); // DOES NOT WORK AS EXPECTED.
+//			logfile.Log(". alts.Count= " + alts.Count);
+//			logfile.Log(". alt[0]= " + alts.Item(0));
 //			foreach (ISpeechPhraseAlternate alt in alts)
+//			{
 //				logfile.Log(". . alt= " + alt.PhraseInfo.GetText());
+//			}
+//			logfile.Log(". got Alternates");
 
-			if (_ruler)
+/*			if (_ruler)
 			{
 				logfile.Log("Sapi_Lipsync_Hypothesis()");
 
@@ -446,7 +488,7 @@ namespace lipsync_editor
 					_results = results;
 //					GenerateResults(Result);
 				}
-			}
+			} */
 		}
 
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
@@ -493,11 +535,11 @@ namespace lipsync_editor
 //				ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
 
 				logfile.Log(". . word= "             + word.DisplayText);
-				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . id= " + id);
 				logfile.Log(". . LexicalForm= "      + word.LexicalForm);
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
+				var ids = (ushort[])word.Pronunciation;
+				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
 
 				var ar = new OrthographicResult();
 				ar.Orthography = word.DisplayText;
