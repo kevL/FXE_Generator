@@ -146,6 +146,8 @@ namespace lipsync_editor
 			// 
 			// tb_wavefile
 			// 
+			this.tb_wavefile.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
 			this.tb_wavefile.Location = new System.Drawing.Point(60, 7);
 			this.tb_wavefile.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_wavefile.Name = "tb_wavefile";
@@ -466,7 +468,7 @@ namespace lipsync_editor
 			this.la_blocks.Location = new System.Drawing.Point(876, 40);
 			this.la_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.la_blocks.Name = "la_blocks";
-			this.la_blocks.Size = new System.Drawing.Size(270, 15);
+			this.la_blocks.Size = new System.Drawing.Size(290, 15);
 			this.la_blocks.TabIndex = 27;
 			this.la_blocks.Text = "Data Blocks";
 			this.la_blocks.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -484,14 +486,14 @@ namespace lipsync_editor
 			// 
 			// co_recognizers
 			// 
-			this.co_recognizers.Anchor = System.Windows.Forms.AnchorStyles.Top;
+			this.co_recognizers.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.co_recognizers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_recognizers.DropDownWidth = 340;
 			this.co_recognizers.FormattingEnabled = true;
 			this.co_recognizers.Location = new System.Drawing.Point(670, 7);
 			this.co_recognizers.Margin = new System.Windows.Forms.Padding(0);
 			this.co_recognizers.Name = "co_recognizers";
-			this.co_recognizers.Size = new System.Drawing.Size(476, 23);
+			this.co_recognizers.Size = new System.Drawing.Size(496, 23);
 			this.co_recognizers.TabIndex = 2;
 			this.co_recognizers.SelectedIndexChanged += new System.EventHandler(this.OnRecognizerChanged);
 			// 
@@ -503,7 +505,7 @@ namespace lipsync_editor
 			this.bu_synth.Name = "bu_synth";
 			this.bu_synth.Size = new System.Drawing.Size(51, 25);
 			this.bu_synth.TabIndex = 4;
-			this.bu_synth.Text = "voice";
+			this.bu_synth.Text = "synth";
 			this.bu_synth.UseVisualStyleBackColor = true;
 			this.bu_synth.Click += new System.EventHandler(this.click_Synth);
 			// 

@@ -17,7 +17,7 @@ namespace lipsync_editor
 		static int _h = -1;
 
 		static int _vol = 100;
-		static int _rat; // default 0 standard (range -10..10).
+		static int _rat =  -2; // default 0 standard (range -10..10).
 		#endregion fields (static)
 
 

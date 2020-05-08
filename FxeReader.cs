@@ -21,7 +21,7 @@ namespace lipsync_editor
 		#region write methods (static)
 		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
-			_d = true;
+			_d = false;
 			logfile.Log("FxeReader.ReadFile()");
 
 			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;

@@ -116,6 +116,8 @@ namespace lipsync_editor
 						short channels = br.ReadInt16();		// start 22: is Mono
 						if (channels == 1)
 						{
+							// TODO: Sample-rate and bit-depth should probably be relaxed.
+
 							int rate = br.ReadInt32();			// start 24: is 44.1kHz
 							if (rate == 44100)
 							{

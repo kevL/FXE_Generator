@@ -88,7 +88,7 @@ namespace lipsync_editor
 //				case 2057: // This is for English GB (en-GB)
 //					break;
 
-//				case 1036: // This is for French
+//				case 1036: // This is for French (fr-FR)
 //					break;
 			}
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Windows.Forms;
 
 using Microsoft.Win32;
@@ -85,7 +86,7 @@ namespace lipsync_editor
 						foreach (var langid in langids)
 						{
 							if (Langids != String.Empty) Langids += "  ";
-							Langids += Int32.Parse(langid, System.Globalization.NumberStyles.HexNumber).ToString();
+							Langids += Int32.Parse(langid, NumberStyles.HexNumber).ToString();
 						}
 					}
 				}
@@ -133,46 +134,49 @@ namespace lipsync_editor
 			var sr_default = new SpInprocRecognizer();
 			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 
-			logfile.Log();
-			logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);
-			logfile.Log("Recognizer.GetDescription()= " + sr_default.Recognizer.GetDescription());
-			logfile.Log();
-
-			ISpeechObjectTokens toks = sr_default.GetRecognizers();
-			foreach (ISpeechObjectToken tok in toks)
+			if (sr_default != null)
 			{
-				logfile.Log(". installed.Id= "               + tok.Id);
-				logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
-			}
-			logfile.Log();
+				logfile.Log();
+				logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);
+				logfile.Log("Recognizer.GetDescription()= " + sr_default.Recognizer.GetDescription());
+				logfile.Log();
 
-
-			int  id_default = -1;
-			bool id_default_found = false;
-
-			var recognizers = new List<Recognizer>();
-			foreach (ISpeechObjectToken tok in toks)
-			{
-				if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other speech engines incl/ 3rd-party
+				ISpeechObjectTokens toks = sr_default.GetRecognizers();
+				foreach (ISpeechObjectToken tok in toks)
 				{
-					recognizers.Add(new Recognizer(tok));
+					logfile.Log(". installed.Id= "               + tok.Id);
+					logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
+				}
+				logfile.Log();
 
-					if (!id_default_found)
+
+				int  id_default = -1;
+				bool id_default_found = false;
+
+				var recognizers = new List<Recognizer>();
+				foreach (ISpeechObjectToken tok in toks)
+				{
+					if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other SAPI-compliant speech engines incl/ 3rd-party
 					{
-						++id_default;
+						recognizers.Add(new Recognizer(tok));
 
-						if (tok.Id == sr_default.Recognizer.Id)
-							id_default_found = true;
+						if (!id_default_found)
+						{
+							++id_default;
+
+							if (tok.Id == sr_default.Recognizer.Id)
+								id_default_found = true;
+						}
 					}
 				}
-			}
 
-			if (recognizers.Count != 0)
-			{
-				co.DataSource = recognizers;
-				co.SelectedIndex = id_default;
+				if (recognizers.Count != 0)
+				{
+					co.DataSource = recognizers;
+					co.SelectedIndex = id_default;
 
-				return true;
+					return true;
+				}
 			}
 
 			logfile.Log(". RECOGNIZER NOT FOUND");

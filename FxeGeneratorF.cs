@@ -7,9 +7,9 @@ using System.Media;
 using System.Reflection;
 using System.Windows.Forms;
 
-#if DEBUG
-using System.Speech.Recognition;
-#endif
+//#if DEBUG
+//using System.Speech.Recognition;
+//#endif
 
 
 namespace lipsync_editor
@@ -42,7 +42,7 @@ namespace lipsync_editor
 		/// <summary>
 		/// SAPI setup and usage object.
 		/// </summary>
-		readonly SapiLipsync _lipsyncer;
+		readonly SapiLipsync _sapi;
 
 		/// <summary>
 		/// The fullpath of an audio-file to be analyzed.
@@ -124,9 +124,9 @@ namespace lipsync_editor
 		/// <param name="headtype"></param>
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
-#if DEBUG
-			LogSpeechRecognitionEngines();
-#endif
+//#if DEBUG
+//			LogSpeechRecognitionEngines();
+//#endif
 
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
 
@@ -211,12 +211,12 @@ namespace lipsync_editor
 
 
 				// initialize SAPI
-				_lipsyncer = new SapiLipsync();
-				_lipsyncer.TtsParseText           += OnTtsParseText;
-				_lipsyncer.SpeechRecognitionEnded += OnSpeechRecognitionEnded;
+				_sapi = new SapiLipsync();
+				_sapi.TtsStreamEnded += OnTtsStreamEnded;
+				_sapi.SrStreamEnded  += OnSrStreamEnded;
 
-				// this will set '_lipsyncer._recognizer'
-				// this will set '_lipsyncer._phoneConverter.LanguageId'
+				// this will set '_sapi._recognizer'
+				// this will set '_sapi._phoneConverter.LanguageId'
 				// and the Titletext
 				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
 				{
@@ -245,58 +245,58 @@ namespace lipsync_editor
 				_wavefile = wavefile;
 				_headtype = headtype;
 
-				_lipsyncer = new SapiLipsync(_wavefile);
-				if (_lipsyncer.Audiopath != String.Empty)
+				_sapi = new SapiLipsync(_wavefile);
+				if (_sapi.Audiopath != String.Empty)
 				{
-					_lipsyncer.SpeechRecognitionEnded += OnSpeechRecognitionEnded;
-					_lipsyncer.Start(LoadTypedTextFile());
+					_sapi.SrStreamEnded += OnSrStreamEnded;
+					_sapi.Start(LoadTypedTextFile());
 				}
 			}
 		}
 
 
-#if DEBUG
-		static void LogSpeechRecognitionEngines()
-		{
-			logfile.Log("--- SpeechRecognitionEngines LOCALLY INSTALLED ---");
-			logfile.Log("System.Speech.Recognition");
-
-			int i = -1;
-			var recs = SpeechRecognitionEngine.InstalledRecognizers();
-			foreach (var rec in recs)
-			{
-				logfile.Log();
-
-				logfile.Log((++i) + "= " + rec.Id + " : " + rec.Name);
-				logfile.Log("culture= " + rec.Culture);
-				logfile.Log("desc= "    + rec.Description);
-
-				foreach (var info in rec.AdditionalInfo)
-					logfile.Log(". info= " + info.Key + " : " + info.Value);
-
-				if (rec.SupportedAudioFormats.Count != 0)
-				{
-					logfile.Log("Supported audio formats");
-					int j = -1;
-					foreach (var format in rec.SupportedAudioFormats)
-					{
-						logfile.Log(". " + (++j));
-						logfile.Log(". format= "   + format.EncodingFormat);
-						logfile.Log(". freq= "     + format.SamplesPerSecond);
-						logfile.Log(". bits= "     + format.BitsPerSample);
-						logfile.Log(". bps= "      + format.AverageBytesPerSecond);
-						logfile.Log(". chans= "    + format.ChannelCount);
-						logfile.Log(". blockaln= " + format.BlockAlign);
-					}
-				}
-				else logfile.Log("No supported audio formats");
-			}
-			logfile.Log();
-			logfile.Log("--- SpeechRecognitionEngines END ---");
-			logfile.Log();
-			logfile.Log();
-		}
-#endif
+//#if DEBUG
+//		static void LogSpeechRecognitionEngines()
+//		{
+//			logfile.Log("--- SpeechRecognitionEngines LOCALLY INSTALLED ---");
+//			logfile.Log("System.Speech.Recognition");
+//
+//			int i = -1;
+//			var recs = SpeechRecognitionEngine.InstalledRecognizers();
+//			foreach (var rec in recs)
+//			{
+//				logfile.Log();
+//
+//				logfile.Log((++i) + "= " + rec.Id + " : " + rec.Name);
+//				logfile.Log("culture= " + rec.Culture);
+//				logfile.Log("desc= "    + rec.Description);
+//
+//				foreach (var info in rec.AdditionalInfo)
+//					logfile.Log(". info= " + info.Key + " : " + info.Value);
+//
+//				if (rec.SupportedAudioFormats.Count != 0)
+//				{
+//					logfile.Log("Supported audio formats");
+//					int j = -1;
+//					foreach (var format in rec.SupportedAudioFormats)
+//					{
+//						logfile.Log(". " + (++j));
+//						logfile.Log(". format= "   + format.EncodingFormat);
+//						logfile.Log(". freq= "     + format.SamplesPerSecond);
+//						logfile.Log(". bits= "     + format.BitsPerSample);
+//						logfile.Log(". bps= "      + format.AverageBytesPerSecond);
+//						logfile.Log(". chans= "    + format.ChannelCount);
+//						logfile.Log(". blockaln= " + format.BlockAlign);
+//					}
+//				}
+//				else logfile.Log("No supported audio formats");
+//			}
+//			logfile.Log();
+//			logfile.Log("--- SpeechRecognitionEngines END ---");
+//			logfile.Log();
+//			logfile.Log();
+//		}
+//#endif
 
 		/// <summary>
 		/// Prints the current version of this LipSyncer app.
@@ -335,7 +335,7 @@ namespace lipsync_editor
 			//logfile.Log("OnRecognizerChanged()");
 
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
-			_lipsyncer.SetRecognizer(recognizer);
+			_sapi.SetRecognizer(recognizer);
 
 			tssl_token  .Text = recognizer.Tok.Id;
 			tssl_langids.Text = recognizer.Langids;
@@ -397,11 +397,11 @@ namespace lipsync_editor
 					if (FxeReader.ReadFile(_wavefile, _fxedata))
 						PopulateDataGrid(_fxedata);
 
-					_lipsyncer.Audiopath = AudioConverter.deterAudiopath(_wavefile);
-					logfile.Log(". _lipsyncer.Audiopath= " + _lipsyncer.Audiopath);
+					_sapi.Audiopath = AudioConverter.deterAudiopath(_wavefile);
+					logfile.Log(". _sapi.Audiopath= " + _sapi.Audiopath);
 
 					bu_generate .Enabled =
-					bu_play     .Enabled = (_lipsyncer.Audiopath != String.Empty);
+					bu_play     .Enabled = (_sapi.Audiopath != String.Empty);
 				}
 			}
 		}
@@ -417,7 +417,7 @@ namespace lipsync_editor
 			{
 				using (StreamReader sr = File.OpenText(file))
 				{
-					return TypedText.SanitizeDialogText(sr.ReadToEnd());
+					return TypedText.SanitizeTypedText(sr.ReadToEnd());
 				}
 			}
 			return String.Empty;
@@ -431,9 +431,12 @@ namespace lipsync_editor
 		void click_Generate(object sender, EventArgs e)
 		{
 			logfile.Log();
-			logfile.Log("click_Generate()");
+			logfile.Log();
+			logfile.Log("click_Generate() ===============================================================");
 
 			Cursor = Cursors.WaitCursor;
+
+			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
 
 			tb_expected    .Text =
 			tb_def_words   .Text =
@@ -458,7 +461,7 @@ namespace lipsync_editor
 			_fxedata_def.Clear();
 			_fxedata_enh.Clear();
 
-			_lipsyncer.Start(tb_text.Text);
+			_sapi.Start(tb_text.Text);
 		}
 
 		/// <summary>
@@ -481,10 +484,12 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Play(object sender, EventArgs e)
 		{
-			using (var wavefile = new FileStream(_lipsyncer.Audiopath, FileMode.Open))
+			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
+
+			using (var wavefile = new FileStream(_sapi.Audiopath, FileMode.Open))
 			using (var player   = new SoundPlayer(wavefile))
 			{
-				player.SoundLocation = _lipsyncer.Audiopath;
+				player.SoundLocation = _sapi.Audiopath;
 				player.Play();
 			}
 		}
@@ -496,6 +501,8 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Synth(object sender, EventArgs e)
 		{
+			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
+
 			bu_synth.Enabled = false;
 
 			var synth = new VoiceSynthF(this, tb_text.Text);
@@ -518,7 +525,7 @@ namespace lipsync_editor
 		/// <param name="text"></param>
 		internal void SetText(string text)
 		{
-			tb_text.Text = TypedText.SanitizeDialogText(text);
+			tb_text.Text = TypedText.SanitizeTypedText(text);
 		}
 
 		/// <summary>
@@ -615,21 +622,22 @@ namespace lipsync_editor
 		/// If there is typed-text its phonemes are displayed after the TTS
 		/// (text-to-speech) stream finishes.
 		/// </summary>
-		void OnTtsParseText()
+		void OnTtsStreamEnded()
 		{
-			logfile.Log("OnTtsParseText()");
-
-			Cursor = Cursors.Default;
+			logfile.Log("OnTtsStreamEnded()");
 
 			string expected = String.Empty;
-			foreach (var expect in _lipsyncer.Expected)
+			foreach (var expect in _sapi.Expected)
 			{
 				if (expected != String.Empty) expected += " ";
 				expected += expect;
 			}
 			logfile.Log(". expected= " + expected);
+			logfile.Log();
 
 			tb_expected.Text = expected;
+
+			Cursor = Cursors.Default;
 		}
 
 		/// <summary>
@@ -638,10 +646,10 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="ars_def"></param>
 		/// <param name="ars_enh"></param>
-		void OnSpeechRecognitionEnded(List<OrthographicResult> ars_def, List<OrthographicResult> ars_enh)
+		void OnSrStreamEnded(List<OrthographicResult> ars_def, List<OrthographicResult> ars_enh)
 		{
 			logfile.Log();
-			logfile.Log("OnSpeechRecognitionEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
+			logfile.Log("OnSrStreamEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
 
 			_ars_def = ars_def;
 			_ars_enh = ars_enh;
@@ -655,14 +663,14 @@ namespace lipsync_editor
 				{
 					PrintResults(_ars_enh, tb_enh_words, tb_enh_phons);
 
-					la_def_word_pct.Text = _lipsyncer.RatioWords_def.ToString("P1");
-					la_enh_word_pct.Text = _lipsyncer.RatioWords_enh.ToString("P1");
+					la_def_word_pct.Text = _sapi.RatioWords_def.ToString("P1");
+					la_enh_word_pct.Text = _sapi.RatioWords_enh.ToString("P1");
 				}
 
-				if (_lipsyncer.Expected.Count != 0)
+				if (_sapi.Expected.Count != 0)
 				{
-					la_def_phon_pct.Text = _lipsyncer.RatioPhons_def.ToString("P1");
-					la_enh_phon_pct.Text = _lipsyncer.RatioPhons_enh.ToString("P1");
+					la_def_phon_pct.Text = _sapi.RatioPhons_def.ToString("P1");
+					la_enh_phon_pct.Text = _sapi.RatioPhons_enh.ToString("P1");
 
 					rb_def.Visible =
 					rb_enh.Visible = true;
@@ -679,7 +687,7 @@ namespace lipsync_editor
 			FxeData.GenerateData(_ars_enh, _fxedata_enh);
 
 			if (tb_text.Text == String.Empty
-				|| _lipsyncer.RatioPhons_def > _lipsyncer.RatioPhons_enh)
+				|| _sapi.RatioPhons_def > _sapi.RatioPhons_enh)
 			{
 				_fxedata = _fxedata_def;
 
@@ -744,13 +752,13 @@ namespace lipsync_editor
 		/// </summary>
 		void ColorPercents()
 		{
-			if      (_lipsyncer.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Red;
-			else if (_lipsyncer.RatioPhons_def > 0.80) la_def_phon_pct.ForeColor = Color.LimeGreen;
-			else                                       la_def_phon_pct.ForeColor = SystemColors.ControlText;
+			if      (_sapi.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Red;
+			else if (_sapi.RatioPhons_def > 0.80) la_def_phon_pct.ForeColor = Color.LimeGreen;
+			else                                  la_def_phon_pct.ForeColor = SystemColors.ControlText;
 
-			if      (_lipsyncer.RatioPhons_enh < 0.65) la_enh_phon_pct.ForeColor = Color.Red;
-			else if (_lipsyncer.RatioPhons_enh > 0.80) la_enh_phon_pct.ForeColor = Color.LimeGreen;
-			else                                       la_enh_phon_pct.ForeColor = SystemColors.ControlText;
+			if      (_sapi.RatioPhons_enh < 0.65) la_enh_phon_pct.ForeColor = Color.Red;
+			else if (_sapi.RatioPhons_enh > 0.80) la_enh_phon_pct.ForeColor = Color.LimeGreen;
+			else                                  la_enh_phon_pct.ForeColor = SystemColors.ControlText;
 		}
 
 		/// <summary>

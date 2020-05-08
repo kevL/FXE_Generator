@@ -11,7 +11,14 @@ namespace lipsync_editor
 	/// </summary>
 	static class TypedText
 	{
-		internal static string SanitizeDialogText(string text)
+		/// <summary>
+		/// Replaces whitespaces, newlines, and comments with spaces; removes
+		/// controlchars and comments, then replaces any multiple spaces with
+		/// single spaces and trims the specified text.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		internal static string SanitizeTypedText(string text)
 		{
 			text = Spaceout(text);
 
@@ -20,23 +27,31 @@ namespace lipsync_editor
 			text = RemoveComment('[', ']', text);
 			text = RemoveComment('|', '|', text);
 
-			return ConflateSpaces(text).Trim();
+			text = ConflateSpaces(text);
+			text = ConflatePunctuation(text);
+
+			return text.Trim();
 		}
 
-		internal static string StripDialogText(string text)
+		/// <summary>
+		/// Obliterates all chars other than letters, spaces, and single-quotes,
+		/// then returns a lowercase string. This should only be passed text
+		/// that has already been sanitized w/ SanitizeTypedText(). The return
+		/// is used only to match against default-recognition phonemes, which in
+		/// English don't have punctuation other than the single-quote char.
+		/// TODO: Other languages can have other chars; eg, French appears to
+		/// use tilde characters.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		internal static string StripTypedText(string text)
 		{
 			var sb = new StringBuilder(text.Length);
 			char c;
 			for (int i = 0; i != text.Length; ++i)
 			{
-				c = text[i];
-				if (   Char.IsLetter(c)
-//					|| Char.IsNumber(c)
-//					|| Char.IsDigit(c)
-//					|| Char.IsSymbol(c)
-					|| c == ' '
-					|| c == '\'')
-//					&& !Char.IsPunctuation(c)
+				if ((c = text[i]) == ' ' || c == '\''
+					|| Char.IsLetter(c))
 				{
 					sb.Append(c);
 				}
@@ -57,32 +72,25 @@ namespace lipsync_editor
 			for (int i = 0; i != text.Length; ++i)
 			{
 				c = text[i];
-				if (!Char.IsControl(c))
+				if (Char.IsWhiteSpace(c)) // this replaces line- and paragraph-separators also
 				{
-					if (Char.IsWhiteSpace(c)) // this replaces line- and paragraph-separators also
-						sb.Append(' ');
-					else
-						sb.Append(c);
+					sb.Append(' ');
 				}
-			}
-			return sb.ToString();
-		}
-
-		/// <summary>
-		/// Replaces multiple spaces with a single space.
-		/// </summary>
-		/// <param name="text"></param>
-		/// <returns></returns>
-		static string ConflateSpaces(string text)
-		{
-			var sb = new StringBuilder(text.Length);
-
-			char c;
-			for (int i = 0; i != text.Length; ++i)
-			{
-				c = text[i];
-				if (c != ' ' || i == 0 || text[i - 1] != ' ')
+//				else if (c != '\'' && Char.IsPunctuation(c))
+				else if (c == '.'
+					||   c == ','
+					||   c == ';'
+					||   c == ':'
+					||   c == '!'
+					||   c == '?')
+				{
 					sb.Append(c);
+					sb.Append(' ');
+				}
+				else if (!Char.IsControl(c))
+				{
+					sb.Append(c);
+				}
 			}
 			return sb.ToString();
 		}
@@ -106,6 +114,44 @@ namespace lipsync_editor
 				}
 			}
 			return text;
+		}
+
+		/// <summary>
+		/// Replaces multiple spaces with a single space.
+		/// </summary>
+		/// <param name="text"></param>
+		/// <returns></returns>
+		static string ConflateSpaces(string text)
+		{
+			var sb = new StringBuilder(text.Length);
+
+			char c;
+			for (int i = 0; i != text.Length; ++i)
+			{
+				if ((c = text[i]) != ' '
+					|| i == 0 || (text[i - 1] != ' '))
+				{
+					sb.Append(c);
+				}
+			}
+			return sb.ToString();
+		}
+
+		static string ConflatePunctuation(string text)
+		{
+			var sb = new StringBuilder(text.Length);
+
+			char c;
+			for (int i = 0; i != text.Length; ++i)
+			{
+				if ((c = text[i]) != ' '
+					|| i == text.Length - 1
+					|| !Char.IsPunctuation(text[i + 1]))
+				{
+					sb.Append(c);
+				}
+			}
+			return sb.ToString();
 		}
 	}
 }
