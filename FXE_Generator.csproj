@@ -16,6 +16,8 @@
     <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <WarningLevel>4</WarningLevel>
+    <ApplicationIcon>icon\lips.ico</ApplicationIcon>
+    <NoWin32Manifest>False</NoWin32Manifest>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <OutputPath>bin\Debug\</OutputPath>
@@ -56,6 +58,10 @@
     <Compile Include="Exergist_VoiceAttack.cs" />
     <Compile Include="FxeData.cs" />
     <Compile Include="FxeReader.cs" />
+    <Compile Include="Properties\Resource.Designer.cs">
+      <DependentUpon>Resource.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+    </Compile>
     <Compile Include="Recognizer.cs" />
     <Compile Include="SpeechRecognizerLister.cs" />
     <Compile Include="StaticData.cs" />
@@ -76,6 +82,10 @@
   <ItemGroup>
     <EmbeddedResource Include="FxeGeneratorF.resx">
       <DependentUpon>FxeGeneratorF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="VoiceSynthF.resx">
       <DependentUpon>VoiceSynthF.cs</DependentUpon>

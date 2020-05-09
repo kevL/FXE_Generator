@@ -8,7 +8,7 @@ namespace lipsync_editor
 	sealed partial class FxeGeneratorF
 	{
 		/// <summary>
-		/// (un)Required designer variable.
+		/// Required designer variable.
 		/// </summary>
 		IContainer components = null;
 
@@ -619,6 +619,7 @@ namespace lipsync_editor
 			this.Controls.Add(this.la_enh_phon_pct);
 			this.Controls.Add(this.tb_enh_phons);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Icon = global::FXE_Generator.Properties.Resource.lips;
 			this.Name = "FxeGeneratorF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "0x22 - FXE LipSyncer";
