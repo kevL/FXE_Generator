@@ -88,6 +88,9 @@ namespace lipsync_editor
 		/// </summary>
 		internal float Confidence_def
 		{ get; private set; }
+
+		int Confidence_def_count
+		{ get; set; }
 		#endregion properties
 
 
@@ -256,6 +259,7 @@ namespace lipsync_editor
 			_ars_enh.Clear();
 
 			Confidence_def = 0f;
+			Confidence_def_count = 0;
 
 
 			SetRecognizer(FxeGeneratorF.That.GetRecognizer()); // <- workaround. See FxeGeneratorF.GetRecognizer()
@@ -341,6 +345,8 @@ namespace lipsync_editor
 			logfile.Log("Generate() _generato= " + _generato);
 
 			_offset = 0L;
+			Confidence_def_count = 0;
+
 //			_recoContext.Pause();
 
 			// kL_NOTE: How absolutely bizarre. DO NOT SET '_ruler=ruler' in the
@@ -551,9 +557,6 @@ namespace lipsync_editor
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
 
 
-			if (_text == String.Empty)
-				Confidence_def = Result.PhraseInfo.Rule.EngineConfidence; // TODO: depends on the count of passes before the stream actually ends
-
 			List<OrthographicResult> ars = null;
 			switch (_generato)
 			{
@@ -593,6 +596,13 @@ namespace lipsync_editor
 			// will be completely borked obviously. So add this time-offset to any
 			// second or subsequent Recognition event that happens on this stream
 			_offset += (ulong)Result.PhraseInfo.AudioSizeTime;
+
+			if (_text == String.Empty)
+			{
+				++Confidence_def_count;
+				Confidence_def += Result.PhraseInfo.Rule.EngineConfidence; // TODO: depends on the count of passes before the stream actually ends
+			}
+
 			logfile.Log();
 		}
 
@@ -670,7 +680,10 @@ namespace lipsync_editor
 						Generate();
 					}
 					else
+					{
+						Confidence_def /= (float)Confidence_def_count;
 						goto case Generator.Dialogi;
+					}
 					break;
 
 				case Generator.Dialogi:

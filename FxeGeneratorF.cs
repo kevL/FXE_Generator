@@ -767,7 +767,7 @@ namespace lipsync_editor
 		/// <summary>
 		/// Colors the percents.
 		/// </summary>
-		/// <param name="confidence"></param>
+		/// <param name="confidence">true if default-text uses EngineConfidence</param>
 		void ColorPercents(bool confidence)
 		{
 			if      (_sapi.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Crimson;
