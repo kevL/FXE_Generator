@@ -57,6 +57,7 @@
     <Compile Include="FxeData.cs" />
     <Compile Include="FxeReader.cs" />
     <Compile Include="Recognizer.cs" />
+    <Compile Include="SpeechRecognizerLister.cs" />
     <Compile Include="StaticData.cs" />
     <Compile Include="FxeDataBlock.cs" />
     <Compile Include="FxeGeneratorF.cs" />
