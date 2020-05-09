@@ -78,6 +78,16 @@ namespace lipsync_editor
 
 		internal double RatioPhons_enh // enhanced w/ TypedText
 		{ get; private set; }
+
+
+		/// <summary>
+		/// The engine confidence on recognition after a default-type pass (ie.
+		/// without typed-text).
+		/// @note If user provides typed-text then a comparison will be done
+		/// against the typed-text's TTS-phonemes instead.
+		/// </summary>
+		internal float Confidence_def
+		{ get; private set; }
 		#endregion properties
 
 
@@ -197,13 +207,13 @@ namespace lipsync_editor
 			// LowConfidenceThreshold
 
 //			int val = 0;
-//			_recognizer.GetPropertyNumber("CFGConfidenceRejectionThreshold", ref val);	// default 60
+//			_recognizer.GetPropertyNumber("CFGConfidenceRejectionThreshold", ref val);	// default 60-
 //			logfile.Log(". CFGConfidenceRejectionThreshold= " + val);
-//			_recognizer.GetPropertyNumber("HighConfidenceThreshold", ref val);			// default 80
+//			_recognizer.GetPropertyNumber("HighConfidenceThreshold", ref val);			// default 80+
 //			logfile.Log(". HighConfidenceThreshold= " + val);
-//			_recognizer.GetPropertyNumber("NormalConfidenceThreshold", ref val);		// default 50
+//			_recognizer.GetPropertyNumber("NormalConfidenceThreshold", ref val);		// default 50+
 //			logfile.Log(". NormalConfidenceThreshold= " + val);
-//			_recognizer.GetPropertyNumber("LowConfidenceThreshold", ref val);			// default 20
+//			_recognizer.GetPropertyNumber("LowConfidenceThreshold", ref val);			// default 20+
 //			logfile.Log(". LowConfidenceThreshold= " + val);
 //			logfile.Log();
 //
@@ -244,6 +254,8 @@ namespace lipsync_editor
 
 			_ars_def.Clear();
 			_ars_enh.Clear();
+
+			Confidence_def = 0f;
 
 
 			SetRecognizer(FxeGeneratorF.That.GetRecognizer()); // <- workaround. See FxeGeneratorF.GetRecognizer()
@@ -539,6 +551,9 @@ namespace lipsync_editor
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
 
 
+			if (_text == String.Empty)
+				Confidence_def = Result.PhraseInfo.Rule.EngineConfidence; // TODO: depends on the count of passes before the stream actually ends
+
 			List<OrthographicResult> ars = null;
 			switch (_generato)
 			{
@@ -620,6 +635,7 @@ namespace lipsync_editor
 		{
 			logfile.Log();
 			logfile.Log("rc_EndStream() _generato= " + _generato);
+			//logfile.Log(". StreamReleased= " + StreamReleased);
 
 			switch (_generato)
 			{

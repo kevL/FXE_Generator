@@ -681,6 +681,8 @@ namespace lipsync_editor
 					la_def_word_pct.Text = _sapi.RatioWords_def.ToString("P1");
 					la_enh_word_pct.Text = _sapi.RatioWords_enh.ToString("P1");
 				}
+				else
+					la_def_word_pct.Text = _sapi.Confidence_def.ToString("P1");
 
 				if (_sapi.Expected.Count != 0)
 				{
@@ -691,7 +693,7 @@ namespace lipsync_editor
 					rb_enh.Visible = true;
 				}
 
-				ColorPercents();
+				ColorPercents(tb_text.Text == String.Empty);
 
 				bu_createfxe.Enabled =
 				co_headtype .Enabled = true;
@@ -765,15 +767,25 @@ namespace lipsync_editor
 		/// <summary>
 		/// Colors the percents.
 		/// </summary>
-		void ColorPercents()
+		/// <param name="confidence"></param>
+		void ColorPercents(bool confidence)
 		{
-			if      (_sapi.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Red;
+			if      (_sapi.RatioPhons_def < 0.65) la_def_phon_pct.ForeColor = Color.Crimson;
 			else if (_sapi.RatioPhons_def > 0.80) la_def_phon_pct.ForeColor = Color.LimeGreen;
 			else                                  la_def_phon_pct.ForeColor = SystemColors.ControlText;
 
-			if      (_sapi.RatioPhons_enh < 0.65) la_enh_phon_pct.ForeColor = Color.Red;
+			if      (_sapi.RatioPhons_enh < 0.65) la_enh_phon_pct.ForeColor = Color.Crimson;
 			else if (_sapi.RatioPhons_enh > 0.80) la_enh_phon_pct.ForeColor = Color.LimeGreen;
 			else                                  la_enh_phon_pct.ForeColor = SystemColors.ControlText;
+
+			if (confidence)
+			{
+				if      (_sapi.Confidence_def < 0.65) la_def_word_pct.ForeColor = Color.Crimson;
+				else if (_sapi.Confidence_def > 0.80) la_def_word_pct.ForeColor = Color.LimeGreen;
+				else                                  la_def_word_pct.ForeColor = Color.SteelBlue;
+			}
+			else
+				la_def_word_pct.ForeColor = SystemColors.ControlText;
 		}
 
 		/// <summary>
