@@ -172,7 +172,7 @@ namespace lipsync_editor
 			// are supported by the current Recognizer.
 
 			int id;
-			if (!Int32.TryParse(langid, out id))
+			if (!Int32.TryParse(langid, out id)) // safety.
 			{
 				MessageBox.Show(" Did not parse a Language from the registry's token."
 								+ Environment.NewLine + Environment.NewLine
@@ -244,6 +244,9 @@ namespace lipsync_editor
 
 			_ars_def.Clear();
 			_ars_enh.Clear();
+
+
+			SetRecognizer(FxeGeneratorF.That.GetRecognizer()); // <- workaround. See FxeGeneratorF.GetRecognizer()
 
 
 			_text = text;
@@ -463,8 +466,8 @@ namespace lipsync_editor
 			}
 
 //			logfile.Log(". get Alternates");
-//			ISpeechPhraseAlternates alts = Result.Alternates(3); // DOES NOT WORK AS EXPECTED.
-//			logfile.Log(". alts.Count= " + alts.Count);
+//			ISpeechPhraseAlternates alts = Result.Alternates(3);	// DOES NOT WORK AS EXPECTED.
+//			logfile.Log(". alts.Count= " + alts.Count);				// NOTE: for CC only - SpeechRecoContext.CmdMaxAlternates() def 0
 //			logfile.Log(". alt[0]= " + alts.Item(0));
 //			foreach (ISpeechPhraseAlternate alt in alts)
 //				logfile.Log(". . alt= " + alt.PhraseInfo.GetText());

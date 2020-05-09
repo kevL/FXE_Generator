@@ -18,6 +18,8 @@ namespace lipsync_editor
 		: Form
 	{
 		#region fields (static)
+		internal static FxeGeneratorF That;
+
 		const string TITLE = "0x22 - FXE LipSyncer - ";
 
 		internal const string EXT_FXE = "fxe";
@@ -102,13 +104,6 @@ namespace lipsync_editor
 		#endregion fields
 
 
-
-//		// Handle the SpeechRecognized event.
-//		static void recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
-//		{
-//			Console.WriteLine("Recognized text: " + e.Result.Text);
-//		}
-
 		#region cTor
 		/// <summary>
 		/// cTor for GUI interface.
@@ -129,6 +124,8 @@ namespace lipsync_editor
 //#endif
 
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
+
+			That = this;
 
 			FxeData.LoadTrigrams();
 
@@ -341,6 +338,24 @@ namespace lipsync_editor
 			tssl_langids.Text = recognizer.Langids;
 
 			Text = TITLE + recognizer.Id;
+		}
+
+		/// <summary>
+		/// Gets the current recognizer from the Recognizers combobox.
+		/// @note The '_sapi._recognizer' needs to be re-created when the
+		/// Generate button is clicked; if not then (roughly speaking) the
+		/// handle to the wavefile on disk remains open, even though the call
+		/// that closes it appears to be correctly implemented. In short, it's
+		/// really effin' borked - just re-instantiate the recognizer ...
+		/// 
+		/// If you want to see what the bad behavior is like just remark the
+		/// call in SapiLipsync.Start() and use the app a bit. Things quickly go
+		/// south on 2+ generations.
+		/// </summary>
+		/// <returns></returns>
+		internal Recognizer GetRecognizer()
+		{
+			return co_recognizers.SelectedItem as Recognizer;
 		}
 
 		/// <summary>
