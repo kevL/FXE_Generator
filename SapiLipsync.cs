@@ -23,40 +23,35 @@ namespace lipsync_editor
 		#endregion events
 
 
+		#region enums
+		enum Generator
+		{
+			Dictati,
+			Dialogi
+		}
+		#endregion enums
+
+
 		#region fields (static)
 		const string RULE = "Text";
 		#endregion fields (static)
 
 
 		#region fields
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public SpInprocRecognizer _recognizer;
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public SpInProcRecoContext _recoContext;
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public SpFileStream _input;
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public SpVoice _voice;
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public ISpeechRecoGrammar _recoGrammar;
-//		[System.Runtime.InteropServices.ComVisible(true)]
-//		public SpPhoneConverter _phoneConverter;
-
-		SpInprocRecognizer _recognizer;
+		SpInprocRecognizer  _recognizer;
 		SpInProcRecoContext _recoContext;
-		SpFileStream _fs;
-		SpVoice _voice;
-		ISpeechRecoGrammar _recoGrammar;
-		SpPhoneConverter _phoneConverter;
-
+		SpFileStream        _fs;
+		SpVoice             _voice;
+		ISpeechRecoGrammar  _recoGrammar;
+		SpPhoneConverter    _phoneConverter;
 
 		string _text = String.Empty;
+
+		Generator _generato;
 
 		readonly List<OrthographicResult> _ars_def = new List<OrthographicResult>(); // default
 		readonly List<OrthographicResult> _ars_enh = new List<OrthographicResult>(); // enhanced w/ TypedText
 
-		bool _ruler;
-		string _results = String.Empty;
 		ulong _offset;
 		#endregion fields
 
@@ -136,11 +131,8 @@ namespace lipsync_editor
 			_phoneConverter = new SpPhoneConverter();
 			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
 
-//			logfile.Log(". create (SpInprocRecognizer)_recognizer");
-//			_recognizer = new SpInprocRecognizer(); // NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface. good luck!
-//			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
 
-			if (wavefile != String.Empty) // is Console ->
+			if (FxeGeneratorF.isConsole)
 			{
 				_phoneConverter.LanguageId = 1033; // US English (default)
 				Audiopath = AudioConverter.deterAudiopath(wavefile);
@@ -192,7 +184,7 @@ namespace lipsync_editor
 				Environment.Exit(0);
 			}
 
-			_phoneConverter.LanguageId = id;// Int32.Parse(langid);
+			_phoneConverter.LanguageId = id;
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
 
@@ -243,10 +235,6 @@ namespace lipsync_editor
 			logfile.Log("Start()");
 
 			// these don't all need to be cleared ->
-			_ruler = false;
-
-			_results = String.Empty;
-
 			Expected.Clear();
 
 			RatioWords_def =
@@ -287,11 +275,6 @@ namespace lipsync_editor
 			_recoContext.Recognition += rc_Recognition;
 			_recoContext.EndStream   += rc_EndStream;
 
-			// was "2" but MS doc says not needed on its end.
-			// and I don't see grammar id #2 defined on this end either.
-//			_recoGrammar = _recoContext.CreateGrammar();
-//			_recoGrammar.DictationLoad(); //"Pronunciation" <- causes "orthemes expected" to show as phonemes instead of words
-
 /*
 			https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
 			enum SpeechRecoEvents
@@ -323,7 +306,8 @@ namespace lipsync_editor
 			logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
 
 
-			Generate(false);
+			_generato = Generator.Dictati;
+			Generate();
 
 			logfile.Log("Start() DONE");
 			logfile.Log();
@@ -336,16 +320,13 @@ namespace lipsync_editor
 		/// context-free-grammar (ie, Command and Control: a Rule that's based
 		/// on the typed-text).
 		/// </summary>
-		/// <param name="ruler"></param>
-		void Generate(bool ruler)
+		void Generate()
 		{
 			logfile.Log();
-			logfile.Log("Generate()");
+			logfile.Log("Generate() _generato= " + _generato);
 
 			_offset = 0L;
-
-			_ruler = ruler;
-			logfile.Log(". _ruler= " + _ruler);
+//			_recoContext.Pause();
 
 			// kL_NOTE: How absolutely bizarre. DO NOT SET '_ruler=ruler' in the
 			// conditional expression below. It causes an infinite loop ...
@@ -358,62 +339,67 @@ namespace lipsync_editor
 			_recoGrammar = _recoContext.CreateGrammar();
 //			_recoGrammar.DictationLoad(); //"Pronunciation" <- causes "orthemes" to show as phonemes instead of words
 
-			if (!_ruler)
+			switch (_generato)
 			{
-				if (_recoGrammar.Rules.FindRule(RULE) != null)
+				case Generator.Dictati:
+					if (_recoGrammar.Rules.FindRule(RULE) != null)
+					{
+						logfile.Log(". set Rule INACTIVE");
+						_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
+					}
+
+					logfile.Log(". set Dictation ACTIVE");
+					_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
+					break;
+
+				case Generator.Dialogi:
 				{
-					logfile.Log(". set Rule INACTIVE");
-					_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
+					logfile.Log(". set Dictation INACTIVE");
+					_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
+	
+					if (_recoGrammar.Rules.FindRule(RULE) == null)
+					{
+						logfile.Log(". . add \"" + RULE + "\" Rule");
+	
+						ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
+																		 SpeechRuleAttributes.SRATopLevel,
+																		 1);
+						rule.InitialState.AddWordTransition(null,
+															_text,
+															" ",
+															SpeechGrammarWordType.SGLexical,
+															RULE,
+															1);
+						_recoGrammar.Rules.Commit();
+					}
+					logfile.Log(". set Rule ACTIVE");
+					_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
 				}
-
-				logfile.Log(". set Dictation ACTIVE");
-				_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
-			}
-			else
-			{
-				logfile.Log(". set Dictation INACTIVE");
-				_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
-
-				if (_recoGrammar.Rules.FindRule(RULE) == null)
-				{
-					logfile.Log(". . add \"" + RULE + "\" Rule");
-
-					ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
-																	 SpeechRuleAttributes.SRATopLevel,
-//																	(SpeechRuleAttributes)(int)SpeechRuleAttributes.SRATopLevel + (int)SpeechRuleAttributes.SRADynamic,
-																	 1);
-					rule.InitialState.AddWordTransition(null,
-														_text,
-														" ",
-														SpeechGrammarWordType.SGLexical,
-														RULE,
-														1);
-					_recoGrammar.Rules.Commit();
-				}
-				logfile.Log(". set Rule ACTIVE");
-				_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
+				break;
 			}
 //			logfile.Log(". set Dictation ACTIVE");
 //			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
 
-//			if (_input != null)
-//				_input.Close();
+//			if (_fs != null)
+//				_fs.Close();
 
-			logfile.Log(". create (SpFileStream)_input");
+			logfile.Log(". create (SpFileStream)_fs");
 			_fs = new SpFileStream();
-			logfile.Log(". (SpFileStream)_input CREATED");
+			logfile.Log(". (SpFileStream)_fs CREATED");
 
-//			_input.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
+//			_fs.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
 
-			logfile.Log(". Open Audiopath _input for fs");
-			_fs.Open(Audiopath, SpeechStreamFileMode.SSFMOpenForRead, true);
+			logfile.Log(". Open Audiopath _fs");
+			_fs.Open(Audiopath);
 
 //			if (_recognizer.AudioInputStream != null)
 //				_recognizer.AudioInputStream.Seek(0);
 
-			logfile.Log(". assign _input fs to _recognizer.AudioInputStream");
+			logfile.Log(". assign _fs to _recognizer.AudioInputStream");
 			_recognizer.AudioInputStream = _fs;
+
+//			_recoContext.Resume();
 
 			logfile.Log("Generate() DONE");
 			logfile.Log();
@@ -455,7 +441,8 @@ namespace lipsync_editor
 #if DEBUG
 		void rc_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
-			logfile.Log("rc_Hypothesis() _ruler= " + _ruler);
+			logfile.Log("rc_Hypothesis() _generato= " + _generato);
+
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 //			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
 
@@ -502,8 +489,7 @@ namespace lipsync_editor
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log();
-			logfile.Log("rc_FalseRecognition() _ruler= " + _ruler);
-			logfile.Log(". " + Result.PhraseInfo.GetText());
+			logfile.Log("rc_FalseRecognition() _generato= " + _generato);
 
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 //			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
@@ -529,13 +515,12 @@ namespace lipsync_editor
 		void rc_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
 			logfile.Log();
-			logfile.Log("rc_Recognition() _ruler= " + _ruler);
+			logfile.Log("rc_Recognition() _generato= " + _generato);
+			logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 
 //			GenerateResults(Result); ->
-			//logfile.Log(". Result.PhraseInfo VALID");
-			//logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 
 			logfile.Log(". " + Result.PhraseInfo.GetText());
 //			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
@@ -551,9 +536,12 @@ namespace lipsync_editor
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
 
 
-			List<OrthographicResult> ars;
-			if (!_ruler) ars = _ars_def;
-			else         ars = _ars_enh;
+			List<OrthographicResult> ars = null;
+			switch (_generato)
+			{
+				case Generator.Dictati: ars = _ars_def; break;
+				case Generator.Dialogi: ars = _ars_enh; break;
+			}
 
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
 			{
@@ -592,7 +580,7 @@ namespace lipsync_editor
 
 /*		void GenerateResults(ISpeechRecoResult Result)
 		{
-			logfile.Log("GenerateResults() _ruler= " + _ruler);
+			logfile.Log("GenerateResults() _generato= " + _generato);
 			logfile.Log(". _ars_def.Count= " + _ars_def.Count);
 			logfile.Log(". _ars_enh.Count= " + _ars_enh.Count);
 
@@ -628,51 +616,66 @@ namespace lipsync_editor
 		void rc_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
 			logfile.Log();
-			logfile.Log("rc_EndStream() _ruler= " + _ruler);
+			logfile.Log("rc_EndStream() _generato= " + _generato);
 
-			logfile.Log(". set Dictation INACTIVE");
-			_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
-
-			if (_recoGrammar.Rules.FindRule(RULE) != null)
+			switch (_generato)
 			{
-				logfile.Log(". set Rule INACTIVE");
-				_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
-			}
+				case Generator.Dictati:
+					logfile.Log(". set Dictation INACTIVE");
+					_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
+					break;
 
+				case Generator.Dialogi:
+					if (_recoGrammar.Rules.FindRule(RULE) != null)
+					{
+						logfile.Log(". set Rule INACTIVE");
+						_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
+					}
+					break;
+			}
 //			_recoGrammar.DictationUnload();
 
-			logfile.Log(". close _input");
+			logfile.Log(". close _fs");
 			_fs.Close();
+			_fs = null;
 
 
 			Orthography();
 
-			if (!_ruler && _text != String.Empty)
+			switch (_generato)
 			{
-				logfile.Log(". call Generate() w/ ruler");
-				Generate(true);
-			}
-			else
-			{
-				CalculateWordRatio_def();
-				CalculateWordRatio_enh();
-				CalculatePhonRatios();
+				case Generator.Dictati:
+					if (_text != String.Empty)
+					{
+						_generato = Generator.Dialogi;
+						Generate();
+					}
+					else
+						goto case Generator.Dialogi;
+					break;
 
-				logfile.Log(". fire SrStreamEnded event");
+				case Generator.Dialogi:
+					CalculateWordRatio_def();
+					CalculateWordRatio_enh();
+					CalculatePhonRatios();
 
-				if (SrStreamEnded != null)
-					SrStreamEnded(_ars_def, _ars_enh);
+					if (SrStreamEnded != null)
+						SrStreamEnded(_ars_def, _ars_enh);
+					break;
 			}
 		}
 
 		void Orthography()
 		{
 			logfile.Log();
-			logfile.Log("Orthography() _ruler= " + _ruler);
+			logfile.Log("Orthography() _generato= " + _generato);
 
-			List<OrthographicResult> ars;
-			if (!_ruler) ars = _ars_def;
-			else         ars = _ars_enh;
+			List<OrthographicResult> ars = null;
+			switch (_generato)
+			{
+				case Generator.Dictati: ars = _ars_def; break;
+				case Generator.Dialogi: ars = _ars_enh; break;
+			}
 
 			OrthographicResult ar;
 			ulong stop = 0;
