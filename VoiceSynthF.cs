@@ -238,6 +238,7 @@ namespace lipsync_editor
 			this.Controls.Add(this.bar_rat);
 			this.Controls.Add(this.bar_vol);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.Icon = global::FXE_Generator.Properties.Resource.lips;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.MinimumSize = new System.Drawing.Size(340, 225);
