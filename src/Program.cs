@@ -20,7 +20,7 @@ namespace lipsync_editor
 			// The logfile ought appear in the directory with the executable.
 #endif
 
-			if (args.Length == 2)
+			if (args.Length == 2) // TODO: test that.
 			{
 				var fxeGen = new FxeGeneratorF(args[0], args[1]);
 				Application.Run();
