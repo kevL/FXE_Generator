@@ -1,3 +1,4 @@
+#if DEBUG
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -7,16 +8,16 @@ namespace lipsync_editor
 {
 	public static class logfile
 	{
-#if DEBUG
+//#if DEBUG
 		const string Logfile = "logfile.txt";
-#endif
+//#endif
 
 		/// <summary>
 		/// Creates a logfile (overwrites the previous logfile if it exists).
 		/// </summary>
 		public static void CreateLog()
 		{
-#if DEBUG
+//#if DEBUG
 			string pfe = Path.Combine(Application.StartupPath, Logfile);
 //			string pfe = Path.Combine(Application.StartupPath, "logfile" + System.Diagnostics.Process.GetCurrentProcess().Id + ".txt");
 			using (var sw = new StreamWriter(File.Open(pfe,
@@ -24,7 +25,7 @@ namespace lipsync_editor
 													   FileAccess.Write,
 													   FileShare.None)))
 			{}
-#endif
+//#endif
 		}
 
 		/// <summary>
@@ -33,7 +34,7 @@ namespace lipsync_editor
 		/// <param name="line">the line to write</param>
 		public static void Log(string line = "")
 		{
-#if DEBUG
+//#if DEBUG
 			string pfe = Path.Combine(Application.StartupPath, Logfile);
 //			string pfe = Path.Combine(Application.StartupPath, "logfile" + System.Diagnostics.Process.GetCurrentProcess().Id + ".txt");
 			using (var sw = new StreamWriter(File.Open(pfe,
@@ -43,7 +44,8 @@ namespace lipsync_editor
 			{
 				sw.WriteLine(line);
 			}
-#endif
+//#endif
 		}
 	}
 }
+#endif

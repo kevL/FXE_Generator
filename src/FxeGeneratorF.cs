@@ -119,11 +119,10 @@ namespace lipsync_editor
 		/// <param name="headtype"></param>
 		internal FxeGeneratorF(string wavefile, string headtype)
 		{
-//#if DEBUG
+#if DEBUG
 //			LogSpeechRecognitionEngines();
-//#endif
-
 			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
+#endif
 
 			That = this;
 
@@ -131,8 +130,9 @@ namespace lipsync_editor
 
 			if (wavefile == String.Empty) // is GUI interface ->
 			{
+#if DEBUG
 				logfile.Log(". is GUI");
-
+#endif
 				InitializeComponent();
 
 				co_headtype.SelectedIndex = 0;
@@ -232,8 +232,9 @@ namespace lipsync_editor
 			}
 			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
 			{
+#if DEBUG
 				logfile.Log(". is Console");
-
+#endif
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
@@ -366,9 +367,10 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Open(object sender, EventArgs e)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("click_Open()");
-
+#endif
 			using (var ofd = new OpenFileDialog())
 			{
 				ofd.Title  = "Select a WAV or MP3 Audio file";
@@ -380,8 +382,9 @@ namespace lipsync_editor
 				if (ofd.ShowDialog() == DialogResult.OK)
 				{
 					tb_wavefile.Text = _wavefile = ofd.FileName;
+#if DEBUG
 					logfile.Log(". _wavefile= " + _wavefile);
-
+#endif
 					tb_text.Text = LoadTypedTextFile();
 
 					tb_expected    .Text =
@@ -414,8 +417,9 @@ namespace lipsync_editor
 						PopulateDataGrid(_fxedata);
 
 					_sapi.Audiopath = AudioConverter.deterAudiopath(_wavefile);
+#if DEBUG
 					logfile.Log(". _sapi.Audiopath= " + _sapi.Audiopath);
-
+#endif
 					bu_generate .Enabled =
 					bu_play     .Enabled = (_sapi.Audiopath != String.Empty);
 				}
@@ -446,10 +450,11 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Generate(object sender, EventArgs e)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log();
 			logfile.Log("click_Generate() ===============================================================");
-
+#endif
 			Cursor = Cursors.WaitCursor;
 
 			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
@@ -487,9 +492,10 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_CreateFxe(object sender, EventArgs e)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("click_CreateFxe()");
-
+#endif
 			FxeWriter.WriteFile(_wavefile, co_headtype.Text, _fxedata);
 		}
 
@@ -640,17 +646,19 @@ namespace lipsync_editor
 		/// </summary>
 		void OnTtsStreamEnded()
 		{
+#if DEBUG
 			logfile.Log("OnTtsStreamEnded()");
-
+#endif
 			string expected = String.Empty;
 			foreach (var expect in _sapi.Expected)
 			{
 				if (expected != String.Empty) expected += " ";
 				expected += expect;
 			}
+#if DEBUG
 			logfile.Log(". expected= " + expected);
 			logfile.Log();
-
+#endif
 			tb_expected.Text = expected;
 
 			Cursor = Cursors.Default;
@@ -664,9 +672,10 @@ namespace lipsync_editor
 		/// <param name="ars_enh"></param>
 		void OnSrStreamEnded(List<OrthographicResult> ars_def, List<OrthographicResult> ars_enh)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("OnSrStreamEnded() ars_def.Count= " + ars_def.Count + " ars_enh.Count= " + ars_enh.Count);
-
+#endif
 			_ars_def = ars_def;
 			_ars_enh = ars_enh;
 
@@ -736,9 +745,10 @@ namespace lipsync_editor
 		/// <param name="tb_phons"></param>
 		void PrintResults(IList<OrthographicResult> ars, Control tb_words, Control tb_phons)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("PrintResults() ars.Count= " + ars.Count);
-
+#endif
 			string words = String.Empty;
 			string phons = String.Empty;
 
@@ -757,10 +767,10 @@ namespace lipsync_editor
 					}
 				}
 			}
-
+#if DEBUG
 			logfile.Log(". words= " + ((words.Length != 0) ? words : "NO WORDS"));
 			logfile.Log(". phons= " + ((phons.Length != 0) ? phons : "NO PHONS"));
-
+#endif
 			tb_words.Text = words;
 			tb_phons.Text = phons;
 		}
@@ -795,9 +805,10 @@ namespace lipsync_editor
 		/// <param name="ars"></param>
 		void PopulatePhonGrid(List<OrthographicResult> ars)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
-
+#endif
 			int col = -1, row = -1;
 			if (dg_phons.SelectedCells.Count != 0)
 			{
@@ -846,9 +857,10 @@ namespace lipsync_editor
 		/// <param name="fxedata"></param>
 		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("PopulateDataGrid() fxedata.Count= " + fxedata.Count);
-
+#endif
 			int col = -1, row = -1;
 			if (dg_blocks.SelectedCells.Count != 0)
 			{

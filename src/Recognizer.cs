@@ -51,18 +51,21 @@ namespace lipsync_editor
 		/// <param name="tok"></param>
 		internal Recognizer(ISpeechObjectToken tok)
 		{
+#if DEBUG
 			logfile.Log("Recognizer() cTor");
-
+#endif
 			Tok = tok;
 
 			Id = Tok.Id;
 			int pos = Id.LastIndexOf('\\');
 			Id = Id.Substring(pos + 1);
+#if DEBUG
 			logfile.Log(". Id= " + Id);
-
+#endif
 			Label = Tok.GetDescription();
+#if DEBUG
 			logfile.Log(". Label= " + Label);
-
+#endif
 			Langids = "n/a";
 
 			string keyid = @"SOFTWARE\Microsoft\Speech\Recognizers\Tokens\"
@@ -89,7 +92,9 @@ namespace lipsync_editor
 					}
 				}
 			}
+#if DEBUG
 			logfile.Log(". Langids= " + Langids);
+#endif
 		}
 		#endregion cTor
 

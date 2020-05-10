@@ -16,11 +16,13 @@ namespace lipsync_editor
 		#region write methods (static)
 		internal static void WriteFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+#if DEBUG
 			logfile.Log("FxeWriter.WriteFile()");
-
+#endif
 			string file = wavefile.Substring(0, wavefile.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
+#if DEBUG
 			logfile.Log(". file= " + file);
-
+#endif
 			using (FileStream fs = File.Open(file, FileMode.Create))
 			{
 				_bw = new BinaryWriter(fs);

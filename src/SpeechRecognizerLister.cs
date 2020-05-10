@@ -21,30 +21,35 @@ namespace lipsync_editor
 		/// false if user is SoL</returns>
 		internal static bool AddSpeechRecognizers(ComboBox co)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("SpeechRecognizerLister.AddSpeechRecognizers()");
 
 			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+#endif
 			// NOTE: This is your SAPI5.4 SpeechRecognizer (aka SpeechRecognitionEngine) interface.
 			// good luck!
 			var sr_default = new SpInprocRecognizer();
+#if DEBUG
 			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
-
+#endif
 			if (sr_default != null)
 			{
+#if DEBUG
 				logfile.Log();
 				logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);
 				logfile.Log("Recognizer.GetDescription()= " + sr_default.Recognizer.GetDescription());
 				logfile.Log();
-
+#endif
 				ISpeechObjectTokens toks = sr_default.GetRecognizers();
+#if DEBUG
 				foreach (ISpeechObjectToken tok in toks)
 				{
 					logfile.Log(". installed.Id= "               + tok.Id);
 					logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
 				}
 				logfile.Log();
-
+#endif
 
 				int  id_default = -1;
 				bool id_default_found = false;
@@ -74,8 +79,9 @@ namespace lipsync_editor
 					return true;
 				}
 			}
-
+#if DEBUG
 			logfile.Log(". RECOGNIZER NOT FOUND");
+#endif
 			return false;
 		}
 	}

@@ -12,12 +12,13 @@ namespace lipsync_editor
 		[STAThread]
 		static void Main(string[] args)
 		{
+#if DEBUG
 			logfile.CreateLog(); // NOTE: The logfile works in debug-builds only.
 			// To write a line to the logfile:
 			// logfile.Log("what you want to know here");
 			//
 			// The logfile ought appear in the directory with the executable.
-
+#endif
 
 			if (args.Length == 2)
 			{

@@ -11,7 +11,6 @@ namespace lipsync_editor
 	internal delegate void SrStreamEndedEvent(List<OrthographicResult> ars_def,
 											  List<OrthographicResult> ars_enh);
 
-
 	/// <summary>
 	/// Sapi stuff
 	/// </summary>
@@ -108,13 +107,16 @@ namespace lipsync_editor
 		/// <param name="wavefile"></param>
 		internal SapiLipsync(string wavefile)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("SapiLipsync() cTor wavefile= " + wavefile);
 
 			logfile.Log(". create (SpVoice)_voice");
+#endif
 			_voice = new SpVoice();
+#if DEBUG
 			logfile.Log(". (SpVoice)_voice CREATED");
-
+#endif
 			_voice.Volume = 0;
 			_voice.Rate   = 10;
 			_voice.Phoneme   += tts_Phoneme;
@@ -137,20 +139,25 @@ namespace lipsync_editor
 			*/
 			_voice.EventInterests = (SpeechVoiceEvents)(int)SpeechVoiceEvents.SVEEndInputStream
 													 + (int)SpeechVoiceEvents.SVEPhoneme;
+#if DEBUG
 			logfile.Log(". _voice.EventInterests= " + _voice.EventInterests);
+#endif
 
-
+#if DEBUG
 			logfile.Log(". create (SpPhoneConverter)_phoneConverter");
+#endif
 			_phoneConverter = new SpPhoneConverter();
+#if DEBUG
 			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
-
+#endif
 
 			if (FxeGeneratorF.isConsole)
 			{
 				_phoneConverter.LanguageId = 1033; // US English (default)
 				Audiopath = AudioConverter.deterAudiopath(wavefile);
-
+#if DEBUG
 				logfile.Log(". Audiopath= " + Audiopath);
+#endif
 			}
 		}
 		#endregion cTor
@@ -165,17 +172,23 @@ namespace lipsync_editor
 		/// <param name="recognizer"></param>
 		internal void SetRecognizer(Recognizer recognizer)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("SetRecognizer()");
 
 			logfile.Log(". create (SpInprocRecognizer)_recognizer");
+#endif
 			_recognizer = new SpInprocRecognizer();
+#if DEBUG
 			logfile.Log(". (SpInprocRecognizer)_recognizer CREATED");
+#endif
 			_recognizer.Recognizer = (SpObjectToken)recognizer.Tok;
+#if DEBUG
 			logfile.Log(". recognizer.Tok.Id= " + recognizer.Tok.Id);
 			logfile.Log(". recognizer.Description= " + recognizer.Tok.GetDescription());
 
 			logfile.Log(". recognizer.Langids= " + recognizer.Langids);
+#endif
 			string langid = recognizer.Langids;
 			int pos = recognizer.Langids.IndexOf(' ');
 			if (pos != -1)
@@ -198,9 +211,10 @@ namespace lipsync_editor
 			}
 
 			_phoneConverter.LanguageId = id;
+#if DEBUG
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
-
+#endif
 
 			// THESE MAKE ABSOLUTELY NO DIFFERENCE WHATSOEVER TO AUDIOFILE INPUT ->
 			// apparently.
@@ -244,9 +258,10 @@ namespace lipsync_editor
 
 		internal void Start(string text)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("Start()");
-
+#endif
 			// these don't all need to be cleared ->
 			Expected.Clear();
 
@@ -266,27 +281,35 @@ namespace lipsync_editor
 
 
 			_text = text;
+#if DEBUG
 			logfile.Log(". _text= " + _text);
-
+#endif
 			if (_text == String.Empty)
 			{
+#if DEBUG
 				logfile.Log(". . DEFAULT - fire TtsStreamEnded event");
+#endif
 				if (TtsStreamEnded != null)
 					TtsStreamEnded();
 			}
 			else
 			{
+#if DEBUG
 				logfile.Log(". . ENHANCED - call SpVoice.Speak()");
 				logfile.Log(". . _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
-
+#endif
 				_voice.Speak(_text); // -> fire TtsEndStream when the TTS-stream ends.
 				_voice.WaitUntilDone(-1);
 			}
 
 
+#if DEBUG
 			logfile.Log(". create (SpInProcRecoContext)_recoContext");
+#endif
 			_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
+#if DEBUG
 			logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
+#endif
 #if DEBUG
 			_recoContext.FalseRecognition += rc_FalseRecognition;
 			_recoContext.Hypothesis       += rc_Hypothesis;
@@ -322,14 +345,16 @@ namespace lipsync_editor
 //														  + (int)SpeechRecoEvents.SRERecognition
 //														  + (int)SpeechRecoEvents.SREHypothesis
 //														  + (int)SpeechRecoEvents.SREFalseRecognition;
+#if DEBUG
 			logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
-
+#endif
 
 			_generato = Generator.Dictati;
 			Generate();
-
+#if DEBUG
 			logfile.Log("Start() DONE");
 			logfile.Log();
+#endif
 		}
 
 		/// <summary>
@@ -341,13 +366,12 @@ namespace lipsync_editor
 		/// </summary>
 		void Generate()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("Generate() _generato= " + _generato);
-
+#endif
 			_offset = 0L;
 			Confidence_def_count = 0;
-
-//			_recoContext.Pause();
 
 			// kL_NOTE: How absolutely bizarre. DO NOT SET '_ruler=ruler' in the
 			// conditional expression below. It causes an infinite loop ...
@@ -365,23 +389,29 @@ namespace lipsync_editor
 				case Generator.Dictati:
 					if (_recoGrammar.Rules.FindRule(RULE) != null)
 					{
+#if DEBUG
 						logfile.Log(". set Rule INACTIVE");
+#endif
 						_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
 					}
-
+#if DEBUG
 					logfile.Log(". set Dictation ACTIVE");
+#endif
 					_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 					break;
 
 				case Generator.Dialogi:
 				{
+#if DEBUG
 					logfile.Log(". set Dictation INACTIVE");
+#endif
 					_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
-	
+
 					if (_recoGrammar.Rules.FindRule(RULE) == null)
 					{
+#if DEBUG
 						logfile.Log(". . add \"" + RULE + "\" Rule");
-	
+#endif
 						ISpeechGrammarRule rule = _recoGrammar.Rules.Add(RULE,
 																		 SpeechRuleAttributes.SRATopLevel,
 																		 1);
@@ -393,7 +423,9 @@ namespace lipsync_editor
 															1);
 						_recoGrammar.Rules.Commit();
 					}
+#if DEBUG
 					logfile.Log(". set Rule ACTIVE");
+#endif
 					_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
 				}
 				break;
@@ -402,28 +434,27 @@ namespace lipsync_editor
 //			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
 
 
-//			if (_fs != null)
-//				_fs.Close();
-
+#if DEBUG
 			logfile.Log(". create (SpFileStream)_fs");
+#endif
 			_fs = new SpFileStream();
+#if DEBUG
 			logfile.Log(". (SpFileStream)_fs CREATED");
-
+#endif
 //			_fs.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
 
+#if DEBUG
 			logfile.Log(". Open Audiopath _fs");
+#endif
 			_fs.Open(Audiopath);
-
-//			if (_recognizer.AudioInputStream != null)
-//				_recognizer.AudioInputStream.Seek(0);
-
+#if DEBUG
 			logfile.Log(". assign _fs to _recognizer.AudioInputStream");
+#endif
 			_recognizer.AudioInputStream = _fs;
-
-//			_recoContext.Resume();
-
+#if DEBUG
 			logfile.Log("Generate() DONE");
 			logfile.Log();
+#endif
 		}
 		#endregion methods
 
@@ -436,22 +467,28 @@ namespace lipsync_editor
 						 SpeechVisemeFeature Feature,
 						 short CurrentPhoneId)
 		{
+#if DEBUG
 			string ttsinfo = "tts_Phoneme() PhoneId= " + CurrentPhoneId;
+#endif
 			if (CurrentPhoneId > 9)
 			{
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
+#if DEBUG
 				ttsinfo += " phon= " + phon;
-
+#endif
 				Expected.Add(phon);
 			}
+#if DEBUG
 			logfile.Log(ttsinfo);
+#endif
 		}
 
 		void tts_EndStream(int StreamNumber, object StreamPosition)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("tts_EndStream() - fire TtsStreamEnded event");
-
+#endif
 			if (TtsStreamEnded != null)
 				TtsStreamEnded();
 		}
@@ -535,6 +572,7 @@ namespace lipsync_editor
 
 		void rc_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("rc_Recognition() _generato= " + _generato);
 			logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
@@ -555,7 +593,7 @@ namespace lipsync_editor
 			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
 
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
-
+#endif
 
 			List<OrthographicResult> ars = null;
 			switch (_generato)
@@ -566,13 +604,14 @@ namespace lipsync_editor
 
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
 			{
+#if DEBUG
 				logfile.Log(". . word= "             + word.DisplayText);
 				logfile.Log(". . LexicalForm= "      + word.LexicalForm);
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 				var ids = (ushort[])word.Pronunciation;
 				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
-
+#endif
 
 				var ar = new OrthographicResult();
 				ar.Orthography = word.DisplayText;
@@ -602,8 +641,9 @@ namespace lipsync_editor
 				++Confidence_def_count;
 				Confidence_def += Result.PhraseInfo.Rule.EngineConfidence; // TODO: depends on the count of passes before the stream actually ends
 			}
-
+#if DEBUG
 			logfile.Log();
+#endif
 		}
 
 /*		void GenerateResults(ISpeechRecoResult Result)
@@ -643,28 +683,34 @@ namespace lipsync_editor
 
 		void rc_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("rc_EndStream() _generato= " + _generato);
 			//logfile.Log(". StreamReleased= " + StreamReleased);
-
+#endif
 			switch (_generato)
 			{
 				case Generator.Dictati:
+#if DEBUG
 					logfile.Log(". set Dictation INACTIVE");
+#endif
 					_recoGrammar.DictationSetState(SpeechRuleState.SGDSInactive);
 					break;
 
 				case Generator.Dialogi:
 					if (_recoGrammar.Rules.FindRule(RULE) != null)
 					{
+#if DEBUG
 						logfile.Log(". set Rule INACTIVE");
+#endif
 						_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSInactive);
 					}
 					break;
 			}
 //			_recoGrammar.DictationUnload();
-
+#if DEBUG
 			logfile.Log(". close _fs");
+#endif
 			_fs.Close();
 			_fs = null;
 
@@ -699,9 +745,10 @@ namespace lipsync_editor
 
 		void Orthography()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("Orthography() _generato= " + _generato);
-
+#endif
 			List<OrthographicResult> ars = null;
 			switch (_generato)
 			{
@@ -718,7 +765,9 @@ namespace lipsync_editor
 
 				if (ar.Start > stop)
 				{
+#if DEBUG
 					logfile.Log(". . insert silence");
+#endif
 					var silence = new OrthographicResult();
 
 					silence.Orthography = String.Empty;
@@ -738,16 +787,18 @@ namespace lipsync_editor
 
 					++i;
 				}
-
+#if DEBUG
 				logfile.Log(". ar.Orthography= " + ar.Orthography);
+#endif
 				string phons = String.Empty;
 				foreach (var phon in ar.Phons)
 				{
 					if (phons != String.Empty) phons += " ";
 					phons += phon;
 				}
+#if DEBUG
 				logfile.Log(". ar.Phons= " + phons);
-
+#endif
 				AddStops(ar);
 				stop = ar.Stop;
 			}
@@ -796,13 +847,15 @@ namespace lipsync_editor
 
 		void CalculateWordRatio_def()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("CalculateWordRatio_def() _ars_def.Count= " + _ars_def.Count);
-
+#endif
 			// give the default pass an honest chance to match its phonemes to any expected phonemes
 			string text = TypedText.StripTypedText(_text);
+#if DEBUG
 			logfile.Log(". text= " + text);
-
+#endif
 			var words = new List<string>(text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
 			{
@@ -812,7 +865,9 @@ namespace lipsync_editor
 				{
 					if (ar.Orthography != String.Empty)
 					{
+#if DEBUG
 						logfile.Log(". . add " + ar.Orthography);
+#endif
 						words_def.Add(ar.Orthography);
 					}
 				}
@@ -826,19 +881,20 @@ namespace lipsync_editor
 						words_def.Remove(word);
 					}
 				}
-
+#if DEBUG
 				logfile.Log(". " + count_def + " / " + words.Count);
+#endif
 				RatioWords_def = (double)count_def / words.Count;
 			}
 		}
 
 		void CalculateWordRatio_enh()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("CalculateWordRatio()_enh _ars_enh.Count= " + _ars_enh.Count);
-
 			logfile.Log(". _text= " + _text);
-
+#endif
 			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
 			{
@@ -848,7 +904,9 @@ namespace lipsync_editor
 				{
 					if (ar.Orthography != String.Empty)
 					{
+#if DEBUG
 						logfile.Log(". . add " + ar.Orthography);
+#endif
 						words_enh.Add(ar.Orthography);
 					}
 				}
@@ -862,25 +920,27 @@ namespace lipsync_editor
 						words_enh.Remove(word);
 					}
 				}
-
+#if DEBUG
 				logfile.Log(". " + count_enh + " / " + words.Count);
+#endif
 				RatioWords_enh = (double)count_enh / words.Count;
 			}
 		}
 
 		void CalculatePhonRatios()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("CalculatePhonRatios()");
-
+#endif
 			if (Expected.Count != 0)
 			{
 				var phon_def = new List<string>();
 				var phon_enh = new List<string>();
-
+#if DEBUG
 				logfile.Log(". phon_def");
 				if (_ars_def.Count == 0) logfile.Log(". . _ars_def.Count == 0");
-
+#endif
 				foreach (var ar in _ars_def)
 				{
 					if (ar.Orthography != String.Empty)
@@ -893,13 +953,15 @@ namespace lipsync_editor
 							if (phons != String.Empty) phons += " ";
 							phons += phon;
 						}
+#if DEBUG
 						logfile.Log(". . ar.Phons= " + phons);
+#endif
 					}
 				}
-
+#if DEBUG
 				logfile.Log(". phon_enh");
 				if (_ars_enh.Count == 0) logfile.Log(". . _ars_enh.Count == 0");
-
+#endif
 				foreach (var ar in _ars_enh)
 				{
 					if (ar.Orthography != String.Empty)
@@ -912,7 +974,9 @@ namespace lipsync_editor
 							if (phons != String.Empty) phons += " ";
 							phons += phon;
 						}
+#if DEBUG
 						logfile.Log(". . ar.Phons= " + phons);
+#endif
 					}
 				}
 
