@@ -83,7 +83,7 @@ namespace lipsync_editor
 						string[] langids = val.Split(';');
 						foreach (var langid in langids)
 						{
-							if (Langids != String.Empty) Langids += "  ";
+							if (Langids != String.Empty) Langids += " | ";
 							Langids += Int32.Parse(langid, NumberStyles.HexNumber).ToString();
 						}
 					}
