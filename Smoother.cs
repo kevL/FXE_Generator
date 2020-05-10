@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace lipsync_editor
 {
-	static class VisemeSmoother
+	static class Smoother
 	{
 		internal static void Smooth(string vis, List<FxeDataBlock> datablocks)
 		{

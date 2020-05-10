@@ -132,7 +132,7 @@ namespace lipsync_editor
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
 				if (pair.Value.Count > 0)
-					VisemeSmoother.Smooth(pair.Key, pair.Value);
+					Smoother.Smooth(pair.Key, pair.Value);
 			}
 		}
 		#endregion methods (static)
