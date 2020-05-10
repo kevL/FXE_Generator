@@ -733,8 +733,7 @@ namespace lipsync_editor
 					break;
 
 				case Generator.Dialogi:
-					CalculateWordRatio_def();
-					CalculateWordRatio_enh();
+					CalculateWordRatios();
 					CalculatePhonRatios();
 
 					if (SrStreamEnded != null)
@@ -845,11 +844,12 @@ namespace lipsync_editor
 		}
 
 
-		void CalculateWordRatio_def()
+		void CalculateWordRatios()
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("CalculateWordRatio_def() _ars_def.Count= " + _ars_def.Count);
+			logfile.Log("CalculateWordRatios()");
+			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
 #endif
 			// give the default pass an honest chance to match its phonemes to any expected phonemes
 			string text = TypedText.StripTypedText(_text);
@@ -860,7 +860,6 @@ namespace lipsync_editor
 			if (words.Count != 0)
 			{
 				var words_def = new List<string>();
-
 				foreach (var ar in _ars_def)
 				{
 					if (ar.Orthography != String.Empty)
@@ -886,20 +885,16 @@ namespace lipsync_editor
 #endif
 				RatioWords_def = (double)count_def / words.Count;
 			}
-		}
 
-		void CalculateWordRatio_enh()
-		{
+
 #if DEBUG
-			logfile.Log();
-			logfile.Log("CalculateWordRatio()_enh _ars_enh.Count= " + _ars_enh.Count);
+			logfile.Log(" _ars_enh.Count= " + _ars_enh.Count);
 			logfile.Log(". _text= " + _text);
 #endif
-			var words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+			words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
 			{
 				var words_enh = new List<string>();
-
 				foreach (var ar in _ars_enh)
 				{
 					if (ar.Orthography != String.Empty)
