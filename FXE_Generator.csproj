@@ -53,46 +53,49 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OrthographicResult.cs" />
-    <Compile Include="AudioConverter.cs" />
-    <Compile Include="Exergist_VoiceAttack.cs" />
-    <Compile Include="FxeData.cs" />
-    <Compile Include="FxeReader.cs" />
-    <Compile Include="Properties\Resource.Designer.cs">
+    <Compile Include="src\Properties\Resource.Designer.cs">
       <DependentUpon>Resource.resx</DependentUpon>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Include="Recognizer.cs" />
-    <Compile Include="SpeechRecognizerLister.cs" />
-    <Compile Include="StaticData.cs" />
-    <Compile Include="FxeDataBlock.cs" />
-    <Compile Include="FxeGeneratorF.cs" />
-    <Compile Include="FxeGeneratorF.Designer.cs">
+    <Compile Include="src\AudioConverter.cs" />
+    <Compile Include="src\Exergist_VoiceAttack.cs" />
+    <Compile Include="src\FxeData.cs" />
+    <Compile Include="src\FxeDataBlock.cs" />
+    <Compile Include="src\FxeGeneratorF.cs" />
+    <Compile Include="src\FxeGeneratorF.Designer.cs">
       <DependentUpon>FxeGeneratorF.cs</DependentUpon>
     </Compile>
-    <Compile Include="FxeWriter.cs" />
-    <Compile Include="logger.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SapiLipsync.cs" />
-    <Compile Include="TypedText.cs" />
-    <Compile Include="Smoother.cs" />
-    <Compile Include="VoiceSynthF.cs" />
+    <Compile Include="src\FxeReader.cs" />
+    <Compile Include="src\FxeWriter.cs" />
+    <Compile Include="src\logger.cs" />
+    <Compile Include="src\OrthographicResult.cs" />
+    <Compile Include="src\Program.cs" />
+    <Compile Include="src\Recognizer.cs" />
+    <Compile Include="src\SapiLipsync.cs" />
+    <Compile Include="src\Smoother.cs" />
+    <Compile Include="src\SpeechRecognizerLister.cs" />
+    <Compile Include="src\StaticData.cs" />
+    <Compile Include="src\Properties\AssemblyInfo.cs" />
+    <Compile Include="src\TypedText.cs" />
+    <Compile Include="src\VoiceSynthF.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="FxeGeneratorF.resx">
-      <DependentUpon>FxeGeneratorF.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resource.resx">
+    <EmbeddedResource Include="src\Properties\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="VoiceSynthF.resx">
+    <EmbeddedResource Include="src\FxeGeneratorF.resx">
+      <DependentUpon>FxeGeneratorF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\VoiceSynthF.resx">
       <DependentUpon>VoiceSynthF.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="src" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
