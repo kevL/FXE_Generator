@@ -340,15 +340,17 @@ namespace lipsync_editor
 			SREPrivate              = 262144
 			SREAllEvents            = 393215
 */
-//			_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREStreamEnd
 //														  + (int)SpeechRecoEvents.SREPhraseStart
-//														  + (int)SpeechRecoEvents.SRERecognition
-//														  + (int)SpeechRecoEvents.SREHypothesis
-//														  + (int)SpeechRecoEvents.SREFalseRecognition;
 #if DEBUG
+			_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
+														  + (int)SpeechRecoEvents.SREFalseRecognition
+														  + (int)SpeechRecoEvents.SRERecognition
+														  + (int)SpeechRecoEvents.SREStreamEnd;
 			logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
+#else
+			_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SRERecognition
+														  + (int)SpeechRecoEvents.SREStreamEnd;
 #endif
-
 			_generato = Generator.Dictati;
 			Generate();
 #if DEBUG
@@ -474,12 +476,17 @@ namespace lipsync_editor
 			{
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
 #if DEBUG
-				ttsinfo += " phon= " + phon;
+				logfile.Log(ttsinfo + " - " + phon);
+				logfile.Log(". Duration= " + Duration);
+				logfile.Log(". Feature= " + Feature);
+				logfile.Log(". NextPhoneId= " + NextPhoneId);
+				logfile.Log(". nextphone= " + _phoneConverter.IdToPhone(NextPhoneId)); // iffy. Can fail silently.
 #endif
 				Expected.Add(phon);
 			}
 #if DEBUG
-			logfile.Log(ttsinfo);
+			else
+				logfile.Log(ttsinfo);
 #endif
 		}
 
@@ -517,7 +524,7 @@ namespace lipsync_editor
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
+				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
 			}
 
 //			logfile.Log(". get Alternates");
@@ -565,7 +572,7 @@ namespace lipsync_editor
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
+				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
 			}
 		}
 #endif
@@ -610,7 +617,7 @@ namespace lipsync_editor
 				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . id= " + id + " - " + _phoneConverter.IdToPhone(id));
+				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
 #endif
 
 				var ar = new OrthographicResult();
