@@ -332,7 +332,7 @@ namespace lipsync_editor
 			//logfile.Log("OnRecognizerChanged()");
 
 			var recognizer = co_recognizers.SelectedItem as Recognizer;
-			_sapi.SetRecognizer(recognizer);
+//			_sapi.SetRecognizer(recognizer);
 
 			tssl_token  .Text = recognizer.Tok.Id;
 			tssl_langids.Text = recognizer.Langids;
@@ -349,8 +349,9 @@ namespace lipsync_editor
 		/// really effin' borked - just re-instantiate the recognizer ...
 		/// 
 		/// If you want to see what the bad behavior is like just remark the
-		/// call in SapiLipsync.Start() and use the app a bit. Things quickly go
-		/// south on 2+ generations.
+		/// call in SapiLipsync.Start() and unremark the call in
+		/// OnRecognizerChanged() and use the app a bit. Things quickly go south
+		/// on 2+ generations.
 		/// </summary>
 		/// <returns></returns>
 		internal Recognizer GetRecognizer()

@@ -185,7 +185,7 @@ namespace lipsync_editor
 			// are supported by the current Recognizer.
 
 			int id;
-			if (!Int32.TryParse(langid, out id)) // safety.
+			if (!Int32.TryParse(langid, out id)) // safety - unless the token has "n/a" Languages.
 			{
 				MessageBox.Show(" Did not parse a Language from the registry's token."
 								+ Environment.NewLine + Environment.NewLine
