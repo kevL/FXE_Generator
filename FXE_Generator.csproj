@@ -67,6 +67,7 @@
     </Compile>
     <Compile Include="src\FxeReader.cs" />
     <Compile Include="src\FxeWriter.cs" />
+    <Compile Include="src\InfoDialog.cs" />
     <Compile Include="src\logger.cs" />
     <Compile Include="src\OrthographicResult.cs" />
     <Compile Include="src\Program.cs" />
@@ -86,6 +87,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\FxeGeneratorF.resx">
       <DependentUpon>FxeGeneratorF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\InfoDialog.resx">
+      <DependentUpon>InfoDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\VoiceSynthF.resx">
       <DependentUpon>VoiceSynthF.cs</DependentUpon>

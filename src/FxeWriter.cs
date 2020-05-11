@@ -63,23 +63,20 @@ namespace lipsync_editor
 
 			if (!FxeGeneratorF.isConsole)
 			{
-				string info;
-				MessageBoxIcon icon;
-				if (File.Exists(file)) // TODO: That could be a 0-length file -> error.
-				{
-					info = " SUCCESS";
-					icon = MessageBoxIcon.Information;
+				string titl, info;
+				if (File.Exists(file))	// TODO: That could be a 0-length file -> error.
+				{						// test it w/ FxeReader ...
+					titl = "SUCCESS";
+					info = file;
 				}
 				else
 				{
-					info = " FAILED";
-					icon = MessageBoxIcon.Error;
+					titl = "FAILED";
+					info = "write failed.";
 				}
-				MessageBox.Show(info,
-								" Write file",
-								MessageBoxButtons.OK,
-								icon,
-								MessageBoxDefaultButton.Button1);
+
+				var d = new InfoDialog(titl, info);
+				d.ShowDialog();
 			}
 		}
 
