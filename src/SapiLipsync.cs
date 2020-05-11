@@ -170,7 +170,8 @@ namespace lipsync_editor
 		/// @note The LanguageId is used by both TTS and SpeechRecognition.
 		/// </summary>
 		/// <param name="recognizer"></param>
-		internal void SetRecognizer(Recognizer recognizer)
+		/// <returns>true if the language-id is set successfully</returns>
+		bool SetRecognizer(Recognizer recognizer)
 		{
 #if DEBUG
 			logfile.Log();
@@ -198,16 +199,15 @@ namespace lipsync_editor
 			// are supported by the current Recognizer.
 
 			int id;
-			if (!Int32.TryParse(langid, out id)) // safety - unless the token has "n/a" Languages.
+			if (!Int32.TryParse(langid, out id)	// safety - unless the token has "n/a" Languages.
+				|| id < 0)						// TODO: check id against valid SAPI language-ids
 			{
-				MessageBox.Show(" Did not parse a Language from the registry's token."
-								+ Environment.NewLine + Environment.NewLine
-								+ " LipSyncer will bork off.",
+				MessageBox.Show(" Did not parse a Language from the registry's token.",
 								" Error",
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1);
-				Environment.Exit(0); // TODO: this shouldn't exit - it should simply halt generation.
+				return false;
 			}
 
 			_phoneConverter.LanguageId = id;
@@ -251,8 +251,8 @@ namespace lipsync_editor
 //			logfile.Log(". LowConfidenceThreshold= " + val);
 //			logfile.Log();
 
-
 			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
+			return true;
 		}
 
 
@@ -277,86 +277,85 @@ namespace lipsync_editor
 			Confidence_def_count = 0;
 
 
-			SetRecognizer(FxeGeneratorF.That.GetRecognizer()); // <- workaround. See FxeGeneratorF.GetRecognizer()
-
-
-			_text = text;
-#if DEBUG
-			logfile.Log(". _text= " + _text);
-#endif
-			if (_text == String.Empty)
+			if (SetRecognizer(FxeGeneratorF.That.GetRecognizer())) // <- workaround. See FxeGeneratorF.GetRecognizer()
 			{
+				_text = text;
 #if DEBUG
-				logfile.Log(". . DEFAULT - fire TtsStreamEnded event");
+				logfile.Log(". _text= " + _text);
 #endif
-//				if (TtsStreamEnded != null)
-				TtsStreamEnded();
-			}
-			else
-			{
+				if (_text == String.Empty)
+				{
 #if DEBUG
-				logfile.Log(". . ENHANCED - call SpVoice.Speak()");
-				logfile.Log(". . _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
+					logfile.Log(". . DEFAULT - fire TtsStreamEnded event");
 #endif
-				_voice.Speak(_text); // -> fire TtsEndStream when the TTS-stream ends.
-				_voice.WaitUntilDone(-1);
-			}
+//					if (TtsStreamEnded != null)
+					TtsStreamEnded();
+				}
+				else
+				{
+#if DEBUG
+					logfile.Log(". . ENHANCED - call SpVoice.Speak()");
+					logfile.Log(". . _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
+#endif
+					_voice.Speak(_text); // -> fire TtsEndStream when the TTS-stream ends.
+					_voice.WaitUntilDone(-1);
+				}
 
-
 #if DEBUG
-			logfile.Log(". create (SpInProcRecoContext)_recoContext");
+				logfile.Log(". create (SpInProcRecoContext)_recoContext");
 #endif
-			_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
+				_recoContext = (SpInProcRecoContext)_recognizer.CreateRecoContext();
 #if DEBUG
-			logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
+				logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
 #endif
 #if DEBUG
-			_recoContext.FalseRecognition += rc_FalseRecognition;
-			_recoContext.Hypothesis       += rc_Hypothesis;
+				_recoContext.FalseRecognition += rc_FalseRecognition;
+				_recoContext.Hypothesis       += rc_Hypothesis;
 #endif
-			_recoContext.Recognition += rc_Recognition;
-			_recoContext.EndStream   += rc_EndStream;
+				_recoContext.Recognition += rc_Recognition;
+				_recoContext.EndStream   += rc_EndStream;
 
 /*
-			https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
-			enum SpeechRecoEvents
-			SREStreamEnd            = 1
-			SRESoundStart           = 2
-			SRESoundEnd             = 4
-			SREPhraseStart          = 8
-			SRERecognition          = 16
-			SREHypothesis           = 32
-			SREBookmark             = 64
-			SREPropertyNumChange    = 128
-			SREPropertyStringChange = 256
-			SREFalseRecognition     = 512
-			SREInterference         = 1024
-			SRERequestUI            = 2048
-			SREStateChange          = 4096
-			SREAdaptation           = 8192
-			SREStreamStart          = 16384
-			SRERecoOtherContext     = 32768
-			SREAudioLevel           = 65536
-			SREPrivate              = 262144
-			SREAllEvents            = 393215
+				https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
+				enum SpeechRecoEvents
+				SREStreamEnd            = 1
+				SRESoundStart           = 2
+				SRESoundEnd             = 4
+				SREPhraseStart          = 8
+				SRERecognition          = 16
+				SREHypothesis           = 32
+				SREBookmark             = 64
+				SREPropertyNumChange    = 128
+				SREPropertyStringChange = 256
+				SREFalseRecognition     = 512
+				SREInterference         = 1024
+				SRERequestUI            = 2048
+				SREStateChange          = 4096
+				SREAdaptation           = 8192
+				SREStreamStart          = 16384
+				SRERecoOtherContext     = 32768
+				SREAudioLevel           = 65536
+				SREPrivate              = 262144
+				SREAllEvents            = 393215
 */
-//														  + (int)SpeechRecoEvents.SREPhraseStart
+//															  + (int)SpeechRecoEvents.SREPhraseStart
 #if DEBUG
-			_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
-														  + (int)SpeechRecoEvents.SREFalseRecognition
-														  + (int)SpeechRecoEvents.SRERecognition
-														  + (int)SpeechRecoEvents.SREStreamEnd;
-			logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
+				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
+															  + (int)SpeechRecoEvents.SREFalseRecognition
+															  + (int)SpeechRecoEvents.SRERecognition
+															  + (int)SpeechRecoEvents.SREStreamEnd;
+				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
 #else
-			_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SRERecognition
-														  + (int)SpeechRecoEvents.SREStreamEnd;
+				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SRERecognition
+															  + (int)SpeechRecoEvents.SREStreamEnd;
 #endif
-			_generato = Generator.Dictati;
-			Generate();
+				_generato = Generator.Dictati;
+				Generate();
 #if DEBUG
-			logfile.Log("Start() DONE");
-			logfile.Log();
+				logfile.Log("Start() DONE");
+				logfile.Log();
 #endif
+			}
 		}
 
 		/// <summary>
