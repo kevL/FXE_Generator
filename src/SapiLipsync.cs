@@ -207,7 +207,7 @@ namespace lipsync_editor
 								MessageBoxButtons.OK,
 								MessageBoxIcon.Error,
 								MessageBoxDefaultButton.Button1);
-				Environment.Exit(0);
+				Environment.Exit(0); // TODO: this shouldn't exit - it should simply halt generation.
 			}
 
 			_phoneConverter.LanguageId = id;
@@ -289,8 +289,8 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". . DEFAULT - fire TtsStreamEnded event");
 #endif
-				if (TtsStreamEnded != null)
-					TtsStreamEnded();
+//				if (TtsStreamEnded != null)
+				TtsStreamEnded();
 			}
 			else
 			{
@@ -384,7 +384,7 @@ namespace lipsync_editor
 			// was "2" but MS doc says not needed on its end.
 			// and I don't see grammar id #2 defined on this end either.
 			_recoGrammar = _recoContext.CreateGrammar();
-//			_recoGrammar.DictationLoad(); //"Pronunciation" <- causes "orthemes" to show as phonemes instead of words
+			_recoGrammar.DictationLoad(); //"Pronunciation" <- causes "orthemes" to show as phonemes instead of words
 
 			switch (_generato)
 			{
@@ -496,8 +496,8 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("tts_EndStream() - fire TtsStreamEnded event");
 #endif
-			if (TtsStreamEnded != null)
-				TtsStreamEnded();
+//			if (TtsStreamEnded != null)
+			TtsStreamEnded();
 		}
 		#endregion voice handlers
 
@@ -743,8 +743,8 @@ namespace lipsync_editor
 					CalculateWordRatios();
 					CalculatePhonRatios();
 
-					if (SrStreamEnded != null)
-						SrStreamEnded(_ars_def, _ars_enh);
+//					if (SrStreamEnded != null)
+					SrStreamEnded(_ars_def, _ars_enh);
 					break;
 			}
 		}
