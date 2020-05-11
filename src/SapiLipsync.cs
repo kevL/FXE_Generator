@@ -375,16 +375,10 @@ namespace lipsync_editor
 			_offset = 0L;
 			Confidence_def_count = 0;
 
-			// kL_NOTE: How absolutely bizarre. DO NOT SET '_ruler=ruler' in the
-			// conditional expression below. It causes an infinite loop ...
-			// since '_ruler' will NOT be set true despite 'ruler' being true.
-			//
-			// And that, friends, took a day to figure out.
-
 			// was "2" but MS doc says not needed on its end.
 			// and I don't see grammar id #2 defined on this end either.
 			_recoGrammar = _recoContext.CreateGrammar();
-			_recoGrammar.DictationLoad(); //"Pronunciation" <- causes "orthemes" to show as phonemes instead of words
+			_recoGrammar.DictationLoad(); // ("Pronunciation") <- causes orthemes to print as phonemes instead of words
 
 			switch (_generato)
 			{
@@ -432,9 +426,6 @@ namespace lipsync_editor
 				}
 				break;
 			}
-//			logfile.Log(". set Dictation ACTIVE");
-//			_recoGrammar.DictationSetState(SpeechRuleState.SGDSActive);
-
 
 #if DEBUG
 			logfile.Log(". create (SpFileStream)_fs");
@@ -462,6 +453,16 @@ namespace lipsync_editor
 
 
 		#region voice handlers
+		/// <summary>
+		/// Handles the TTS-stream of a typed-text. Adds its phonemes to the
+		/// 'Expected' list.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="Duration"></param>
+		/// <param name="NextPhoneId"></param>
+		/// <param name="Feature"></param>
+		/// <param name="CurrentPhoneId"></param>
 		void tts_Phoneme(int StreamNumber,
 						 object StreamPosition,
 						 int Duration,
@@ -477,10 +478,10 @@ namespace lipsync_editor
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
 #if DEBUG
 				logfile.Log(ttsinfo + " - " + phon);
-				logfile.Log(". Duration= " + Duration);
-				logfile.Log(". Feature= " + Feature);
+				logfile.Log(". Duration= "    + Duration);
+				logfile.Log(". Feature= "     + Feature);
 				logfile.Log(". NextPhoneId= " + NextPhoneId);
-				logfile.Log(". nextphone= " + _phoneConverter.IdToPhone(NextPhoneId)); // iffy. Can fail silently.
+				logfile.Log(". nextphone= "   + _phoneConverter.IdToPhone(NextPhoneId)); // iffy. Can fail silently.
 #endif
 				Expected.Add(phon);
 			}
@@ -490,6 +491,13 @@ namespace lipsync_editor
 #endif
 		}
 
+		/// <summary>
+		/// Handles the TTS-stream of a typed-text finish. Fires the
+		/// 'TtsStreamEnded' event in 'FxeGeneratorF' to print the expected-
+		/// phonemes.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
 		void tts_EndStream(int StreamNumber, object StreamPosition)
 		{
 #if DEBUG
@@ -508,8 +516,7 @@ namespace lipsync_editor
 		{
 			logfile.Log("rc_Hypothesis() _generato= " + _generato);
 
-			logfile.Log(". " + Result.PhraseInfo.GetText());
-//			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
+			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
 			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
@@ -556,8 +563,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("rc_FalseRecognition() _generato= " + _generato);
 
-			logfile.Log(". " + Result.PhraseInfo.GetText());
-//			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
+			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
 			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
@@ -586,10 +592,7 @@ namespace lipsync_editor
 
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 
-//			GenerateResults(Result); ->
-
-			logfile.Log(". " + Result.PhraseInfo.GetText());
-//			logfile.Log(". " + Result.PhraseInfo.GetText(0, -1, true));
+			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". _offset= " + _offset);
 			logfile.Log(". PhraseInfo.AudioSizeTime= " + Result.PhraseInfo.AudioSizeTime);
@@ -652,41 +655,6 @@ namespace lipsync_editor
 			logfile.Log();
 #endif
 		}
-
-/*		void GenerateResults(ISpeechRecoResult Result)
-		{
-			logfile.Log("GenerateResults() _generato= " + _generato);
-			logfile.Log(". _ars_def.Count= " + _ars_def.Count);
-			logfile.Log(". _ars_enh.Count= " + _ars_enh.Count);
-
-			if (Result.PhraseInfo != null)
-			{
-				int wordcount = Result.PhraseInfo.Rule.NumberOfElements;
-				logfile.Log(". . Result.PhraseInfo VALID - wordcount= " + wordcount);
-
-				List<OrthographicResult> ars;
-				if (!_ruler) ars = _ars_def;
-				else         ars = _ars_enh;
-
-				for (int i = 0; i != wordcount; ++i)
-				{
-					var ar = new OrthographicResult();
-
-					ISpeechPhraseElement word = Result.PhraseInfo.Elements.Item(i);
-					ar.Orthography = word.DisplayText;
-
-					string phons = _phoneConverter.IdToPhone((ushort[])word.Pronunciation);
-
-					ar.Phons = new List<string>(phons.Split(' '));
-					ar.Start = (ulong)(word.AudioTimeOffset);						// start of the ortheme/word
-					ar.Stop  = (ulong)(word.AudioTimeOffset + word.AudioSizeTime);	// stop  of the ortheme/word
-
-					ars.Add(ar);
-				}
-			}
-
-			logfile.Log("GenerateResults() DONE");
-		} */
 
 		void rc_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
@@ -858,7 +826,7 @@ namespace lipsync_editor
 			logfile.Log("CalculateWordRatios()");
 			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
 #endif
-			// give the default pass an honest chance to match its phonemes to any expected phonemes
+			// give the default pass an honest chance to match its words to a typed-text
 			string text = TypedText.StripTypedText(_text);
 #if DEBUG
 			logfile.Log(". text= " + text);
