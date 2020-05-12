@@ -202,9 +202,11 @@ namespace lipsync_editor
 			if (!Int32.TryParse(langid, out id)	// safety - unless the token has "n/a" Languages.
 				|| id < 0)						// TODO: check id against valid SAPI language-ids
 			{
-				var d = new InfoDialog("Error", "Did not find a Language in the Recognizer's token.");
-				d.ShowDialog();
-
+				if (!FxeGeneratorF.isConsole)
+				{
+					var d = new InfoDialog("Error", "Did not find a Language in the Recognizer's token.");
+					d.ShowDialog();
+				}
 				return false;
 			}
 
