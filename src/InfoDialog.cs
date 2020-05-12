@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 
@@ -22,11 +23,15 @@ namespace lipsync_editor
 			Text = title;
 			tb_info.Text = info;
 
+			int linecount = Regex.Matches(info, Environment.NewLine).Count + 2;
+
 			Size size = TextRenderer.MeasureText(tb_info.Text, tb_info.Font);
-			ClientSize = new Size(size.Width + 20, ClientSize.Height);
+			ClientSize = new Size(size.Width + 20, linecount * 18);
 
 			tb_info.SelectionStart = tb_info.Text.Length;
 			tb_info.SelectionLength = 0;
+
+			FxeGeneratorF.That.Cursor = Cursors.Default;
 		}
 		#endregion cTor
 

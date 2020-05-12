@@ -137,11 +137,8 @@ namespace lipsync_editor
 
 			if (!FxeGeneratorF.isConsole && fullpath == String.Empty)
 			{
-				MessageBox.Show(" Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.",
-								" Conversion failed",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Error,
-								MessageBoxDefaultButton.Button1);
+				var d = new InfoDialog("Conversion Error", "Failed to convert to 44.1kHz 16-bit Mono PCM-wave format.");
+				d.ShowDialog();
 			}
 
 			return fullpath;

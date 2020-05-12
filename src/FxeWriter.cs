@@ -66,12 +66,12 @@ namespace lipsync_editor
 				string titl, info;
 				if (File.Exists(file))	// TODO: That could be a 0-length file -> error.
 				{						// test it w/ FxeReader ...
-					titl = "SUCCESS";
+					titl = "Write SUCCESS";
 					info = file;
 				}
 				else
 				{
-					titl = "FAILED";
+					titl = "ERROR";
 					info = "write failed.";
 				}
 

@@ -217,16 +217,13 @@ namespace lipsync_editor
 				// and the Titletext
 				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
 				{
-					MessageBox.Show("FATAL"
-									+ Environment.NewLine + Environment.NewLine
-									+ "FXE LipSyncer requires a SAPI 5.4 compliant SpeechRecognitionEngine"
-									+ " installed in Windows' Control Panel | Speech Recognition."
-									+ Environment.NewLine + Environment.NewLine
-									+ "None was found ...",
-									" Error",
-									MessageBoxButtons.OK,
-									MessageBoxIcon.Error,
-									MessageBoxDefaultButton.Button1);
+					string info = "FXE LipSyncer requires a SAPI 5.4 compliant SpeechRecognitionEngine" + Environment.NewLine
+								+ "installed in Windows' Control Panel | Speech Recognition."           + Environment.NewLine
+								+ Environment.NewLine
+								+ "None was found ...";
+					var d = new InfoDialog("FATAL Error", info);
+					d.ShowDialog();
+
 					Environment.Exit(0);
 				}
 			}

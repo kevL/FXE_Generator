@@ -202,11 +202,9 @@ namespace lipsync_editor
 			if (!Int32.TryParse(langid, out id)	// safety - unless the token has "n/a" Languages.
 				|| id < 0)						// TODO: check id against valid SAPI language-ids
 			{
-				MessageBox.Show(" Did not parse a Language from the registry's token.",
-								" Error",
-								MessageBoxButtons.OK,
-								MessageBoxIcon.Error,
-								MessageBoxDefaultButton.Button1);
+				var d = new InfoDialog("Error", "Did not find a Language in the Recognizer's token.");
+				d.ShowDialog();
+
 				return false;
 			}
 
