@@ -61,7 +61,6 @@ namespace lipsync_editor
 			this.ClientSize = new System.Drawing.Size(392, 49);
 			this.Controls.Add(this.tb_info);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.Icon = global::FXE_Generator.Properties.Resource.lips;
 			this.MaximizeBox = false;
 			this.Name = "InfoDialog";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
