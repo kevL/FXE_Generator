@@ -377,7 +377,7 @@ namespace lipsync_editor
 			// was "2" but MS doc says not needed on its end.
 			// and I don't see grammar id #2 defined on this end either.
 			_recoGrammar = _recoContext.CreateGrammar();
-			_recoGrammar.DictationLoad(); // ("Pronunciation") <- causes orthemes to print as phonemes instead of words
+//			_recoGrammar.DictationLoad(); // ("Pronunciation") <- causes orthemes to print as phonemes instead of words
 
 			switch (_generato)
 			{
