@@ -132,5 +132,83 @@ namespace lipsync_editor
 			return str;
 		}
 		#endregion write methods (static)
+
+
+		#region test methods (static)
+		internal static bool TestFile(string file)
+		{
+#if DEBUG
+			_d = false;
+			logfile.Log("FxeReader.TestFile()");
+			logfile.Log(". file= " + file);
+#endif
+			if (File.Exists(file))
+			{
+				using (FileStream fs = File.Open(file, FileMode.Open))
+				{
+					_br = new BinaryReader(fs);
+#if DEBUG
+					if (_d) logfile.Log(". _br.length= " + _br.BaseStream.Length);
+#endif
+					fs.Seek(85, SeekOrigin.Begin);
+					string headtype = GetString();
+					if (headtype == null) return false;
+#if DEBUG
+					logfile.Log(". headtype= " + headtype);
+#endif
+					fs.Seek(34, SeekOrigin.Current);
+					string wavelabel = GetString();
+					if (wavelabel == null) return false;
+#if DEBUG
+					logfile.Log(". wavelabel= " + wavelabel);
+#endif
+					fs.Seek(8, SeekOrigin.Current);
+					short blockcount = _br.ReadInt16();
+#if DEBUG
+					logfile.Log(". blockcount= " + blockcount);
+#endif
+					fs.Seek(8, SeekOrigin.Current);
+
+					for (int i = 0; i != 15; ++i)
+					{
+#if DEBUG
+						if (_d) logfile.Log(". . i= " + i);
+#endif
+						string codeword = GetString();
+						if (codeword == null) return false;
+#if DEBUG
+						if (_d) logfile.Log(". . codeword= " + codeword);
+#endif
+						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
+						short datablockcount = _br.ReadInt16();
+#if DEBUG
+						if (_d) logfile.Log(". . datablockcount= " + datablockcount);
+#endif
+						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+
+						for (short j = 0; j != datablockcount; ++j)
+						{
+#if DEBUG
+							if (_d) logfile.Log(". . . j= " + j);
+#endif
+							float val1 = _br.ReadSingle();
+							float val2 = _br.ReadSingle();
+#if DEBUG
+							if (_d) logfile.Log(". . . val1= " + val1);
+							if (_d) logfile.Log(". . . val2= " + val2);
+#endif
+							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
+
+//							var block = new FxeDataBlock(codeword, val1,val2, 0,0);
+						}
+						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+					}
+					_br.Close();
+				}
+				return true;
+			}
+			return false;
+		}
+		#endregion test methods (static)
 	}
 }

@@ -64,15 +64,15 @@ namespace lipsync_editor
 			if (!FxeGeneratorF.isConsole)
 			{
 				string titl, info;
-				if (File.Exists(file))	// TODO: That could be a 0-length file -> error.
-				{						// test it w/ FxeReader ...
+				if (FxeReader.TestFile(file))
+				{
 					titl = "Write SUCCESS";
 					info = file;
 				}
 				else
 				{
-					titl = "ERROR";
-					info = "write failed.";
+					titl = "Write FAILED";
+					info = "Borked file" + Environment.NewLine + file;
 				}
 
 				var d = new InfoDialog(titl, info);
