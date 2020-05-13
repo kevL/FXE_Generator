@@ -561,8 +561,9 @@ namespace lipsync_editor
 		{
 			logfile.Log();
 			logfile.Log("rc_FalseRecognition() _generato= " + _generato);
+			rc_Recognition(StreamNumber, StreamPosition, SpeechRecognitionType.SRTStandard, Result); // force recognition.
 
-			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
+/*			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
 			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
@@ -578,7 +579,7 @@ namespace lipsync_editor
 				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
 				var ids = (ushort[])word.Pronunciation;
 				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
-			}
+			} */
 		}
 #endif
 
