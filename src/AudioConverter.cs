@@ -54,17 +54,17 @@ namespace lipsync_editor
 
 			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
-				string waveT = Path.Combine(pathT, TMP_WAV);
+				string fileT = Path.Combine(pathT, TMP_WAV);
 				//logfile.Log(". wave= " + waveT);
 
 
-				if (File.Exists(waveT))
-					File.Delete(waveT);
+				if (File.Exists(fileT))
+					File.Delete(fileT);
 
 //				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 //				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
 				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
-				info.Arguments = "--decode \"" + file + "\" \"" + waveT + "\"";
+				info.Arguments = "--decode \"" + file + "\" \"" + fileT + "\"";
 				info.WindowStyle = ProcessWindowStyle.Hidden;
 				info.UseShellExecute = false;
 				info.CreateNoWindow  = true;
@@ -79,7 +79,7 @@ namespace lipsync_editor
 //				if (File.Exists(t))
 //					File.Delete(t);
 
-				file = waveT;
+				file = fileT;
 			}
 
 // http://www.topherlee.com/software/pcm-tut-wavformat.html
