@@ -215,16 +215,17 @@ namespace lipsync_editor
 				// this will set '_sapi._recognizer'
 				// this will set '_sapi._phoneConverter.LanguageId'
 				// and the Titletext
-				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
+//				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
 				{
-					string info = "FXE LipSyncer requires a SAPI 5.4 compliant SpeechRecognitionEngine" + Environment.NewLine
-								+ "installed in Windows' Control Panel | Speech Recognition."           + Environment.NewLine
+					string info = "FXE LipSyncer requires a SAPI 5.4 compliant"            + Environment.NewLine
+								+ "Microsoft Speech Recognizer"                            + Environment.NewLine
+								+ "as displayed in Windoz ControlPanel|SpeechRecognition." + Environment.NewLine
 								+ Environment.NewLine
-								+ "None was found ...";
+								+ "none was found ...";
 					var d = new InfoDialog("FATAL Error", info);
 					d.ShowDialog(this);
 
-					Environment.Exit(0);
+					Environment.Exit(0); // fatality.
 				}
 			}
 			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
