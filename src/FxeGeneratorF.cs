@@ -222,7 +222,7 @@ namespace lipsync_editor
 								+ Environment.NewLine
 								+ "None was found ...";
 					var d = new InfoDialog("FATAL Error", info);
-					d.ShowDialog();
+					d.ShowDialog(this);
 
 					Environment.Exit(0);
 				}

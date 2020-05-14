@@ -76,7 +76,7 @@ namespace lipsync_editor
 				}
 
 				var d = new InfoDialog(titl, info);
-				d.ShowDialog();
+				d.ShowDialog(FxeGeneratorF.That);
 			}
 		}
 
