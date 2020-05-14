@@ -215,7 +215,7 @@ namespace lipsync_editor
 				// this will set '_sapi._recognizer'
 				// this will set '_sapi._phoneConverter.LanguageId'
 				// and the Titletext
-//				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
+				if (!SpeechRecognizerLister.AddSpeechRecognizers(co_recognizers))
 				{
 					string info = "FXE LipSyncer requires a SAPI 5.4 compliant"            + Environment.NewLine
 								+ "Microsoft Speech Recognizer"                            + Environment.NewLine
