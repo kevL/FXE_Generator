@@ -41,6 +41,58 @@ namespace lipsync_editor
 			{
 				default:
 //				case 1033: // This is for English US (en-US)
+
+/*                   Output of PhoneConverter.IdToPhon() ->
+					 0 - 
+					 1 - -
+					 2 - !
+					 3 - &
+					 4 - ,
+					 5 - .
+					 6 - ?
+					 7 - _
+					 8 - 1
+					 9 - 2
+					10 - aa
+					11 - ae
+					12 - ah
+					13 - ao
+					14 - aw
+					15 - ax
+					16 - ay
+					17 - b
+					18 - ch
+					19 - d
+					20 - dh
+					21 - eh
+					22 - er
+					23 - ey
+					24 - f
+					25 - g
+					26 - h
+					27 - ih
+					28 - iy
+					29 - jh
+					30 - k
+					31 - l
+					32 - m
+					33 - n
+					34 - ng
+					35 - ow
+					36 - oy
+					37 - p
+					38 - r
+					39 - s
+					40 - sh
+					41 - t
+					42 - th
+					43 - uh
+					44 - uw
+					45 - v
+					46 - w
+					47 - y
+					48 - z
+					49 - zh */
 					Vices.Add( "x", String.Empty);
 
 					Vices.Add("aa", "Ox");
@@ -68,8 +120,8 @@ namespace lipsync_editor
 					Vices.Add( "m", "Bump");
 					Vices.Add( "n", "New");
 					Vices.Add("ng", "New");
-					Vices.Add("oy", "Oat");
 					Vices.Add("ow", "Oat");
+					Vices.Add("oy", "Oat");
 					Vices.Add( "p", "Bump");
 					Vices.Add( "r", "Roar");
 					Vices.Add( "s", "Size");
@@ -86,10 +138,102 @@ namespace lipsync_editor
 					break;
 
 //				case 2057: // This is for English GB (en-GB)
+
+/*                   Output of PhoneConverter.IdToPhon() ->
+					 0 -
+					 1 - _!
+					 2 - _&
+					 3 - _,
+					 4 - _s */
+
 //					break;
 
-//				case 1036: // This is for French (fr-FR)
-//					break;
+				case 1036: // This is for French (fr-FR)
+
+/*                   Output of PhoneConverter.IdToPhon() ->
+					 0 - 
+					 1 - -
+					 2 - !
+					 3 - &
+					 4 - ,
+					 5 - .
+					 6 - ?
+					 7 - _
+					 8 - 1
+					 9 - ~
+					10 - aa
+					11 - a
+					12 - oh
+					13 - ax
+					14 - b
+					15 - d
+					16 - eh
+					17 - ey
+					18 - f
+					19 - g
+					20 - hy
+					21 - uy
+					22 - iy
+					23 - k
+					24 - l
+					25 - m
+					26 - n
+					27 - ng
+					28 - nj
+					29 - oe
+					30 - eu
+					31 - ow
+					32 - p
+					33 - r
+					34 - s
+					35 - sh
+					36 - t
+					37 - uw
+					38 - v
+					39 - w
+					40 - y
+					41 - z
+					42 - zh */
+					Vices.Add( "x", String.Empty);
+
+					Vices.Add( "~", String.Empty); // wtf
+
+					// kL_note: I based these on the English transcriptions
+					// insofar as is possible but i don't speak French and don't
+					// even have a fr-FR SpeechRecognizer for my OS (win7 pro).
+					Vices.Add("aa", "Ox");
+					Vices.Add( "a", "Ox");		// <- not in English phons
+					Vices.Add("oh", "Oat");		// <- not in English phons
+					Vices.Add("ax", "If");
+					Vices.Add( "b", "Bump");
+					Vices.Add( "d", "Told");
+					Vices.Add("eh", "If");
+					Vices.Add("ey", "If");
+					Vices.Add( "f", "Fave");
+					Vices.Add( "g", "Cage");
+					Vices.Add("hy", "Oat");		// <- not in English phons
+					Vices.Add("uy", "Oat");		// <- not in English phons
+					Vices.Add("iy", "Eat");
+					Vices.Add( "k", "Cage");
+					Vices.Add( "l", "Told");
+					Vices.Add( "m", "Bump");
+					Vices.Add( "n", "New");
+					Vices.Add("ng", "New");
+					Vices.Add("nj", "New");		// <- not in English phons
+					Vices.Add("oe", "Oat");		// <- not in English phons
+					Vices.Add("eu", "Earth");	// <- not in English phons
+					Vices.Add("ow", "Oat");
+					Vices.Add( "p", "Bump");
+					Vices.Add( "r", "Roar");
+					Vices.Add( "s", "Size");
+					Vices.Add("sh", "Church");
+					Vices.Add( "t", "Told");
+					Vices.Add("uw", "Oat");
+					Vices.Add( "v", "Fave");
+					Vices.Add( "w", "Wet");
+					Vices.Add( "z", "Size");
+					Vices.Add("zh", "Church");
+					break;
 			}
 		}
 
