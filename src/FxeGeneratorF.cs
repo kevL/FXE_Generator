@@ -708,23 +708,53 @@ namespace lipsync_editor
 			}
 
 
+#if DEBUG
+			logfile.Log(". call GenerateData() def");
+#endif
 			FxeData.GenerateData(_ars_def, _fxedata_def);
+#if DEBUG
+			logfile.Log(". done GenerateData() def");
+			logfile.Log(". call GenerateData() enh");
+#endif
 			FxeData.GenerateData(_ars_enh, _fxedata_enh);
+#if DEBUG
+			logfile.Log(". done GenerateData() enh");
+#endif
 
+#if DEBUG
+			logfile.Log(". _sapi.RatioPhons_def= " + _sapi.RatioPhons_def);
+			logfile.Log(". _sapi.RatioPhons_enh= " + _sapi.RatioPhons_enh);
+#endif
 			if (tb_text.Text == String.Empty
 				|| _sapi.RatioPhons_def > _sapi.RatioPhons_enh)
 			{
+#if DEBUG
+				logfile.Log(". select DEFault");
+#endif
 				_fxedata = _fxedata_def;
 
 				if (!isConsole)
+				{
+#if DEBUG
+					logfile.Log(". . rb_def");
+#endif
 					rb_def.Checked = true; // fire rb_CheckChanged
+				}
 			}
 			else
 			{
+#if DEBUG
+				logfile.Log(". select ENHanced");
+#endif
 				_fxedata = _fxedata_enh;
 
 				if (!isConsole)
+				{
+#if DEBUG
+					logfile.Log(". . rb_enh");
+#endif
 					rb_enh.Checked = true; // fire rb_CheckChanged
+				}
 			}
 
 
