@@ -301,15 +301,17 @@ namespace lipsync_editor
 		{
 			var an = Assembly.GetExecutingAssembly().GetName();
 			string ver = "ver " + an.Version.Major
-					   + "."    + an.Version.Minor;
+					   + "."    + an.Version.Minor
+					   + "."    + an.Version.Build
+					   + "."    + an.Version.Revision;
 
-			if (an.Version.Build != 0 || an.Version.Revision != 0)
-			{
-				ver += "." + an.Version.Build;
-
-				if (an.Version.Revision != 0)
-					ver += "." + an.Version.Revision;
-			}
+//			if (an.Version.Build != 0 || an.Version.Revision != 0)
+//			{
+//				ver += "." + an.Version.Build;
+//
+//				if (an.Version.Revision != 0)
+//					ver += "." + an.Version.Revision;
+//			}
 #if DEBUG
 			ver += ".d";
 #else
