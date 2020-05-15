@@ -149,11 +149,12 @@ namespace lipsync_editor
 			_phoneConverter = new SpPhoneConverter();
 #if DEBUG
 			logfile.Log(". (SpPhoneConverter)_phoneConverter CREATED");
+//			PrintPhons(1036); // test fr-FR
 #endif
 
 			if (FxeGeneratorF.isConsole)
 			{
-				_phoneConverter.LanguageId = 1033; // US English (default)
+				_phoneConverter.LanguageId = 1033; // EnglishUS (default)
 				Audiopath = AudioConverter.deterAudiopath(wavefile);
 #if DEBUG
 				logfile.Log(". Audiopath= " + Audiopath);
@@ -161,6 +162,21 @@ namespace lipsync_editor
 			}
 		}
 		#endregion cTor
+
+
+//		/// <summary>
+//		/// Get this. I only have EnglishUS and EnglishGB recognizers for my OS
+//		/// (win7 pro) but can output the phonemes of French and perhaps other
+//		/// languages.
+//		/// PS. My EnglishGB phonemes appear to be utterly borked.
+//		/// </summary>
+//		/// <param name="langid"></param>
+//		void PrintPhons(int langid)
+//		{
+//			_phoneConverter.LanguageId = langid;
+//			for (int i = 0; i != 100; ++i)
+//				logfile.Log(i + " - " + _phoneConverter.IdToPhone(i));
+//		}
 
 
 		#region methods
