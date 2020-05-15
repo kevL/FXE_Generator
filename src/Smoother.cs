@@ -6,8 +6,11 @@ namespace lipsync_editor
 {
 	static class Smoother
 	{
-		internal static void Smooth(string vis, List<FxeDataBlock> datablocks)
+		internal static void Apply(KeyValuePair<string, List<FxeDataBlock>> pair)
 		{
+			string vis                    = pair.Key;
+			List<FxeDataBlock> datablocks = pair.Value;
+
 			FxeDataBlock datablock;
 
 			int   id = datablocks[0].Id;

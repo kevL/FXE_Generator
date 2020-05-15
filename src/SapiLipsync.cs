@@ -231,7 +231,10 @@ namespace lipsync_editor
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
 #endif
+			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
 
+			return true;
+		}
 			// THESE MAKE ABSOLUTELY NO DIFFERENCE WHATSOEVER TO AUDIOFILE INPUT ->
 			// apparently.
 			// CFGConfidenceRejectionThreshold
@@ -266,10 +269,6 @@ namespace lipsync_editor
 //			_recognizer.GetPropertyNumber("LowConfidenceThreshold", ref val);
 //			logfile.Log(". LowConfidenceThreshold= " + val);
 //			logfile.Log();
-
-			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
-			return true;
-		}
 
 
 		internal void Start(string text)
@@ -818,6 +817,8 @@ namespace lipsync_editor
 					default:
 						stops.Add(stop += 30);
 						break;
+
+					// TODO: French etc.
 				}
 			}
 

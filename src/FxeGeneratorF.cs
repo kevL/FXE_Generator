@@ -853,17 +853,38 @@ namespace lipsync_editor
 				++j;
 				confidence = ar.Confidence.ToString("F3");
 				level = ar.Level;
+#if DEBUG
+				logfile.Log(". word= " + ar.Orthography);
+#endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
 //					decimal strt = (decimal)ar.GetStart(i) / 10000000;
 //					decimal stop = (decimal)ar.Stops[i]    / 10000000;
 
 					string phon = ar.Phons[i];
+#if DEBUG
+					logfile.Log(". . phon= " + phon);
+#endif
+					string vis;
+					if (StaticData.Vices.ContainsKey(phon)) // fudge ->
+					{
+						vis = StaticData.Vices[phon];
+#if DEBUG
+						logfile.Log(". . . vis= " + vis);
+#endif
+					}
+					else
+					{
+						vis = "INVALID";
+#if DEBUG
+						logfile.Log(". . . vis NOT FOUND in Vices");
+#endif
+					}
 
 					_dt1.Rows.Add(new object[] { j + "." + i,
 												 phon,
 												 (decimal)ar.Stops[i] / 10000000,
-												 StaticData.Vices[phon],
+												 vis, //StaticData.Vices[phon]
 												 confidence,
 												 level });
 					confidence = level = String.Empty;

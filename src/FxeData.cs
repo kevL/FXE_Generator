@@ -34,17 +34,37 @@ namespace lipsync_editor
 		#region methods (static)
 		internal static void GenerateData(List<OrthographicResult> ars, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+#if DEBUG
+			logfile.Log();
+			logfile.Log("FxeData.GenerateData() ars.Count= " + ars.Count);
+#endif
 			var vices = new List<KeyValuePair<string, decimal>>();
 
 			string phon;
 			foreach (OrthographicResult ar in ars)
 			{
+#if DEBUG
+				logfile.Log(". word= " + ar.Orthography);
+#endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
 					if ((phon = ar.Phons[i]) != "x")
 					{
-						decimal stop = (decimal)ar.Stops[i] / 10000000;
-						vices.Add(new KeyValuePair<string, decimal>(StaticData.Vices[phon], stop));
+#if DEBUG
+						logfile.Log(". . phon= " + phon);
+#endif
+						if (StaticData.Vices.ContainsKey(phon)) // fudge ->
+						{
+							string vis = StaticData.Vices[phon];
+#if DEBUG
+							logfile.Log(". . . vis= " + vis);
+#endif
+							decimal stop = (decimal)ar.Stops[i] / 10000000;
+							vices.Add(new KeyValuePair<string, decimal>(vis, stop));
+						}
+#if DEBUG
+						else logfile.Log(". . . vis NOT FOUND in Vices - bypass.");
+#endif
 					}
 				}
 			}
@@ -78,11 +98,14 @@ namespace lipsync_editor
 			blocks.Sort();
 
 			AddDatablocks(blocks, fxedata);
-			Smooth(fxedata);
+			SmoothData(fxedata);
 		}
 
 		static DataVal GetTrigramValue(string c2, string c1, string c0)
 		{
+#if DEBUG
+			logfile.Log("FxeData.GetTrigramValue() c2= " + c2 + " c1= " + c1 + " c0= " + c0);
+#endif
 			DataVal dataval = TriGramTable[c2][c1][c0];
 			if (Math.Abs(dataval.length) < StaticData.EPSILON)
 			{
@@ -99,6 +122,9 @@ namespace lipsync_editor
 
 		static void AddDatablocks(IList<FxeDataBlock> datablocks, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+#if DEBUG
+			logfile.Log("FxeData.AddDatablocks()");
+#endif
 			StaticData.AddCodewords(fxedata);
 
 			FxeDataBlock datablock0 = null;
@@ -127,12 +153,14 @@ namespace lipsync_editor
 			}
 		}
 
-		static void Smooth(Dictionary<string, List<FxeDataBlock>> fxedata)
+		static void SmoothData(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
+#if DEBUG
+			logfile.Log("FxeData.SmoothData()");
+#endif
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
-				if (pair.Value.Count > 0)
-					Smoother.Smooth(pair.Key, pair.Value);
+				if (pair.Value.Count > 0) Smoother.Apply(pair);
 			}
 		}
 		#endregion methods (static)

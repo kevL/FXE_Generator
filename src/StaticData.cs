@@ -33,6 +33,9 @@ namespace lipsync_editor
 		/// <param name="phoneId"></param>
 		internal static void AddVices(int phoneId)
 		{
+#if DEBUG
+			logfile.Log("StaticData.AddVices() phoneId= " + phoneId);
+#endif
 			Vices.Clear();
 
 			// TODO: Vices ought rely on PhoneIds.
@@ -41,7 +44,9 @@ namespace lipsync_editor
 			{
 				default:
 //				case 1033: // This is for English US (en-US)
-
+#if DEBUG
+					logfile.Log(". case: " + phoneId);
+#endif
 /*                   Output of PhoneConverter.IdToPhon() ->
 					 0 - 
 					 1 - -
@@ -149,7 +154,9 @@ namespace lipsync_editor
 //					break;
 
 				case 1036: // This is for French (fr-FR)
-
+#if DEBUG
+					logfile.Log(". case: 1036 fr-FR");
+#endif
 /*                   Output of PhoneConverter.IdToPhon() ->
 					 0 - 
 					 1 - -
