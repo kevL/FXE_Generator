@@ -299,11 +299,11 @@ namespace lipsync_editor
 		/// </summary>
 		void printversion()
 		{
-			var an = Assembly.GetExecutingAssembly().GetName();
-			string ver = "ver " + an.Version.Major
-					   + "."    + an.Version.Minor
-					   + "."    + an.Version.Build
-					   + "."    + an.Version.Revision;
+			var ver = Assembly.GetExecutingAssembly().GetName().Version;
+			string version = "version " + ver.Major
+						   + "."        + ver.Minor
+						   + "."        + ver.Build
+						   + "."        + ver.Revision;
 
 //			if (an.Version.Build != 0 || an.Version.Revision != 0)
 //			{
@@ -313,11 +313,11 @@ namespace lipsync_editor
 //					ver += "." + an.Version.Revision;
 //			}
 #if DEBUG
-			ver += ".d";
+			version += "-d";
 #else
-			ver += ".r";
+			ver += "-r";
 #endif
-			la_version.Text = ver;
+			la_version.Text = version;
 		}
 		#endregion cTor
 

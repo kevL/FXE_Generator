@@ -476,12 +476,12 @@ namespace lipsync_editor
 			// la_version
 			// 
 			this.la_version.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_version.Location = new System.Drawing.Point(380, 61);
+			this.la_version.Location = new System.Drawing.Point(361, 66);
 			this.la_version.Margin = new System.Windows.Forms.Padding(0);
 			this.la_version.Name = "la_version";
-			this.la_version.Size = new System.Drawing.Size(85, 20);
+			this.la_version.Size = new System.Drawing.Size(104, 15);
 			this.la_version.TabIndex = 29;
-			this.la_version.Text = "ver.";
+			this.la_version.Text = "version";
 			this.la_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// co_recognizers
@@ -505,7 +505,7 @@ namespace lipsync_editor
 			this.bu_synth.Name = "bu_synth";
 			this.bu_synth.Size = new System.Drawing.Size(51, 25);
 			this.bu_synth.TabIndex = 4;
-			this.bu_synth.Text = "synth";
+			this.bu_synth.Text = "voice";
 			this.bu_synth.UseVisualStyleBackColor = true;
 			this.bu_synth.Click += new System.EventHandler(this.click_Synth);
 			// 
