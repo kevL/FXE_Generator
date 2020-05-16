@@ -315,7 +315,7 @@ namespace lipsync_editor
 #if DEBUG
 			version += "-d";
 #else
-			ver += "-r";
+			version += "-r";
 #endif
 			la_version.Text = version;
 		}
