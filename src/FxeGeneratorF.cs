@@ -710,18 +710,8 @@ namespace lipsync_editor
 			}
 
 
-#if DEBUG
-			logfile.Log(". call GenerateData() def");
-#endif
 			FxeData.GenerateData(_ars_def, _fxedata_def);
-#if DEBUG
-			logfile.Log(". done GenerateData() def");
-			logfile.Log(". call GenerateData() enh");
-#endif
 			FxeData.GenerateData(_ars_enh, _fxedata_enh);
-#if DEBUG
-			logfile.Log(". done GenerateData() enh");
-#endif
 
 #if DEBUG
 			logfile.Log(". _sapi.RatioPhons_def= " + _sapi.RatioPhons_def);
@@ -864,29 +854,22 @@ namespace lipsync_editor
 //					decimal stop = (decimal)ar.Stops[i]    / 10000000;
 
 					string phon = ar.Phons[i];
-#if DEBUG
-					logfile.Log(". . phon= " + phon);
-#endif
+
 					string vis;
 					if (StaticData.Vices.ContainsKey(phon)) // fudge ->
 					{
 						vis = StaticData.Vices[phon];
-#if DEBUG
-						logfile.Log(". . . vis= " + vis);
-#endif
 					}
 					else
-					{
 						vis = "INVALID";
 #if DEBUG
-						logfile.Log(". . . vis NOT FOUND in Vices");
+					logfile.Log(". . " + phon + " -> "+ vis);
 #endif
-					}
 
 					_dt1.Rows.Add(new object[] { j + "." + i,
 												 phon,
 												 (decimal)ar.Stops[i] / 10000000,
-												 vis, //StaticData.Vices[phon]
+												 vis,
 												 confidence,
 												 level });
 					confidence = level = String.Empty;
