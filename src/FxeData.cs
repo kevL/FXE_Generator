@@ -48,29 +48,34 @@ namespace lipsync_editor
 #endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-					if ((phon = ar.Phons[i]) != "x")
+					if ((phon = ar.Phons[i]) != "x"
+						&& phon != "~") // French dohickey
 					{
 #if DEBUG
-						logfile.Log(". . phon= " + phon);
+						string log = ". . " + phon + " -> ";
 #endif
 						if (StaticData.Vices.ContainsKey(phon)) // fudge ->
 						{
 							string vis = StaticData.Vices[phon];
 #if DEBUG
-							logfile.Log(". . . vis= " + vis);
+							log += vis;
 #endif
 							decimal stop = (decimal)ar.Stops[i] / 10000000;
 							vices.Add(new KeyValuePair<string, decimal>(vis, stop));
 						}
 #if DEBUG
-						else logfile.Log(". . . vis NOT FOUND in Vices - bypass.");
+						else log += "INVALID";
+						logfile.Log(log);
 #endif
 					}
 				}
 			}
 
+#if DEBUG
+			logfile.Log();
+#endif
 
-			var blocks = new List<FxeDataBlock>(); // viseme start, mid, end points
+			var datablocks = new List<FxeDataBlock>(); // viseme start, mid, end points
 
 			DataVal dataval;
 			string c2 = "S";
@@ -87,18 +92,18 @@ namespace lipsync_editor
 				float strt = stop - dataval.length;
 				float midl = strt + dataval.length / 2f;
 
-				blocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
-				blocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
-				blocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
+				datablocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
+				datablocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
+				datablocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
 				++id;
 
 				c2 = c1;
 				c1 = c0;
 			}
-			blocks.Sort();
+			datablocks.Sort();
 
-			AddDatablocks(blocks, fxedata);
-			SmoothData(fxedata);
+			AddDatablocks(datablocks, fxedata);
+			SmoothTransitions(fxedata);
 		}
 
 		static DataVal GetTrigramValue(string c2, string c1, string c0)
@@ -153,10 +158,10 @@ namespace lipsync_editor
 			}
 		}
 
-		static void SmoothData(Dictionary<string, List<FxeDataBlock>> fxedata)
+		static void SmoothTransitions(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
-			logfile.Log("FxeData.SmoothData()");
+			logfile.Log("FxeData.SmoothTransitions()");
 #endif
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
