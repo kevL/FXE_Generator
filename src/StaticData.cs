@@ -238,6 +238,7 @@ namespace lipsync_editor
 					Vices.Add("uw", "Oat");
 					Vices.Add( "v", "Fave");
 					Vices.Add( "w", "Wet");
+					Vices.Add( "y", "Wet");
 					Vices.Add( "z", "Size");
 					Vices.Add("zh", "Church");
 					break;
