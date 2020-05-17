@@ -201,9 +201,9 @@ namespace lipsync_editor
 					40 - y
 					41 - z
 					42 - zh */
-					Vices.Add( "x", String.Empty);
+					Vices.Add( "x", String.Empty); // silence
 
-					Vices.Add( "~", String.Empty); // wtf
+					Vices.Add( "~", String.Empty); // nasal vowel signifier
 
 					// kL_note: I based these on the English transcriptions
 					// insofar as is possible but i don't speak French and don't

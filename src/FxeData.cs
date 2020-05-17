@@ -48,8 +48,8 @@ namespace lipsync_editor
 #endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-					if ((phon = ar.Phons[i]) != "x"
-						&& phon != "~") // French dohickey
+					if ((phon = ar.Phons[i]) != "x"	// silence
+						&& phon != "~")				// nasal vowel signifier
 					{
 #if DEBUG
 						string log = ". . " + phon + " -> ";
