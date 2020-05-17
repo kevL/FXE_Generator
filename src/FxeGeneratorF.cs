@@ -773,12 +773,17 @@ namespace lipsync_editor
 			string phons = String.Empty;
 
 			OrthographicResult ar;
+			string or;
+
 			for (int i = 0; i != ars.Count; ++i)
 			{
-				if (!String.IsNullOrEmpty((ar = ars[i]).Orthography))
+				ar = ars[i];
+				or = ar.Orthography;
+
+				if (or != String.Empty) // safety (i think).
 				{
 					if (words != String.Empty) words += " ";
-					words += ar.Orthography;
+					words += or;
 
 					for (int j = 0; j != ar.Phons.Count; ++j)
 					{
