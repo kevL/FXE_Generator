@@ -937,8 +937,9 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". phon_def");
 				if (_ars_def.Count == 0) logfile.Log(". . _ars_def.Count == 0");
-#endif
+
 				string phons;
+#endif
 
 				foreach (var ar in _ars_def)
 				{
@@ -1032,39 +1033,40 @@ namespace lipsync_editor
 						++count_enh;
 					}
 				}
-/*				string phon0 = null;
-				foreach (string phon in _tts_Expected)
-				{
-					if (phon0 == null)
-					{
-						if (phon_def.Count != 0 && phon_def[0] == phon)
-							++count_def;
 
-						if (phon_enh.Count != 0 && phon_enh[0] == phon)
-							++count_enh;
-					}
-					else
-					{
-						for (int i = 1; i != phon_def.Count; ++i)
-						{
-							if (phon_def[i] == phon && phon_def[i - 1] == phon0)
-							{
-								++count_def;
-								break;
-							}
-						}
-
-						for (int i = 1; i != phon_enh.Count; ++i)
-						{
-							if (phon_enh[i] == phon && phon_enh[i - 1] == phon0)
-							{
-								++count_enh;
-								break;
-							}
-						}
-					}
-					phon0 = phon;
-				} */
+//				string phon0 = null;
+//				foreach (string phon in _tts_Expected)
+//				{
+//					if (phon0 == null)
+//					{
+//						if (phon_def.Count != 0 && phon_def[0] == phon)
+//							++count_def;
+//
+//						if (phon_enh.Count != 0 && phon_enh[0] == phon)
+//							++count_enh;
+//					}
+//					else
+//					{
+//						for (int i = 1; i != phon_def.Count; ++i)
+//						{
+//							if (phon_def[i] == phon && phon_def[i - 1] == phon0)
+//							{
+//								++count_def;
+//								break;
+//							}
+//						}
+//
+//						for (int i = 1; i != phon_enh.Count; ++i)
+//						{
+//							if (phon_enh[i] == phon && phon_enh[i - 1] == phon0)
+//							{
+//								++count_enh;
+//								break;
+//							}
+//						}
+//					}
+//					phon0 = phon;
+//				}
 
 				RatioPhons_def = (double)count_def / (Expected.Count + phon_def.Count / 2);
 				RatioPhons_enh = (double)count_enh / (Expected.Count + phon_enh.Count / 2);
