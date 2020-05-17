@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 
 namespace lipsync_editor
@@ -16,7 +15,7 @@ namespace lipsync_editor
 		internal string Orthography;
 
 		/// <summary>
-		/// The list of phonemes. These are pulled from SAPI.
+		/// The list of phonemes. These are pulled by SAPI.
 		/// </summary>
 		internal List<string> Phons;
 
