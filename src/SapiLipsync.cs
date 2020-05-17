@@ -322,9 +322,9 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
 #endif
-#if DEBUG
-				_recoContext.Hypothesis       += rc_Hypothesis;
-#endif
+//#if DEBUG
+//				_recoContext.Hypothesis       += rc_Hypothesis;
+//#endif
 				_recoContext.FalseRecognition += rc_FalseRecognition;
 				_recoContext.Recognition      += rc_Recognition;
 				_recoContext.EndStream        += rc_EndStream;
@@ -353,17 +353,17 @@ namespace lipsync_editor
 				SREAllEvents            = 393215
 */
 //															  + (int)SpeechRecoEvents.SREPhraseStart
-#if DEBUG
-				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
-															  + (int)SpeechRecoEvents.SREFalseRecognition
-															  + (int)SpeechRecoEvents.SRERecognition
-															  + (int)SpeechRecoEvents.SREStreamEnd;
-				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
-#else
+//#if DEBUG
+//				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
+//															  + (int)SpeechRecoEvents.SREFalseRecognition
+//															  + (int)SpeechRecoEvents.SRERecognition
+//															  + (int)SpeechRecoEvents.SREStreamEnd;
+//				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
+//#else
 				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
 															  + (int)SpeechRecoEvents.SRERecognition
 															  + (int)SpeechRecoEvents.SREStreamEnd;
-#endif
+//#endif
 				_generato = Generator.Dictati;
 				Generate();
 #if DEBUG
@@ -525,6 +525,7 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
+/*
 #if DEBUG
 		void rc_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
@@ -533,17 +534,18 @@ namespace lipsync_editor
 			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
-			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
-			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
 			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
+			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
+			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
 
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
 			{
-				logfile.Log(". . word= "             + word.DisplayText);
-				logfile.Log(". . LexicalForm= "      + word.LexicalForm);
-				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
-				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
+				logfile.Log(". . word= "              + word.DisplayText);
+				logfile.Log(". . LexicalForm= "       + word.LexicalForm);
+				logfile.Log(". . DisplayAttributes= " + word.DisplayAttributes);
+				logfile.Log(". . EngineConfidence= "  + word.EngineConfidence);
+				logfile.Log(". . ActualConfidence= "  + word.ActualConfidence);
 				var ids = (ushort[])word.Pronunciation;
 				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
 			}
@@ -556,23 +558,22 @@ namespace lipsync_editor
 //				logfile.Log(". . alt= " + alt.PhraseInfo.GetText());
 //			logfile.Log(". got Alternates");
 
-/*			if (_ruler)
-			{
-				logfile.Log("Sapi_Lipsync_Hypothesis()");
-
-//				string results = Result.PhraseInfo.GetText(0, -1, true);
-				string results = Result.PhraseInfo.GetText();
-				if (results.Length > _results.Length)
-				{
-					logfile.Log(". replace _results");
-
-					_results = results;
+//			if (_ruler)
+//			{
+//				logfile.Log("Sapi_Lipsync_Hypothesis()");
+//
+//				string results = Result.PhraseInfo.GetText(); // (0, -1, true)
+//				if (results.Length > _results.Length)
+//				{
+//					logfile.Log(". replace _results");
+//
+//					_results = results;
 //					GenerateResults(Result);
-				}
-			} */
+//				}
+//			}
 		}
 #endif
-
+*/
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 #if DEBUG
@@ -611,13 +612,17 @@ namespace lipsync_editor
 
 			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
-			logfile.Log(". _offset= " + _offset);
-			logfile.Log(". PhraseInfo.AudioSizeTime= " + Result.PhraseInfo.AudioSizeTime);
+			logfile.Log(". _offset                       = " + _offset);
+			logfile.Log(". StreamPosition                = " + StreamPosition);
+			logfile.Log(". PhraseInfo.AudioStreamPosition= " + Result.PhraseInfo.AudioStreamPosition);
+			logfile.Log(". PhraseInfo.AudioSizeBytes     = " + Result.PhraseInfo.AudioSizeBytes);
+			logfile.Log(". PhraseInfo.StartTime          = " + Result.PhraseInfo.StartTime);
+			logfile.Log(". PhraseInfo.AudioSizeTime      = " + Result.PhraseInfo.AudioSizeTime);
 
 			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
-			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
-			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
 			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
+			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
+			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
 
 			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
 #endif
@@ -632,23 +637,26 @@ namespace lipsync_editor
 			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
 			{
 #if DEBUG
-				logfile.Log(". . word= "             + word.DisplayText);
-				logfile.Log(". . LexicalForm= "      + word.LexicalForm);
-				logfile.Log(". . ActualConfidence= " + word.ActualConfidence);
-				logfile.Log(". . EngineConfidence= " + word.EngineConfidence);
+				logfile.Log(". . word= "              + word.DisplayText);
+				logfile.Log(". . LexicalForm= "       + word.LexicalForm);
+				logfile.Log(". . DisplayAttributes= " + word.DisplayAttributes);
+				logfile.Log(". . EngineConfidence= "  + word.EngineConfidence);
+				logfile.Log(". . ActualConfidence= "  + word.ActualConfidence);
 				var ids = (ushort[])word.Pronunciation;
 				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
+
+				logfile.Log(". . word.AudioStreamOffset= " + word.AudioStreamOffset);
+				logfile.Log(". . word.AudioSizeBytes   = " + word.AudioSizeBytes);
+				logfile.Log(". . word.AudioTimeOffset  = " + word.AudioTimeOffset);
+				logfile.Log(". . word.AudioSizeTime    = " + word.AudioSizeTime);
 #endif
 
 				var ar = new OrthographicResult();
 				ar.Orthography = word.DisplayText;
 
-				string phons = _phoneConverter.IdToPhone(word.Pronunciation); // NOTE: object is a ushort[]
+				string phons = _phoneConverter.IdToPhone(word.Pronunciation); // NOTE: object is a ushort or ushort[]
 
-				//logfile.Log(". . . word.AudioTimeOffset= " + word.AudioTimeOffset);
-				//logfile.Log(". . . word.AudioSizeTime  = " + word.AudioSizeTime);
-
-				ar.Phons      = new List<string>(phons.Split(' ')); // remove empty entries ...
+				ar.Phons      = new List<string>(phons.Split(' '));
 				ar.Confidence = word.EngineConfidence;
 				ar.Level      = word.ActualConfidence.ToString().Replace("SEC", String.Empty).Replace("Confidence", String.Empty);
 				ar.Start      = _offset + (ulong)(word.AudioTimeOffset);
@@ -666,7 +674,7 @@ namespace lipsync_editor
 			if (_text == String.Empty)
 			{
 				++Confidence_def_count;
-				Confidence_def += Result.PhraseInfo.Rule.EngineConfidence; // TODO: depends on the count of passes before the stream actually ends
+				Confidence_def += Result.PhraseInfo.Rule.EngineConfidence;
 			}
 #if DEBUG
 			logfile.Log();
@@ -842,7 +850,7 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("CalculateWordRatios()");
+			logfile.Log("CalculateRatios_word()");
 			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
 #endif
 			// give the default pass an honest chance to match its words to a typed-text
@@ -861,7 +869,7 @@ namespace lipsync_editor
 #if DEBUG
 						logfile.Log(". . add " + ar.Orthography);
 #endif
-						words_def.Add(ar.Orthography);
+						words_def.Add(ar.Orthography.ToLower());
 					}
 				}
 
@@ -870,14 +878,14 @@ namespace lipsync_editor
 				{
 					if (words_def.Contains(word))
 					{
-						++count_def;
 						words_def.Remove(word);
+						++count_def;
 					}
 				}
 #if DEBUG
 				logfile.Log(". " + count_def + " / " + words.Count);
 #endif
-				RatioWords_def = (double)count_def / words.Count;
+				RatioWords_def = (double)count_def / (words.Count + words_def.Count / 2);
 			}
 
 
@@ -905,14 +913,14 @@ namespace lipsync_editor
 				{
 					if (words_enh.Contains(word))
 					{
-						++count_enh;
 						words_enh.Remove(word);
+						++count_enh;
 					}
 				}
 #if DEBUG
 				logfile.Log(". " + count_enh + " / " + words.Count);
 #endif
-				RatioWords_enh = (double)count_enh / words.Count;
+				RatioWords_enh = (double)count_enh / (words.Count + words_enh.Count / 2);
 			}
 		}
 
@@ -920,7 +928,7 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("CalculatePhonRatios()");
+			logfile.Log("CalculateRatios_phon()");
 #endif
 			if (Expected.Count != 0)
 			{
@@ -930,23 +938,43 @@ namespace lipsync_editor
 				logfile.Log(". phon_def");
 				if (_ars_def.Count == 0) logfile.Log(". . _ars_def.Count == 0");
 #endif
+				string phons;
+
 				foreach (var ar in _ars_def)
 				{
 					if (ar.Orthography != String.Empty)
 					{
-						phon_def.AddRange(ar.Phons);
-
-						string phons = String.Empty;
+//						phon_def.AddRange(ar.Phons);
+						foreach (var phon in ar.Phons)
+						{
+							if (phon != "~") // IGNORE nasal vowel signifier
+								phon_def.Add(phon);
+						}
+//						foreach (var phon in ar.Phons)
+//						{
+//							if ((ushort)_phoneConverter.PhoneToId(phon) > 9) // ignore signifiers
+//								phon_def.Add(phon);
+//						}
+#if DEBUG
+						phons = String.Empty;
 						foreach (var phon in ar.Phons)
 						{
 							if (phons != String.Empty) phons += " ";
 							phons += phon;
 						}
-#if DEBUG
 						logfile.Log(". . ar.Phons= " + phons);
 #endif
 					}
 				}
+#if DEBUG
+				phons = String.Empty;
+				foreach (var phon in phon_def)
+				{
+					if (phons != String.Empty) phons += " ";
+					phons += phon;
+				}
+				logfile.Log(". . phon_def= " + phons);
+#endif
 #if DEBUG
 				logfile.Log(". phon_enh");
 				if (_ars_enh.Count == 0) logfile.Log(". . _ars_enh.Count == 0");
@@ -955,19 +983,37 @@ namespace lipsync_editor
 				{
 					if (ar.Orthography != String.Empty)
 					{
-						phon_enh.AddRange(ar.Phons);
-
-						string phons = String.Empty;
+//						phon_enh.AddRange(ar.Phons);
+						foreach (var phon in ar.Phons)
+						{
+							if (phon != "~") // IGNORE nasal vowel signifier
+								phon_enh.Add(phon);
+						}
+//						foreach (var phon in ar.Phons)
+//						{
+//							if ((ushort)_phoneConverter.PhoneToId(phon) > 9) // ignore signifiers
+//								phon_enh.Add(phon);
+//						}
+#if DEBUG
+						phons = String.Empty;
 						foreach (var phon in ar.Phons)
 						{
 							if (phons != String.Empty) phons += " ";
 							phons += phon;
 						}
-#if DEBUG
 						logfile.Log(". . ar.Phons= " + phons);
 #endif
 					}
 				}
+#if DEBUG
+				phons = String.Empty;
+				foreach (var phon in phon_enh)
+				{
+					if (phons != String.Empty) phons += " ";
+					phons += phon;
+				}
+				logfile.Log(". . phon_enh= " + phons);
+#endif
 
 				int count_def = 0;
 				int count_enh = 0;
@@ -976,14 +1022,14 @@ namespace lipsync_editor
 				{
 					if (phon_def.Contains(phon))
 					{
-						++count_def;
 						phon_def.Remove(phon);
+						++count_def;
 					}
 
 					if (phon_enh.Contains(phon))
 					{
-						++count_enh;
 						phon_enh.Remove(phon);
+						++count_enh;
 					}
 				}
 /*				string phon0 = null;
