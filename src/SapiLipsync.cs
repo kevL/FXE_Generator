@@ -1017,8 +1017,8 @@ namespace lipsync_editor
 					phon0 = phon;
 				} */
 
-				RatioPhons_def = (double)count_def / Expected.Count;
-				RatioPhons_enh = (double)count_enh / Expected.Count;
+				RatioPhons_def = (double)count_def / (Expected.Count + phon_def.Count / 2);
+				RatioPhons_enh = (double)count_enh / (Expected.Count + phon_enh.Count / 2);
 			}
 		}
 		#endregion lipsync handlers
