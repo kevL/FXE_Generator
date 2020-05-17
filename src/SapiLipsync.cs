@@ -323,11 +323,11 @@ namespace lipsync_editor
 				logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
 #endif
 #if DEBUG
-				_recoContext.FalseRecognition += rc_FalseRecognition;
 				_recoContext.Hypothesis       += rc_Hypothesis;
 #endif
-				_recoContext.Recognition += rc_Recognition;
-				_recoContext.EndStream   += rc_EndStream;
+				_recoContext.FalseRecognition += rc_FalseRecognition;
+				_recoContext.Recognition      += rc_Recognition;
+				_recoContext.EndStream        += rc_EndStream;
 
 /*
 				https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
@@ -360,7 +360,8 @@ namespace lipsync_editor
 															  + (int)SpeechRecoEvents.SREStreamEnd;
 				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
 #else
-				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SRERecognition
+				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
+															  + (int)SpeechRecoEvents.SRERecognition
 															  + (int)SpeechRecoEvents.SREStreamEnd;
 #endif
 				_generato = Generator.Dictati;
@@ -570,12 +571,15 @@ namespace lipsync_editor
 				}
 			} */
 		}
+#endif
 
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("rc_FalseRecognition() _generato= " + _generato);
-			rc_Recognition(StreamNumber, StreamPosition, SpeechRecognitionType.SRTStandard, Result); // force recognition.
+#endif
+			rc_Recognition(StreamNumber, StreamPosition, SpeechRecognitionType.SRTStandard, Result); // force Recognition.
 
 /*			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
@@ -595,7 +599,6 @@ namespace lipsync_editor
 				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
 			} */
 		}
-#endif
 
 		void rc_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
@@ -722,8 +725,8 @@ namespace lipsync_editor
 					break;
 
 				case Generator.Dialogi:
-					CalculateWordRatios();
-					CalculatePhonRatios();
+					CalculateRatios_word();
+					CalculateRatios_phon();
 
 //					if (SrStreamEnded != null)
 					SrStreamEnded(_ars_def, _ars_enh);
@@ -835,7 +838,7 @@ namespace lipsync_editor
 		}
 
 
-		void CalculateWordRatios()
+		void CalculateRatios_word()
 		{
 #if DEBUG
 			logfile.Log();
@@ -913,7 +916,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void CalculatePhonRatios()
+		void CalculateRatios_phon()
 		{
 #if DEBUG
 			logfile.Log();
