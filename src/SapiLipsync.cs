@@ -873,7 +873,9 @@ namespace lipsync_editor
 					}
 				}
 
+				int count_def_over = Math.Max(0, words_def.Count - words.Count);
 				int count_def = 0;
+
 				foreach (string word in words)
 				{
 					if (words_def.Contains(word))
@@ -885,7 +887,7 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". " + count_def + " / " + words.Count);
 #endif
-				RatioWords_def = (double)count_def / (words.Count + words_def.Count / 2);
+				RatioWords_def = Math.Max(0.0, (double)(count_def - count_def_over) / words.Count);
 			}
 
 
@@ -908,6 +910,8 @@ namespace lipsync_editor
 					}
 				}
 
+				int count_enh_over = Math.Max(0, words_enh.Count - words.Count);
+
 				int count_enh = 0;
 				foreach (string word in words)
 				{
@@ -920,7 +924,7 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". " + count_enh + " / " + words.Count);
 #endif
-				RatioWords_enh = (double)count_enh / (words.Count + words_enh.Count / 2);
+				RatioWords_enh = Math.Max(0.0, (double)(count_enh - count_enh_over) / words.Count);
 			}
 		}
 
@@ -1016,23 +1020,29 @@ namespace lipsync_editor
 				logfile.Log(". . phon_enh= " + phons);
 #endif
 
+				int count_def_over = Math.Max(0, phon_def.Count - Expected.Count);
+				int count_enh_over = Math.Max(0, phon_enh.Count - Expected.Count);
+
 				int count_def = 0;
 				int count_enh = 0;
 
-				foreach (string phon in Expected)
+				foreach (string expect in Expected)
 				{
-					if (phon_def.Contains(phon))
+					if (phon_def.Contains(expect))
 					{
-						phon_def.Remove(phon);
+						phon_def.Remove(expect);
 						++count_def;
 					}
 
-					if (phon_enh.Contains(phon))
+					if (phon_enh.Contains(expect))
 					{
-						phon_enh.Remove(phon);
+						phon_enh.Remove(expect);
 						++count_enh;
 					}
 				}
+
+				RatioPhons_def = Math.Max(0.0, (double)(count_def - count_def_over) / Expected.Count);
+				RatioPhons_enh = Math.Max(0.0, (double)(count_enh - count_enh_over) / Expected.Count);
 
 //				string phon0 = null;
 //				foreach (string phon in _tts_Expected)
@@ -1067,9 +1077,6 @@ namespace lipsync_editor
 //					}
 //					phon0 = phon;
 //				}
-
-				RatioPhons_def = (double)count_def / (Expected.Count + phon_def.Count / 2);
-				RatioPhons_enh = (double)count_enh / (Expected.Count + phon_enh.Count / 2);
 			}
 		}
 		#endregion lipsync handlers
