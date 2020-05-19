@@ -94,17 +94,10 @@ namespace lipsync_editor
 
 		#region cTor
 		/// <summary>
-		/// cTor for GUI interface.
-		/// </summary>
-		internal SapiLipsync()
-			: this(String.Empty)
-		{}
-
-		/// <summary>
 		/// cTor.
 		/// </summary>
-		/// <param name="wavefile"></param>
-		internal SapiLipsync(string wavefile)
+		/// <param name="wavefile">blank string if '!isConsole'</param>
+		internal SapiLipsync(string wavefile = "")
 		{
 #if DEBUG
 			logfile.Log();
@@ -153,7 +146,7 @@ namespace lipsync_editor
 
 			if (FxeGeneratorF.isConsole)
 			{
-				_phoneConverter.LanguageId = 1033; // EnglishUS (default)
+				_phoneConverter.LanguageId = 1033; // EnglishUS (default) // TODO: <--
 				Audiopath = AudioConverter.deterAudiopath(wavefile);
 #if DEBUG
 				logfile.Log(". Audiopath= " + Audiopath);

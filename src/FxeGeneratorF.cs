@@ -106,18 +106,11 @@ namespace lipsync_editor
 
 		#region cTor
 		/// <summary>
-		/// cTor for GUI interface.
-		/// </summary>
-		internal FxeGeneratorF()
-			: this(String.Empty, String.Empty)
-		{}
-
-		/// <summary>
 		/// cTor.
 		/// </summary>
-		/// <param name="wavefile"></param>
-		/// <param name="headtype"></param>
-		internal FxeGeneratorF(string wavefile, string headtype)
+		/// <param name="wavefile">blank string if '!isConsole'</param>
+		/// <param name="headtype">blank string if '!isConsole'</param>
+		internal FxeGeneratorF(string wavefile = "", string headtype = "")
 		{
 #if DEBUG
 //			LogSpeechRecognitionEngines();
@@ -127,6 +120,8 @@ namespace lipsync_editor
 			That = this;
 
 			FxeData.LoadTrigrams();
+
+			bool fatality = false;
 
 			if (wavefile == String.Empty) // is GUI interface ->
 			{
@@ -225,14 +220,16 @@ namespace lipsync_editor
 					var d = new InfoDialog("FATAL Error", info);
 					d.ShowDialog(this);
 
-					Environment.Exit(0); // fatality.
+					fatality = true;
 				}
 			}
-			else if (headtype != String.Empty && File.Exists(wavefile)) // is CL interface ->
+			else if (headtype != String.Empty && File.Exists(wavefile)) // is Console interface ->
 			{
 #if DEBUG
 				logfile.Log(". is Console");
 #endif
+				// TODO: Fail if a Recognizer is not found.
+
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
@@ -247,7 +244,14 @@ namespace lipsync_editor
 					_sapi.SrStreamEnded += OnSrStreamEnded;
 					_sapi.Start(LoadTypedTextFile());
 				}
+				else
+					fatality = true;
 			}
+			else // is Console error ->
+				fatality = true;
+
+			if (fatality)
+				Environment.Exit(0);
 		}
 
 

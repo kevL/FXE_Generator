@@ -22,7 +22,7 @@ namespace lipsync_editor
 
 			if (args.Length == 2) // TODO: test that.
 			{
-				var fxeGen = new FxeGeneratorF(args[0], args[1]);
+				var kittencuddles = new FxeGeneratorF(args[0], args[1]);
 				Application.Run();
 			}
 			else
