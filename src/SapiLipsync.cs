@@ -223,7 +223,7 @@ namespace lipsync_editor
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
 #endif
-			StaticData.AddVices(_phoneConverter.LanguageId); // TODO: Figure out if different phoneme-sets can actually be implemented.
+			StaticData.AddVices(_phoneConverter.LanguageId);
 
 			return true;
 		}
@@ -404,7 +404,6 @@ namespace lipsync_editor
 					break;
 
 				case Generator.Dialogi:
-				{
 #if DEBUG
 					logfile.Log(". set Dictation INACTIVE");
 #endif
@@ -430,8 +429,12 @@ namespace lipsync_editor
 					logfile.Log(". set Rule ACTIVE");
 #endif
 					_recoGrammar.CmdSetRuleState(RULE, SpeechRuleState.SGDSActive);
-				}
-				break;
+
+
+//					logfile.Log(". max alternates(pre)= " + _recoContext.CmdMaxAlternates);
+//					_recoContext.CmdMaxAlternates = 3;
+//					logfile.Log(". max alternates(pos)= " + _recoContext.CmdMaxAlternates);
+					break;
 			}
 
 #if DEBUG
@@ -550,24 +553,10 @@ namespace lipsync_editor
 //			logfile.Log(". get Alternates");
 //			ISpeechPhraseAlternates alts = Result.Alternates(3);	// DOES NOT WORK AS EXPECTED.
 //			logfile.Log(". alts.Count= " + alts.Count);				// NOTE: for CC only - SpeechRecoContext.CmdMaxAlternates() def 0
-//			logfile.Log(". alt[0]= " + alts.Item(0));
+//			logfile.Log(". alt[0]= " + alts.Item(0));				// This fails silently regardless of CmdMaxAlternates value and/or isCC.
 //			foreach (ISpeechPhraseAlternate alt in alts)
 //				logfile.Log(". . alt= " + alt.PhraseInfo.GetText());
 //			logfile.Log(". got Alternates");
-
-//			if (_ruler)
-//			{
-//				logfile.Log("Sapi_Lipsync_Hypothesis()");
-//
-//				string results = Result.PhraseInfo.GetText(); // (0, -1, true)
-//				if (results.Length > _results.Length)
-//				{
-//					logfile.Log(". replace _results");
-//
-//					_results = results;
-//					GenerateResults(Result);
-//				}
-//			}
 		}
 #endif
 */
@@ -603,6 +592,7 @@ namespace lipsync_editor
 #if DEBUG
 			logfile.Log();
 			logfile.Log("rc_Recognition() _generato= " + _generato);
+			logfile.Log(". StreamNumber= " + StreamNumber);
 			logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
@@ -753,7 +743,7 @@ namespace lipsync_editor
 			}
 
 			OrthographicResult ar;
-			ulong stop = 0;
+			ulong stop = 0L;
 
 			for (int i = 0; i != ars.Count; ++i)
 			{
