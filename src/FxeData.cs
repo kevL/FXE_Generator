@@ -49,7 +49,7 @@ namespace lipsync_editor
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
 					if ((phon = ar.Phons[i]) != "x"	// silence
-						&& phon != "~")				// nasal vowel signifier
+						&& phon != "~")				// nasalvowel signifier
 					{
 #if DEBUG
 						string log = ". . " + phon + " -> ";

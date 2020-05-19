@@ -487,21 +487,25 @@ namespace lipsync_editor
 #if DEBUG
 			string ttsinfo = "tts_Phoneme() PhoneId= " + CurrentPhoneId;
 #endif
-			if (CurrentPhoneId > 9)
+			if (CurrentPhoneId > 9) // NOTE: This causes signifiers like silence #7 "_" and nasalvowel #9 "~" to bypass.
 			{
 				string phon = _phoneConverter.IdToPhone(CurrentPhoneId);
 #if DEBUG
 				logfile.Log(ttsinfo + " - " + phon);
-				logfile.Log(". Duration= "    + Duration);
-				logfile.Log(". Feature= "     + Feature);
-				logfile.Log(". NextPhoneId= " + NextPhoneId);
-				logfile.Log(". nextphone= "   + _phoneConverter.IdToPhone(NextPhoneId)); // iffy. Can fail silently.
+				logfile.Log(". ADD to Expected");
 #endif
 				Expected.Add(phon);
 			}
 #if DEBUG
 			else
-				logfile.Log(ttsinfo);
+			{
+				logfile.Log(ttsinfo + " - " + _phoneConverter.IdToPhone(CurrentPhoneId));
+				logfile.Log(". BYPASS Expected");
+			}
+			logfile.Log(". Duration= "    + Duration);
+			logfile.Log(". Feature= "     + Feature);
+			logfile.Log(". NextPhoneId= " + NextPhoneId);
+			logfile.Log(". nextphone= "   + _phoneConverter.IdToPhone(NextPhoneId)); // iffy. Can fail silently.
 #endif
 		}
 
@@ -851,11 +855,11 @@ namespace lipsync_editor
 #if DEBUG
 			logfile.Log();
 			logfile.Log("CalculateRatios_word()");
-			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
 #endif
 			// give the default pass an honest chance to match its words to a typed-text
 			string text = TypedText.StripTypedText(_text);
 #if DEBUG
+			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
 			logfile.Log(". text= " + text);
 #endif
 			var words = new List<string>(text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
@@ -952,7 +956,7 @@ namespace lipsync_editor
 //						phon_def.AddRange(ar.Phons);
 						foreach (var phon in ar.Phons)
 						{
-							if (phon != "~") // IGNORE nasal vowel signifier
+							if (phon != "~") // IGNORE nasalvowel signifier
 								phon_def.Add(phon);
 						}
 //						foreach (var phon in ar.Phons)
@@ -991,7 +995,7 @@ namespace lipsync_editor
 //						phon_enh.AddRange(ar.Phons);
 						foreach (var phon in ar.Phons)
 						{
-							if (phon != "~") // IGNORE nasal vowel signifier
+							if (phon != "~") // IGNORE nasalvowel signifier
 								phon_enh.Add(phon);
 						}
 //						foreach (var phon in ar.Phons)
