@@ -315,13 +315,17 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". (SpInProcRecoContext)_recoContext CREATED");
 #endif
-//#if DEBUG
-//				_recoContext.Hypothesis       += rc_Hypothesis;
-//#endif
 				_recoContext.FalseRecognition += rc_FalseRecognition;
 				_recoContext.Recognition      += rc_Recognition;
 				_recoContext.EndStream        += rc_EndStream;
-
+#if DEBUG
+				_recoContext.Hypothesis       += rc_Hypothesis;
+				_recoContext.StartStream      += rc_StartStream;
+				_recoContext.SoundStart       += rc_SoundStart;
+				_recoContext.SoundEnd         += rc_SoundEnd;
+				_recoContext.PhraseStart      += rc_PhraseStart;
+				_recoContext.Interference     += rc_Interference;
+#endif
 /*
 				https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
 				enum SpeechRecoEvents
@@ -353,9 +357,9 @@ namespace lipsync_editor
 //															  + (int)SpeechRecoEvents.SREStreamEnd;
 //				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
 //#else
-				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
-															  + (int)SpeechRecoEvents.SRERecognition
-															  + (int)SpeechRecoEvents.SREStreamEnd;
+//				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
+//															  + (int)SpeechRecoEvents.SRERecognition
+//															  + (int)SpeechRecoEvents.SREStreamEnd;
 //#endif
 				_generato = Generator.Dictati;
 				Generate();
@@ -365,6 +369,33 @@ namespace lipsync_editor
 #endif
 			}
 		}
+
+#if DEBUG
+		void rc_StartStream(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_StartStream() StreamPosition= " + StreamPosition);
+		}
+
+		void rc_SoundStart(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_SoundStart() StreamPosition= " + StreamPosition);
+		}
+		void rc_SoundEnd(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_SoundEnd() StreamPosition= " + StreamPosition);
+		}
+
+		void rc_PhraseStart(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_PhraseStart() StreamPosition= " + StreamPosition);
+		}
+
+		void rc_Interference(int StreamNumber, object StreamPosition, SpeechInterference Interference)
+		{
+			logfile.Log("rc_Interference() StreamPosition= " + StreamPosition + " Interference= " + Interference);
+		}
+#endif
+
 
 		/// <summary>
 		/// Generate() will be called only once if there is no typed-text; it
@@ -379,7 +410,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("Generate() _generato= " + _generato);
 #endif
-			_offset = 0L;
+			_offset = 0uL;
 			Confidence_def_count = 0;
 
 			// was "2" but MS doc says not needed on its end.
@@ -525,30 +556,29 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
-/*
+
 #if DEBUG
 		void rc_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log("rc_Hypothesis() _generato= " + _generato);
-
 			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
-			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
-			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
-			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
-			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
-
-			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
-			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
-			{
-				logfile.Log(". . word= "              + word.DisplayText);
-				logfile.Log(". . LexicalForm= "       + word.LexicalForm);
-				logfile.Log(". . DisplayAttributes= " + word.DisplayAttributes);
-				logfile.Log(". . EngineConfidence= "  + word.EngineConfidence);
-				logfile.Log(". . ActualConfidence= "  + word.ActualConfidence);
-				var ids = (ushort[])word.Pronunciation;
-				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
-			}
+//			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
+//			logfile.Log(". Result.PhraseInfo.Rule.Id= "               + Result.PhraseInfo.Rule.Id);
+//			logfile.Log(". Result.PhraseInfo.Rule.EngineConfidence= " + Result.PhraseInfo.Rule.EngineConfidence);
+//			logfile.Log(". Result.PhraseInfo.Rule.Confidence= "       + Result.PhraseInfo.Rule.Confidence);
+//
+//			logfile.Log(". wordcount= " + Result.PhraseInfo.Elements.Count);
+//			foreach (ISpeechPhraseElement word in Result.PhraseInfo.Elements)
+//			{
+//				logfile.Log(". . word= "              + word.DisplayText);
+//				logfile.Log(". . LexicalForm= "       + word.LexicalForm);
+//				logfile.Log(". . DisplayAttributes= " + word.DisplayAttributes);
+//				logfile.Log(". . EngineConfidence= "  + word.EngineConfidence);
+//				logfile.Log(". . ActualConfidence= "  + word.ActualConfidence);
+//				var ids = (ushort[])word.Pronunciation;
+//				foreach (var id in ids) logfile.Log(". . . PhoneId= " + id + " - " + _phoneConverter.IdToPhone(id));
+//			}
 
 //			logfile.Log(". get Alternates");
 //			ISpeechPhraseAlternates alts = Result.Alternates(3);	// DOES NOT WORK AS EXPECTED.
@@ -559,7 +589,7 @@ namespace lipsync_editor
 //			logfile.Log(". got Alternates");
 		}
 #endif
-*/
+
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 #if DEBUG
@@ -587,6 +617,16 @@ namespace lipsync_editor
 			} */
 		}
 
+//		ulong GetAudioStreamPositionSeconds(string pos)
+//		{
+//			ulong sec = UInt64.Parse(pos);
+//
+//			sec /= 2uL;		// bytes per sample (16-bit)
+//			sec /= 44100;	// samples per second
+//
+//			return sec;
+//		}
+
 		void rc_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
 #if DEBUG
@@ -602,6 +642,8 @@ namespace lipsync_editor
 			logfile.Log(". _offset                       = " + _offset);
 			logfile.Log(". StreamPosition                = " + StreamPosition);
 			logfile.Log(". PhraseInfo.AudioStreamPosition= " + Result.PhraseInfo.AudioStreamPosition);
+//			logfile.Log(". . sec= " + GetAudioStreamPositionSeconds(Result.PhraseInfo.AudioStreamPosition.ToString()));
+
 			logfile.Log(". PhraseInfo.AudioSizeBytes     = " + Result.PhraseInfo.AudioSizeBytes);
 			logfile.Log(". PhraseInfo.StartTime          = " + Result.PhraseInfo.StartTime);
 			logfile.Log(". PhraseInfo.AudioSizeTime      = " + Result.PhraseInfo.AudioSizeTime);
@@ -656,7 +698,7 @@ namespace lipsync_editor
 			// completed, which means it's going to fire again but the AudioTimeOffsets
 			// will be completely borked obviously. So add this time-offset to any
 			// second or subsequent Recognition event that happens on this stream
-			_offset += (ulong)Result.PhraseInfo.AudioSizeTime;
+			_offset += (ulong)Result.PhraseInfo.AudioSizeTime; // TODO. is not accurate.
 
 			if (_text == String.Empty)
 			{
@@ -743,7 +785,7 @@ namespace lipsync_editor
 			}
 
 			OrthographicResult ar;
-			ulong stop = 0L;
+			ulong stop = 0uL;
 
 			for (int i = 0; i != ars.Count; ++i)
 			{
