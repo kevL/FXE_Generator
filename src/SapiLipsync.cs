@@ -24,26 +24,26 @@ namespace lipsync_editor
 		#region enums
 		enum Generator
 		{
-			Dictati,
-			Dialogi
+			Dictati, // 1st pass over the audiostream (use dictation grammar)
+			Dialogi  // 2nd pass over the audiostream (use dialog-rule derived from any TTS typed-text)
 		}
 		#endregion enums
 
 
 		#region fields (static)
-		const string RULE = "Text";
+		const string RULE = "Text"; // identifier used by the grammar of TTS typed-text
 		#endregion fields (static)
 
 
 		#region fields
-		SpInprocRecognizer  _recognizer;
-		SpInProcRecoContext _recoContext;
-		SpFileStream        _fs;
-		SpVoice             _voice;
-		ISpeechRecoGrammar  _recoGrammar;
-		SpPhoneConverter    _phoneConverter;
+		SpInprocRecognizer  _recognizer;		// basic SAPI object
+		SpInProcRecoContext _recoContext;		// this does the heavy work here; is tied to the recognizer
+		SpFileStream        _fs;				// the audiofile stream to analyze
+		SpVoice             _voice;				// TTS object for typed-text
+		ISpeechRecoGrammar  _recoGrammar;		// the current grammar for '_recoContext'
+		SpPhoneConverter    _phoneConverter;	// object that converts phone-ids (integers) to phonemes (string-literals) and vice versa
 
-		string _text = String.Empty;
+		string _text = String.Empty; // the typed-text sanitized
 
 		Generator _generato;
 
@@ -370,33 +370,6 @@ namespace lipsync_editor
 			}
 		}
 
-#if DEBUG
-		void rc_StartStream(int StreamNumber, object StreamPosition)
-		{
-			logfile.Log("rc_StartStream() StreamPosition= " + StreamPosition);
-		}
-
-		void rc_SoundStart(int StreamNumber, object StreamPosition)
-		{
-			logfile.Log("rc_SoundStart() StreamPosition= " + StreamPosition);
-		}
-		void rc_SoundEnd(int StreamNumber, object StreamPosition)
-		{
-			logfile.Log("rc_SoundEnd() StreamPosition= " + StreamPosition);
-		}
-
-		void rc_PhraseStart(int StreamNumber, object StreamPosition)
-		{
-			logfile.Log("rc_PhraseStart() StreamPosition= " + StreamPosition);
-		}
-
-		void rc_Interference(int StreamNumber, object StreamPosition, SpeechInterference Interference)
-		{
-			logfile.Log("rc_Interference() StreamPosition= " + StreamPosition + " Interference= " + Interference);
-		}
-#endif
-
-
 		/// <summary>
 		/// Generate() will be called only once if there is no typed-text; it
 		/// should use dictation. Generate() will be called a second time if
@@ -556,8 +529,66 @@ namespace lipsync_editor
 
 
 		#region lipsync handlers
-
 #if DEBUG
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.StartStream' event.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		void rc_StartStream(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_StartStream() StreamPosition= " + StreamPosition);
+		}
+
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.SoundStart' event.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		void rc_SoundStart(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_SoundStart() StreamPosition= " + StreamPosition);
+		}
+
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.SoundEnd' event.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		void rc_SoundEnd(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_SoundEnd() StreamPosition= " + StreamPosition);
+		}
+
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.PhraseStart' event.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		void rc_PhraseStart(int StreamNumber, object StreamPosition)
+		{
+			logfile.Log("rc_PhraseStart() StreamPosition= " + StreamPosition);
+		}
+
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.Interference' event.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="Interference"></param>
+		void rc_Interference(int StreamNumber, object StreamPosition, SpeechInterference Interference)
+		{
+			logfile.Log("rc_Interference() StreamPosition= " + StreamPosition + " Interference= " + Interference);
+		}
+
+
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.Hypothesis' event. Fires each time the
+		/// engine performs a hypothesis.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="Result"></param>
 		void rc_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 			logfile.Log("rc_Hypothesis() _generato= " + _generato);
@@ -590,6 +621,15 @@ namespace lipsync_editor
 		}
 #endif
 
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.FalseRecognition' event. Fires rarely,
+		/// supposedly if engine-confidence-level is too low or perhaps when a
+		/// word or phrase is dropped due to interference - but the event is
+		/// unfortunately not that consistent in my experience.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="Result"></param>
 		void rc_FalseRecognition(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
 #if DEBUG
@@ -627,6 +667,19 @@ namespace lipsync_editor
 //			return sec;
 //		}
 
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.Recognition' event. Fires as the final
+		/// hypothesis for a phrase. Each word will be added to a list of
+		/// 'OrthographicResult's for the phrase.
+		/// WARNING: This can fire 2+ on the same file-stream causing the engine
+		/// to drop/reset important variables like 'PhraseInfo.StartTime' and
+		/// 'word.AudioStreamOffset' and 'word.AudioTimeOffset'
+		/// TODO: a fact that is exceedingly annoying to try to compensate for.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="RecognitionType"></param>
+		/// <param name="Result"></param>
 		void rc_Recognition(int StreamNumber, object StreamPosition, SpeechRecognitionType RecognitionType, ISpeechRecoResult Result)
 		{
 #if DEBUG
@@ -710,6 +763,16 @@ namespace lipsync_editor
 #endif
 		}
 
+		/// <summary>
+		/// Handles 'SpInProcRecoContext.EndStream' event. Fires after
+		/// Recognition(s) completes itself, closes the filestream, and either
+		/// (a) calls Generate() for a 2nd pass or (b) calculates word/phoneme
+		/// ratios and fires SrStreamEnded -> FxeGenerator.OnSrStreamEnded()
+		/// to print results and generate FXE data/datablocks.
+		/// </summary>
+		/// <param name="StreamNumber"></param>
+		/// <param name="StreamPosition"></param>
+		/// <param name="StreamReleased"></param>
 		void rc_EndStream(int StreamNumber, object StreamPosition, bool StreamReleased)
 		{
 #if DEBUG
