@@ -38,9 +38,9 @@ namespace lipsync_editor
 		#region fields
 		SpInprocRecognizer  _recognizer;		// basic SAPI object
 		SpInProcRecoContext _recoContext;		// this does the heavy work here; is tied to the recognizer
+		ISpeechRecoGrammar  _recoGrammar;		// the current grammar for '_recoContext'
 		SpFileStream        _fs;				// the audiofile stream to analyze
 		SpVoice             _voice;				// TTS object for typed-text
-		ISpeechRecoGrammar  _recoGrammar;		// the current grammar for '_recoContext'
 		SpPhoneConverter    _phoneConverter;	// object that converts phone-ids (integers) to phonemes (string-literals) and vice versa
 
 		string _text = String.Empty; // the typed-text sanitized
