@@ -129,8 +129,8 @@ namespace lipsync_editor
 			SVEPrivate          = 32768
 			SVEAllEvents        = 33790
 			*/
-			_voice.EventInterests = (SpeechVoiceEvents)(int)SpeechVoiceEvents.SVEEndInputStream
-													 + (int)SpeechVoiceEvents.SVEPhoneme;
+			_voice.EventInterests = (SpeechVoiceEvents)(int)SpeechVoiceEvents.SVEPhoneme
+													 + (int)SpeechVoiceEvents.SVEEndInputStream;
 #if DEBUG
 			logfile.Log(". _voice.EventInterests= " + _voice.EventInterests);
 #endif
@@ -325,9 +325,23 @@ namespace lipsync_editor
 				_recoContext.SoundEnd         += rc_SoundEnd;
 				_recoContext.PhraseStart      += rc_PhraseStart;
 				_recoContext.Interference     += rc_Interference;
+
+				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
+															  + (int)SpeechRecoEvents.SRERecognition
+															  + (int)SpeechRecoEvents.SREStreamEnd
+															  + (int)SpeechRecoEvents.SREHypothesis
+															  + (int)SpeechRecoEvents.SREStreamStart
+															  + (int)SpeechRecoEvents.SRESoundStart
+															  + (int)SpeechRecoEvents.SRESoundEnd
+															  + (int)SpeechRecoEvents.SREPhraseStart
+															  + (int)SpeechRecoEvents.SREInterference;
+				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
+#else
+				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
+															  + (int)SpeechRecoEvents.SRERecognition
+															  + (int)SpeechRecoEvents.SREStreamEnd;
 #endif
-/*
-				https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
+/*				https://docs.microsoft.com/en-us/previous-versions/windows/desktop/ee125206%28v%3dvs.85%29
 				enum SpeechRecoEvents
 				SREStreamEnd            = 1
 				SRESoundStart           = 2
@@ -349,18 +363,6 @@ namespace lipsync_editor
 				SREPrivate              = 262144
 				SREAllEvents            = 393215
 */
-//															  + (int)SpeechRecoEvents.SREPhraseStart
-//#if DEBUG
-//				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREHypothesis
-//															  + (int)SpeechRecoEvents.SREFalseRecognition
-//															  + (int)SpeechRecoEvents.SRERecognition
-//															  + (int)SpeechRecoEvents.SREStreamEnd;
-//				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
-//#else
-//				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
-//															  + (int)SpeechRecoEvents.SRERecognition
-//															  + (int)SpeechRecoEvents.SREStreamEnd;
-//#endif
 				_generato = Generator.Dictati;
 				Generate();
 #if DEBUG
