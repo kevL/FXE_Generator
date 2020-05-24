@@ -13,6 +13,7 @@ namespace lipsync_editor
 
 
 	sealed class FxeDataBlock
+		: IComparable
 	{
 		#region properties
 		internal string Vis
@@ -39,7 +40,7 @@ namespace lipsync_editor
 		/// <param name="vis"></param>
 		/// <param name="val1"></param>
 		/// <param name="val2"></param>
-		/// <param name="type"></param>
+		/// <param name="type">start, middle, or stop</param>
 		/// <param name="id"></param>
 		internal FxeDataBlock(string vis, float val1, float val2, FxeDataType type, int id)
 		{
@@ -51,5 +52,23 @@ namespace lipsync_editor
 			Id   = id;
 		}
 		#endregion cTor
+ 
+
+		#region methods
+		public int CompareTo(object o)
+		{
+			var other = o as FxeDataBlock;
+
+			if (other == null)
+				throw new ArgumentException();
+
+
+			int result = Val1.CompareTo(other.Val1);
+			if (result != 0)
+				return result;
+
+			return Type.CompareTo(other.Type);
+		}
+		#endregion methods
 	}
 }
