@@ -897,7 +897,7 @@ namespace lipsync_editor
 			}
 		}
 
-		void AddStops(OrthographicResult ar)
+		static void AddStops(OrthographicResult ar)
 		{
 			//logfile.Log("AddStops()");
 
@@ -949,8 +949,8 @@ namespace lipsync_editor
 			// give the default pass an honest chance to match its words to a typed-text
 			string text = TypedText.StripTypedText(_text);
 #if DEBUG
-			logfile.Log(" _ars_def.Count= " + _ars_def.Count);
-			logfile.Log(". text= " + text);
+			logfile.Log(". _ars_def.Count= " + _ars_def.Count);
+			logfile.Log(". text(stripped)= " + text);
 #endif
 			var words = new List<string>(text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
 			if (words.Count != 0)
@@ -979,14 +979,14 @@ namespace lipsync_editor
 					}
 				}
 #if DEBUG
-				logfile.Log(". " + count_def + " / " + words.Count);
+				logfile.Log(". (" + count_def + " - " + count_def_over + ") / " + words.Count);
 #endif
 				RatioWords_def = Math.Max(0.0, (double)(count_def - count_def_over) / words.Count);
 			}
 
 
 #if DEBUG
-			logfile.Log(" _ars_enh.Count= " + _ars_enh.Count);
+			logfile.Log(".  _ars_enh.Count= " + _ars_enh.Count);
 			logfile.Log(". _text= " + _text);
 #endif
 			words = new List<string>(_text.Split(new [] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
@@ -1016,7 +1016,7 @@ namespace lipsync_editor
 					}
 				}
 #if DEBUG
-				logfile.Log(". " + count_enh + " / " + words.Count);
+				logfile.Log(". (" + count_enh + " - " + count_enh_over + ") / " + words.Count);
 #endif
 				RatioWords_enh = Math.Max(0.0, (double)(count_enh - count_enh_over) / words.Count);
 			}
@@ -1043,10 +1043,9 @@ namespace lipsync_editor
 				{
 					if (ar.Orthography != String.Empty)
 					{
-//						phon_def.AddRange(ar.Phons);
 						foreach (var phon in ar.Phons)
 						{
-							if (phon != "~") // IGNORE nasalvowel signifier
+							if (phon != "~") // IGNORE nasalvowel signifier TODO: All signifiers.
 								phon_def.Add(phon);
 						}
 //						foreach (var phon in ar.Phons)
@@ -1082,10 +1081,9 @@ namespace lipsync_editor
 				{
 					if (ar.Orthography != String.Empty)
 					{
-//						phon_enh.AddRange(ar.Phons);
 						foreach (var phon in ar.Phons)
 						{
-							if (phon != "~") // IGNORE nasalvowel signifier
+							if (phon != "~") // IGNORE nasalvowel signifier TODO: All signifiers.
 								phon_enh.Add(phon);
 						}
 //						foreach (var phon in ar.Phons)
@@ -1135,11 +1133,15 @@ namespace lipsync_editor
 					}
 				}
 
+#if DEBUG
+				logfile.Log(". (" + count_def + " - " + count_def_over + ") / " + Expected.Count);
+				logfile.Log(". (" + count_enh + " - " + count_enh_over + ") / " + Expected.Count);
+#endif
 				RatioPhons_def = Math.Max(0.0, (double)(count_def - count_def_over) / Expected.Count);
 				RatioPhons_enh = Math.Max(0.0, (double)(count_enh - count_enh_over) / Expected.Count);
 
 //				string phon0 = null;
-//				foreach (string phon in _tts_Expected)
+//				foreach (string phon in Expected)
 //				{
 //					if (phon0 == null)
 //					{
@@ -1159,7 +1161,6 @@ namespace lipsync_editor
 //								break;
 //							}
 //						}
-//
 //						for (int i = 1; i != phon_enh.Count; ++i)
 //						{
 //							if (phon_enh[i] == phon && phon_enh[i - 1] == phon0)

@@ -40,24 +40,10 @@ namespace lipsync_editor
 		internal ulong Stop;
 
 		/// <summary>
-		/// The stoptime for each listed phoneme in milliseconds. SAPI 5.1 does
-		/// not generate this information, instead sapi_lipsync uses the
-		/// phoneme_estimator to do this. Applications can also build their own.
+		/// The stoptime of each phoneme in milliseconds. SAPI 5.4 does not
+		/// generate this information - instead SapiLipsync.AddStops() estimates
+		/// the stops.
 		/// </summary>
 		internal List<ulong> Stops = new List<ulong>();
-
-
-/*		/// <summary>
-		/// Gets a starttime.
-		/// </summary>
-		/// <param name="id"></param>
-		/// <returns></returns>
-		internal ulong GetStart(int id)
-		{
-			if (id == 0)
-				return Start;
-
-			return Stops[id - 1];
-		} */
 	}
 }
