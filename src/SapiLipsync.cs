@@ -882,14 +882,12 @@ namespace lipsync_editor
 				}
 #if DEBUG
 				logfile.Log(". ar.Orthography= " + ar.Orthography);
-#endif
 				string phons = String.Empty;
 				foreach (var phon in ar.Phons)
 				{
 					if (phons != String.Empty) phons += " ";
 					phons += phon;
 				}
-#if DEBUG
 				logfile.Log(". ar.Phons= " + phons);
 #endif
 				AddStops(ar);
@@ -930,7 +928,6 @@ namespace lipsync_editor
 			{
 				decimal factor = (decimal)(ar.Stop - ar.Start) / stop;
 
-				ar.phStops = new List<ulong>();
 				for (int i = 0; i != stops.Count; ++i)
 				{
 					decimal dur = stops[i] * factor;
