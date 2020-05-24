@@ -238,7 +238,7 @@ namespace lipsync_editor
 			}
 		}
 
-		internal static List<string> GetStandardVices()
+		internal static List<string> GetStandardViscodes()
 		{
 			var codewords = new List<string>();
 
@@ -262,7 +262,7 @@ namespace lipsync_editor
 			return codewords;
 		}
 
-		internal static void AddCodewords(IDictionary<string, List<FxeDataBlock>> fxedata)
+		internal static void MapFxeViscodes(IDictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			fxedata.Clear();
 

@@ -32,7 +32,7 @@ namespace lipsync_editor
 #endif
 			if (File.Exists(file))
 			{
-				StaticData.AddCodewords(fxedata);
+				StaticData.MapFxeViscodes(fxedata);
 
 				using (FileStream fs = File.Open(file, FileMode.Open))
 				{
@@ -64,17 +64,17 @@ namespace lipsync_editor
 #if DEBUG
 						if (_d) logfile.Log(". . i= " + i);
 #endif
-						string codeword = GetString();
-						if (codeword == null) return false;
+						string viscode = GetString();
+						if (viscode == null) return false;
 #if DEBUG
-						if (_d) logfile.Log(". . codeword= " + codeword);
+						if (_d) logfile.Log(". . viscode= " + viscode);
 #endif
-						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
+						fs.Seek(8, SeekOrigin.Current);				// 8 bytes of zeroes
 						short datablockcount = _br.ReadInt16();
 #if DEBUG
 						if (_d) logfile.Log(". . datablockcount= " + datablockcount);
 #endif
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);				// 4 bytes of zeroes
 
 						for (short j = 0; j != datablockcount; ++j)
 						{
@@ -87,12 +87,12 @@ namespace lipsync_editor
 							if (_d) logfile.Log(". . . val1= " + val1);
 							if (_d) logfile.Log(". . . val2= " + val2);
 #endif
-							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
+							fs.Seek(10, SeekOrigin.Current);		// 10 bytes of zeroes
 
-							var block = new FxeDataBlock(codeword, val1,val2, 0,0);
-							fxedata[codeword].Add(block);
+							var block = new FxeDataBlock(viscode, val1, val2, FxeDataType.Strt, 0);
+							fxedata[viscode].Add(block);
 						}
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);				// 4 bytes of zeroes
 					}
 					_br.Close();
 				}
@@ -174,17 +174,17 @@ namespace lipsync_editor
 #if DEBUG
 						if (_d) logfile.Log(". . i= " + i);
 #endif
-						string codeword = GetString();
-						if (codeword == null) return false;
+						string viscode = GetString();
+						if (viscode == null) return false;
 #if DEBUG
-						if (_d) logfile.Log(". . codeword= " + codeword);
+						if (_d) logfile.Log(". . viscode= " + viscode);
 #endif
-						fs.Seek(8, SeekOrigin.Current);							// 8 bytes of zeroes
+						fs.Seek(8, SeekOrigin.Current);				// 8 bytes of zeroes
 						short datablockcount = _br.ReadInt16();
 #if DEBUG
 						if (_d) logfile.Log(". . datablockcount= " + datablockcount);
 #endif
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);				// 4 bytes of zeroes
 
 						for (short j = 0; j != datablockcount; ++j)
 						{
@@ -197,11 +197,9 @@ namespace lipsync_editor
 							if (_d) logfile.Log(". . . val1= " + val1);
 							if (_d) logfile.Log(". . . val2= " + val2);
 #endif
-							fs.Seek(10, SeekOrigin.Current);					// 10 bytes of zeroes
-
-//							var block = new FxeDataBlock(codeword, val1,val2, 0,0);
+							fs.Seek(10, SeekOrigin.Current);		// 10 bytes of zeroes
 						}
-						fs.Seek(4, SeekOrigin.Current);							// 4 bytes of zeroes
+						fs.Seek(4, SeekOrigin.Current);				// 4 bytes of zeroes
 					}
 					_br.Close();
 				}

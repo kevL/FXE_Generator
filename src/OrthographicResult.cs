@@ -44,6 +44,6 @@ namespace lipsync_editor
 		/// generate this information - instead SapiLipsync.AddStops() estimates
 		/// the stops.
 		/// </summary>
-		internal List<ulong> Stops = new List<ulong>();
+		internal List<ulong> phStops = new List<ulong>();
 	}
 }

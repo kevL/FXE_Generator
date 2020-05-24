@@ -874,7 +874,7 @@ namespace lipsync_editor
 					silence.Start = stop;
 					silence.Stop  = ar.Start;
 
-					silence.Stops.Add(silence.Stop);
+					silence.phStops.Add(silence.Stop);
 
 					ars.Insert(i, silence);
 
@@ -930,11 +930,11 @@ namespace lipsync_editor
 			{
 				decimal factor = (decimal)(ar.Stop - ar.Start) / stop;
 
-				ar.Stops = new List<ulong>();
+				ar.phStops = new List<ulong>();
 				for (int i = 0; i != stops.Count; ++i)
 				{
 					decimal dur = stops[i] * factor;
-					ar.Stops.Add(ar.Start + (ulong)dur);
+					ar.phStops.Add(ar.Start + (ulong)dur);
 				}
 			}
 		}

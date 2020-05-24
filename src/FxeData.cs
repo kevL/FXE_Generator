@@ -60,7 +60,7 @@ namespace lipsync_editor
 #if DEBUG
 							log += vice;
 #endif
-							decimal stop = (decimal)ar.Stops[i] / 10000000;
+							decimal stop = (decimal)ar.phStops[i] / 10000000;
 							visuals.Add(new KeyValuePair<string, decimal>(vice, stop));
 						}
 #if DEBUG
@@ -109,7 +109,7 @@ namespace lipsync_editor
 		static Trival GetTrival(string vice2, string vice1, string vice0)
 		{
 #if DEBUG
-			logfile.Log("FxeData.GetTrigramValue() vice2= " + vice2 + " vice1= " + vice1 + " vice0= " + vice0);
+			logfile.Log("FxeData.GetTrival() vice2= " + vice2 + " vice1= " + vice1 + " vice0= " + vice0);
 #endif
 			Trival trival = TriGramTable[vice2][vice1][vice0];
 			if (Math.Abs(trival.length) < StaticData.EPSILON)
@@ -130,7 +130,7 @@ namespace lipsync_editor
 #if DEBUG
 			logfile.Log("FxeData.AddDatablocks()");
 #endif
-			StaticData.AddCodewords(fxedata);
+			StaticData.MapFxeViscodes(fxedata);
 
 			FxeDataBlock datablock0 = null;
 
@@ -196,7 +196,7 @@ namespace lipsync_editor
 
 		static void InitTrigrams()
 		{
-			List<string> vices = StaticData.GetStandardVices();
+			List<string> vices = StaticData.GetStandardViscodes();
 			foreach (string vice2 in vices)
 			{
 				var bilateral = new Dictionary<string, Dictionary<string, Trival>>();
