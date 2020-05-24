@@ -214,6 +214,7 @@ namespace lipsync_editor
 			this.tb_text.Size = new System.Drawing.Size(460, 40);
 			this.tb_text.TabIndex = 10;
 			this.tb_text.TextChanged += new System.EventHandler(this.textchanged_Text);
+			this.tb_text.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keydown_TypedText);
 			// 
 			// dg_phons
 			// 

@@ -640,6 +640,23 @@ namespace lipsync_editor
 //			if (dg_phons.Rows[e.RowIndex].Cells[0].Value.ToString().EndsWith(".0", StringComparison.Ordinal))
 //				dg_phons.Rows[e.RowIndex].Cells[0].Style.BackColor = Color.Azure;
 		}
+
+
+		void keydown_TypedText(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyData)
+			{
+				case Keys.Enter:
+					e.Handled = e.SuppressKeyPress = true;
+					click_Generate(null, EventArgs.Empty);
+					break;
+
+				case Keys.Enter | Keys.Shift:
+				case Keys.Enter | Keys.Control:
+					e.Handled = e.SuppressKeyPress = true;
+					break;
+			}
+		}
 		#endregion control handlers
 
 
