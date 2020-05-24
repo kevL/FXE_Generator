@@ -54,7 +54,7 @@ namespace lipsync_editor
 		#endregion cTor
  
 
-		#region methods
+		#region methods (interface)
 		public int CompareTo(object o)
 		{
 			var other = o as FxeDataBlock;
@@ -69,6 +69,6 @@ namespace lipsync_editor
 
 			return Type.CompareTo(other.Type);
 		}
-		#endregion methods
+		#endregion methods (interface)
 	}
 }
