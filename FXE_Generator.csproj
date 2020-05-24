@@ -58,6 +58,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="src\AudioConverter.cs" />
+    <Compile Include="src\EditorPhonF.cs" />
     <Compile Include="src\FxeData.cs" />
     <Compile Include="src\FxeDataBlock.cs" />
     <Compile Include="src\FxeGeneratorF.cs" />
@@ -83,6 +84,9 @@
     <EmbeddedResource Include="Properties\Resource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\EditorPhonF.resx">
+      <DependentUpon>EditorPhonF.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="src\FxeGeneratorF.resx">
       <DependentUpon>FxeGeneratorF.cs</DependentUpon>

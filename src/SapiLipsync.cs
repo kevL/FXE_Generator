@@ -212,8 +212,10 @@ namespace lipsync_editor
 			{
 				if (!FxeGeneratorF.isConsole)
 				{
-					var d = new InfoDialog("Error", "Did not find a Language in the Recognizer's token.");
-					d.ShowDialog(FxeGeneratorF.That);
+					using (var d = new InfoDialog("Error", "Did not find a Language in the Recognizer's token."))
+					{
+						d.ShowDialog(FxeGeneratorF.That);
+					}
 				}
 				return false;
 			}

@@ -368,6 +368,7 @@ namespace lipsync_editor
 			this.la_phons.TabIndex = 25;
 			this.la_phons.Text = "PHONEMES";
 			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+			this.la_phons.Click += new System.EventHandler(this.click_PhonLabel);
 			// 
 			// dg_blocks
 			// 

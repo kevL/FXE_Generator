@@ -74,8 +74,10 @@ namespace lipsync_editor
 					info = "Borked file" + Environment.NewLine + file;
 				}
 
-				var d = new InfoDialog(titl, info);
-				d.ShowDialog(FxeGeneratorF.That);
+				using (var d = new InfoDialog(titl, info))
+				{
+					d.ShowDialog(FxeGeneratorF.That);
+				}
 			}
 		}
 

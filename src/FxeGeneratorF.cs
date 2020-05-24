@@ -217,9 +217,10 @@ namespace lipsync_editor
 								+ "as displayed in Windoz ControlPanel|SpeechRecognition." + Environment.NewLine
 								+ Environment.NewLine
 								+ "none was found ...";
-					var d = new InfoDialog("FATAL Error", info);
-					d.ShowDialog(this);
-
+					using (var d = new InfoDialog("FATAL Error", info))
+					{
+						d.ShowDialog(this);
+					}
 					fatality = true;
 				}
 			}
@@ -655,6 +656,15 @@ namespace lipsync_editor
 				case Keys.Enter | Keys.Control:
 					e.Handled = e.SuppressKeyPress = true;
 					break;
+			}
+		}
+
+
+		void click_PhonLabel(object sender, EventArgs e)
+		{
+			using (var editor = new EditorPhonF())
+			{
+				editor.ShowDialog(this);
 			}
 		}
 		#endregion control handlers
