@@ -12,6 +12,12 @@ namespace lipsync_editor
 	sealed class InfoDialog
 		: Form
 	{
+		#region fields
+		Timer _t1 = new Timer();
+		string _info;
+		#endregion fields
+
+
 		#region cTor
 		/// <summary>
 		/// cTor.
@@ -32,8 +38,52 @@ namespace lipsync_editor
 			tb_info.SelectionLength = 0;
 
 			FxeGeneratorF.That.Cursor = Cursors.Default;
+
+			_info = tb_info.Text;
+			_t1.Tick += OnTick;
+			_t1.Interval = 1450;
 		}
 		#endregion cTor
+
+
+		#region handlers (override)
+		protected override void OnKeyDown(KeyEventArgs e)
+		{
+			switch (e.KeyData)
+			{
+				case Keys.Escape:
+					Close();
+					break;
+
+				case Keys.Enter:
+					try
+					{
+						_t1.Start();
+
+						Clipboard.SetText(_info + Environment.NewLine);
+						tb_info.Text = "copied";
+
+						tb_info.SelectionStart = tb_info.Text.Length;
+						tb_info.SelectionLength = 0;
+					}
+					catch // yes I know.
+					{}
+					break;
+			}
+		}
+		#endregion handlers (override)
+
+
+		#region handlers
+		void OnTick(object sender, EventArgs e)
+		{
+			_t1.Stop();
+			tb_info.Text = _info;
+
+			tb_info.SelectionStart = tb_info.Text.Length;
+			tb_info.SelectionLength = 0;
+		}
+		#endregion handlers
 
 
 		#region designer
@@ -61,6 +111,7 @@ namespace lipsync_editor
 			this.ClientSize = new System.Drawing.Size(392, 49);
 			this.Controls.Add(this.tb_info);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.KeyPreview = true;
 			this.MaximizeBox = false;
 			this.Name = "InfoDialog";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
