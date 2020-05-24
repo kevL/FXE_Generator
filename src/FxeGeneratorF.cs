@@ -662,9 +662,12 @@ namespace lipsync_editor
 
 		void click_PhonLabel(object sender, EventArgs e)
 		{
-			using (var editor = new EditorPhonF())
+			if (_dt1 != null && _dt1.Rows.Count != 0)
 			{
-				editor.ShowDialog(this);
+				using (var editor = new EditorPhonF(_dt1))
+				{
+					editor.ShowDialog(this);
+				}
 			}
 		}
 		#endregion control handlers
