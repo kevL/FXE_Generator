@@ -854,9 +854,7 @@ namespace lipsync_editor
 
 			for (int i = 0; i != ars.Count; ++i)
 			{
-				ar = ars[i];
-
-				if (ar.Start > stop)
+				if ((ar = ars[i]).Start > stop)
 				{
 #if DEBUG
 					logfile.Log(". . insert silence");
@@ -880,6 +878,7 @@ namespace lipsync_editor
 
 					++i;
 				}
+
 #if DEBUG
 				logfile.Log(". ar.Orthography= " + ar.Orthography);
 				string phons = String.Empty;
@@ -890,12 +889,14 @@ namespace lipsync_editor
 				}
 				logfile.Log(". ar.Phons= " + phons);
 #endif
-				AddStops(ar);
+
+				CalculatePhonStops(ar);
+
 				stop = ar.Stop;
 			}
 		}
 
-		static void AddStops(OrthographicResult ar)
+		static void CalculatePhonStops(OrthographicResult ar)
 		{
 			//logfile.Log("AddStops()");
 
@@ -906,6 +907,8 @@ namespace lipsync_editor
 			{
 				switch (phon)
 				{
+					// curious where 0100010 got these - intuition perhaps.
+
 					case "aa": case "ae": case "ah": case "ax": case "ay":
 					case  "b": case "eh": case  "l": case  "r": case  "w":
 						stops.Add(stop += 50);
@@ -930,8 +933,7 @@ namespace lipsync_editor
 
 				for (int i = 0; i != stops.Count; ++i)
 				{
-					decimal dur = stops[i] * factor;
-					ar.phStops.Add(ar.Start + (ulong)dur);
+					ar.phStops.Add(ar.Start + (ulong)(stops[i] * factor));
 				}
 			}
 		}
