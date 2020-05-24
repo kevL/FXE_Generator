@@ -620,7 +620,7 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
-			if (dg_phons.Rows[e.RowIndex].Cells[1].Value.ToString() == "x")
+			if (dg_phons.Rows[e.RowIndex].Cells[1].Value.ToString() == "[x]")
 			{
 				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
 			}
@@ -859,9 +859,6 @@ namespace lipsync_editor
 #endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-//					decimal strt = (decimal)ar.GetStart(i) / 10000000;
-//					decimal stop = (decimal)ar.Stops[i]    / 10000000;
-
 					string phon = ar.Phons[i];
 
 					string vis;
@@ -871,6 +868,9 @@ namespace lipsync_editor
 					}
 					else
 						vis = "INVALID";
+
+					if (phon == "x") // silence
+						phon = "[x]";
 #if DEBUG
 					logfile.Log(". . " + phon + " -> "+ vis);
 #endif
