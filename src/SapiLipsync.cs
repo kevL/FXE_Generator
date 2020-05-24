@@ -223,7 +223,7 @@ namespace lipsync_editor
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
 			logfile.Log();
 #endif
-			StaticData.AddVices(_phoneConverter.LanguageId);
+			StaticData.viceroy(_phoneConverter.LanguageId);
 
 			return true;
 		}

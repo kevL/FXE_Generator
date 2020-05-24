@@ -7,9 +7,9 @@ namespace lipsync_editor
 {
 	#region structs (global)
 	/// <summary>
-	/// For values of 'TriGramTable.dat'
+	/// Holds a value derived in 'TriGramTable.dat'.
 	/// </summary>
-	struct DataVal
+	struct Trival
 	{
 		internal float length;
 		internal float val;
@@ -26,8 +26,8 @@ namespace lipsync_editor
 		#region fields (static)
 		const string TRIGRAMTABLE = "TriGramTable.dat";
 
-		static readonly Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>> TriGramTable =
-					new Dictionary<string, Dictionary<string, Dictionary<string, DataVal>>>();
+		static readonly Dictionary<string, Dictionary<string, Dictionary<string, Trival>>> TriGramTable =
+					new Dictionary<string, Dictionary<string, Dictionary<string, Trival>>>();
 		#endregion fields (static)
 
 
@@ -38,7 +38,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("FxeData.GenerateData() ars.Count= " + ars.Count);
 #endif
-			var vices = new List<KeyValuePair<string, decimal>>();
+			var visuals = new List<KeyValuePair<string, decimal>>();
 
 			string phon;
 			foreach (OrthographicResult ar in ars)
@@ -56,12 +56,12 @@ namespace lipsync_editor
 #endif
 						if (StaticData.Vices.ContainsKey(phon)) // fudge ->
 						{
-							string vis = StaticData.Vices[phon];
+							string vice = StaticData.Vices[phon];
 #if DEBUG
-							log += vis;
+							log += vice;
 #endif
 							decimal stop = (decimal)ar.Stops[i] / 10000000;
-							vices.Add(new KeyValuePair<string, decimal>(vis, stop));
+							visuals.Add(new KeyValuePair<string, decimal>(vice, stop));
 						}
 #if DEBUG
 						else log += "INVALID";
@@ -77,28 +77,28 @@ namespace lipsync_editor
 
 			var datablocks = new List<FxeDataBlock>(); // viseme start, mid, end points
 
-			DataVal dataval;
-			string c2 = "S";
-			string c1 = "S";
+			Trival trival;
+			string vice2 = "S";
+			string vice1 = "S";
 			int id = 0;
 
-			foreach (KeyValuePair<string, decimal> vis in vices)
+			foreach (KeyValuePair<string, decimal> visual in visuals)
 			{
-				string c0 = vis.Key;
+				string vice0 = visual.Key;
 
-				float stop = (float)vis.Value;
+				float stop = (float)visual.Value;
 
-				dataval = GetTrigramValue(c2, c1, c0);
-				float strt = stop - dataval.length;
-				float midl = strt + dataval.length / 2f;
+				trival = GetTrival(vice2, vice1, vice0);
+				float strt = stop - trival.length;
+				float midl = strt + trival.length / 2f;
 
-				datablocks.Add(new FxeDataBlock(c0, strt,          0f, (byte)0, id));
-				datablocks.Add(new FxeDataBlock(c0, midl, dataval.val, (byte)1, id));
-				datablocks.Add(new FxeDataBlock(c0, stop,          0f, (byte)2, id));
+				datablocks.Add(new FxeDataBlock(vice0, strt,         0f, (byte)0, id));
+				datablocks.Add(new FxeDataBlock(vice0, midl, trival.val, (byte)1, id));
+				datablocks.Add(new FxeDataBlock(vice0, stop,         0f, (byte)2, id));
 				++id;
 
-				c2 = c1;
-				c1 = c0;
+				vice2 = vice1;
+				vice1 = vice0;
 			}
 			datablocks.Sort();
 
@@ -106,23 +106,23 @@ namespace lipsync_editor
 			SmoothTransitions(fxedata);
 		}
 
-		static DataVal GetTrigramValue(string c2, string c1, string c0)
+		static Trival GetTrival(string vice2, string vice1, string vice0)
 		{
 #if DEBUG
-			logfile.Log("FxeData.GetTrigramValue() c2= " + c2 + " c1= " + c1 + " c0= " + c0);
+			logfile.Log("FxeData.GetTrigramValue() vice2= " + vice2 + " vice1= " + vice1 + " vice0= " + vice0);
 #endif
-			DataVal dataval = TriGramTable[c2][c1][c0];
-			if (Math.Abs(dataval.length) < StaticData.EPSILON)
+			Trival trival = TriGramTable[vice2][vice1][vice0];
+			if (Math.Abs(trival.length) < StaticData.EPSILON)
 			{
-				DataVal dataval0;
-				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, DataVal>>> pair in TriGramTable)
+				Trival trival0;
+				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, Trival>>> pair in TriGramTable)
 				{
-					dataval0 = pair.Value[c1][c0];
-					if (dataval0.count > dataval.count)
-						dataval = dataval0;
+					trival0 = pair.Value[vice1][vice0];
+					if (trival0.count > trival.count)
+						trival = trival0;
 				}
 			}
-			return dataval;
+			return trival;
 		}
 
 		static void AddDatablocks(IList<FxeDataBlock> datablocks, Dictionary<string, List<FxeDataBlock>> fxedata)
@@ -153,7 +153,7 @@ namespace lipsync_editor
 					}
 				}
 
-				fxedata[datablock.Viseme].Add(datablock);
+				fxedata[datablock.Vis].Add(datablock);
 				datablock0 = datablock;
 			}
 		}
@@ -181,14 +181,14 @@ namespace lipsync_editor
 				var br = new BinaryReader(fs);
 				while (br.BaseStream.Position < br.BaseStream.Length)
 				{
-					string[] codewords = br.ReadString().Split(',');
+					string[] vices = br.ReadString().Split(',');
 
-					var dataval = new DataVal();
-					dataval.length = br.ReadSingle();
-					dataval.val    = br.ReadSingle();
-					dataval.count  = br.ReadInt16();
+					var trival = new Trival();
+					trival.length = br.ReadSingle();
+					trival.val    = br.ReadSingle();
+					trival.count  = br.ReadInt16();
 
-					TriGramTable[codewords[0]][codewords[1]][codewords[2]] = dataval;
+					TriGramTable[vices[0]][vices[1]][vices[2]] = trival;
 				}
 				br.Close();
 			}
@@ -196,25 +196,22 @@ namespace lipsync_editor
 
 		static void InitTrigrams()
 		{
-			List<string> codewords = StaticData.GetCodewords();
-			foreach (string c2 in codewords)
+			List<string> vices = StaticData.GetStandardVices();
+			foreach (string vice2 in vices)
 			{
-				var bigram = new Dictionary<string, Dictionary<string, DataVal>>();
-				TriGramTable.Add(c2, bigram);
+				var bilateral = new Dictionary<string, Dictionary<string, Trival>>();
+				TriGramTable.Add(vice2, bilateral);
 
-				foreach (string c1 in codewords)
+				foreach (string vice1 in vices)
 				{
-					if (c1 != "S" || c2 == "S")
+					if (vice1 != "S" || vice2 == "S")
 					{
-						var unigram = new Dictionary<string, DataVal>();
-						bigram.Add(c1, unigram);
+						var unilateral = new Dictionary<string, Trival>();
+						bilateral.Add(vice1, unilateral);
 
-						foreach (string c0 in codewords)
+						foreach (string vice0 in vices)
 						{
-							if (c0 != "S")
-							{
-								unigram.Add(c0, new DataVal());
-							}
+							if (vice0 != "S") unilateral.Add(vice0, new Trival());
 						}
 					}
 				}

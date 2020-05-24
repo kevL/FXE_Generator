@@ -17,7 +17,7 @@ namespace lipsync_editor
 					new Dictionary<string, string>();
 
 		/// <summary>
-		/// A dictionary of visemes keyed by phoneme-strings.
+		/// A dictionary of viseme-strings keyed by phoneme-strings.
 		/// </summary>
 		internal static Dictionary<string, string> Vices
 		{
@@ -28,26 +28,24 @@ namespace lipsync_editor
 
 		#region methods (static)
 		/// <summary>
-		/// 
+		/// Fills the 'Vices' dictionary that maps phoneme-strings to
+		/// viseme-strings.
 		/// </summary>
-		/// <param name="phoneId"></param>
-		internal static void AddVices(int phoneId)
+		/// <param name="langid">the SpPhoneConverter's current language</param>
+		internal static void viceroy(int langid)
 		{
 #if DEBUG
-			logfile.Log("StaticData.AddVices() phoneId= " + phoneId);
+			logfile.Log("StaticData.viceroy() langid= " + langid);
 #endif
 			Vices.Clear();
 
-			// TODO: Vices ought rely on PhoneIds.
+			Vices.Add( "x", String.Empty); // silence
 
-			switch (phoneId)
+			switch (langid)
 			{
 				default:
 //				case 1033: // This is for English US (en-US)
-#if DEBUG
-					logfile.Log(". case: " + phoneId);
-#endif
-/*                   Output of PhoneConverter.IdToPhon() ->
+/*					 Output of PhoneConverter.IdToPhon() ->
 					 0 - 
 					 1 - -
 					 2 - !
@@ -98,7 +96,6 @@ namespace lipsync_editor
 					47 - y
 					48 - z
 					49 - zh */
-					Vices.Add( "x", String.Empty);
 
 					Vices.Add("aa", "Ox");
 					Vices.Add("ae", "If");
@@ -143,21 +140,18 @@ namespace lipsync_editor
 					break;
 
 //				case 2057: // This is for English GB (en-GB)
-
-/*                   Output of PhoneConverter.IdToPhon() ->
+/*					 Output of PhoneConverter.IdToPhon() ->
 					 0 -
 					 1 - _!
 					 2 - _&
 					 3 - _,
 					 4 - _s */
+					 // wtf is that
 
 //					break;
 
 				case 1036: // This is for French (fr-FR)
-#if DEBUG
-					logfile.Log(". case: 1036 fr-FR");
-#endif
-/*                   Output of PhoneConverter.IdToPhon() ->
+/*					 Output of PhoneConverter.IdToPhon() ->
 					 0 - 
 					 1 - -
 					 2 - !
@@ -201,7 +195,6 @@ namespace lipsync_editor
 					40 - y
 					41 - z
 					42 - zh */
-					Vices.Add( "x", String.Empty); // silence
 
 					Vices.Add( "~", String.Empty); // nasalvowel signifier
 
@@ -245,7 +238,7 @@ namespace lipsync_editor
 			}
 		}
 
-		internal static List<string> GetCodewords()
+		internal static List<string> GetStandardVices()
 		{
 			var codewords = new List<string>();
 

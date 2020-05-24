@@ -919,10 +919,10 @@ namespace lipsync_editor
 
 			_dt2.Rows.Clear();
 
-			int j = -1; // debug
+			int j = -1;
 			foreach (FxeDataBlock block in blocks)
 			{
-				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Viseme, block.Val1, block.Val2 });
+				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Vis, block.Val1, block.Val2 });
 			}
 //			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 
