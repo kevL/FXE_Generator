@@ -63,7 +63,7 @@ namespace lipsync_editor
 					if (GetLineIntersection(Ax,Ay, Bx,By, Cx,Cy, Dx,Dy, ref x, ref y))
 					{
 						InsertIntersectionPoint(datablocks,
-												new FxeDataBlock(vis, x, y, 1, id),
+												new FxeDataBlock(vis, x, y, FxeDataType.Midl, id),
 												i + 1);
 
 						if (floatsequal(Ay, 0f) && Cy > y) // remove a
@@ -128,27 +128,26 @@ namespace lipsync_editor
 			}
 		}
 
-		static int GetNextPoint(IList<FxeDataBlock> datablocks, int startId, ref float x, ref float y)
+		static int GetNextPoint(IList<FxeDataBlock> datablocks, int id, ref float x, ref float y)
 		{
-			x = -1;
-			y = -1;
+			x = y = -1;
 
-			if (datablocks[startId].Type != 2)
+			if (datablocks[id].Type != FxeDataType.Stop)
 			{
-				int id = datablocks[startId].Id;
+				int blockid = datablocks[id].Id;
 
-				++startId;
-				while (startId < datablocks.Count)
+				++id;
+				while (id < datablocks.Count)
 				{
-					FxeDataBlock datablock = datablocks[startId];
-					if (datablock.Id == id)
+					FxeDataBlock datablock = datablocks[id];
+					if (datablock.Id == blockid)
 					{
 						x = datablock.Val1;
 						y = datablock.Val2;
 
-						return startId;
+						return id;
 					}
-					++startId;
+					++id;
 				}
 			}
 			return -1;

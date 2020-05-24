@@ -92,9 +92,9 @@ namespace lipsync_editor
 				float strt = stop - trival.length;
 				float midl = strt + trival.length / 2f;
 
-				datablocks.Add(new FxeDataBlock(vice0, strt,         0f, (byte)0, id));
-				datablocks.Add(new FxeDataBlock(vice0, midl, trival.val, (byte)1, id));
-				datablocks.Add(new FxeDataBlock(vice0, stop,         0f, (byte)2, id));
+				datablocks.Add(new FxeDataBlock(vice0, strt,         0f, FxeDataType.Strt, id));
+				datablocks.Add(new FxeDataBlock(vice0, midl, trival.val, FxeDataType.Midl, id));
+				datablocks.Add(new FxeDataBlock(vice0, stop,         0f, FxeDataType.Stop, id));
 				++id;
 
 				vice2 = vice1;
