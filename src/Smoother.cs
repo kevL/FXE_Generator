@@ -26,10 +26,9 @@ namespace lipsync_editor
 
 					int Aindex = i - 1;
 
-					float Bx = 0f;
-					float By = 0f;
+					float Bx,By;
 
-					int Bindex = GetNextPoint(datablocks, Aindex, ref Bx, ref By);
+					int Bindex = GetNextPoint(datablocks, Aindex, out Bx, out By);
 					if (Bindex == -1)
 					{
 						id = datablock.Id;
@@ -42,19 +41,16 @@ namespace lipsync_editor
 					float Cx = datablock.Val1;
 					float Cy = datablock.Val2;
 
-					float Dx = 0f;
-					float Dy = 0f;
+					float Dx,Dy;
 
-					int Dindex = GetNextPoint(datablocks, Cindex, ref Dx, ref Dy);
-					if (Dindex == -1)
+					int Dindex = GetNextPoint(datablocks, Cindex, out Dx, out Dy);
+					if (Dindex == -1
+						&& Ay > 0f) // delete C
 					{
-						if (Ay > 0f) // remove c
-						{
-							datablocks.RemoveAt(i);
-							--i;
+						datablocks.RemoveAt(i);
+						--i;
 
-							continue;
-						}
+						continue;
 					}
 
 					float x = 0f;
@@ -66,7 +62,7 @@ namespace lipsync_editor
 												new FxeDataBlock(vis, x, y, FxeDataType.Midl, id),
 												i + 1);
 
-						if (floatsequal(Ay, 0f) && Cy > y) // remove a
+						if (floatsequal(Ay, 0f) && Cy > y) // delete A
 						{
 							datablocks.RemoveAt(i - 1);
 							--i;
@@ -78,7 +74,7 @@ namespace lipsync_editor
 							continue;
 						}
 
-						if (Cy < y) // remove c
+						if (Cy < y) // delete C
 						{
 							datablocks.RemoveAt(i);
 							--i;
@@ -92,7 +88,7 @@ namespace lipsync_editor
 					}
 					else // lines do not cross
 					{
-						if (Ay < Cy && Bx < Dx) // remove a
+						if (Ay < Cy && Bx < Dx) // delete A
 						{
 							datablocks.RemoveAt(i - 1);
 							--i;
@@ -106,7 +102,7 @@ namespace lipsync_editor
 
 						if ((Dx < Bx && Dy < By) // kL_note: not sure about that refactor.
 							|| floatsequal(Dy, 0f)
-							|| floatsequal(By, 0f)) // remove c
+							|| floatsequal(By, 0f)) // delete C
 						{
 							datablocks.RemoveAt(i);
 							--i;
@@ -128,10 +124,8 @@ namespace lipsync_editor
 			}
 		}
 
-		static int GetNextPoint(IList<FxeDataBlock> datablocks, int id, ref float x, ref float y)
+		static int GetNextPoint(IList<FxeDataBlock> datablocks, int id, out float x, out float y)
 		{
-			x = y = -1;
-
 			if (datablocks[id].Type != FxeDataType.Stop)
 			{
 				int blockid = datablocks[id].Id;
@@ -150,6 +144,8 @@ namespace lipsync_editor
 					++id;
 				}
 			}
+
+			x = y = -1f;
 			return -1;
 		}
 
