@@ -46,6 +46,20 @@ namespace lipsync_editor
 		#endregion cTor
 
 
+		#region handlers
+		void prepaint_EditorGrid(object sender, DataGridViewRowPrePaintEventArgs e)
+		{
+			object val = eg_phons.Rows[e.RowIndex].HeaderCell.Value;
+			if (val != null && val.ToString().EndsWith(".0", StringComparison.CurrentCultureIgnoreCase))
+			{
+				eg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Thistle;
+			}
+			else
+				eg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Empty;
+		}
+		#endregion handlers
+
+
 
 		#region designer
 		EditorGrid eg_phons;
@@ -93,6 +107,7 @@ namespace lipsync_editor
 			this.eg_phons.Size = new System.Drawing.Size(227, 542);
 			this.eg_phons.StandardTab = true;
 			this.eg_phons.TabIndex = 0;
+			this.eg_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.prepaint_EditorGrid);
 			// 
 			// phon
 			// 
