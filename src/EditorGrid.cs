@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -7,13 +8,13 @@ namespace lipsync_editor
 	sealed class EditorGrid
 		: DataGridView
 	{
+		#region handlers (override)
 		/// <summary>
 		/// NOTE: KeyDown won't fire when a cell is in edit.
 		/// </summary>
 		/// <param name="e"></param>
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
-			logfile.Log("OnKeyDown()");
 			if (e.KeyData == Keys.Enter)
 			{
 				e.Handled = e.SuppressKeyPress = true;
@@ -30,7 +31,6 @@ namespace lipsync_editor
 		/// <returns></returns>
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
-			logfile.Log("ProcessDialogKey()");
 			if (IsCurrentCellInEditMode)
 			{
 				switch (keyData)
@@ -48,5 +48,18 @@ namespace lipsync_editor
 			}
 			return base.ProcessDialogKey(keyData);
 		}
+
+
+		protected override void OnRowPrePaint(DataGridViewRowPrePaintEventArgs e)
+		{
+			object val = Rows[e.RowIndex].HeaderCell.Value;
+			if (val != null && val.ToString().EndsWith(".0", StringComparison.CurrentCultureIgnoreCase))
+			{
+				Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Thistle;
+			}
+			else
+				Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Empty;
+		}
+		#endregion handlers (override)
 	}
 }
