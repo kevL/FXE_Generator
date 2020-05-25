@@ -217,7 +217,7 @@ namespace lipsync_editor
 			this.bu_waver.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_waver.Name = "bu_waver";
 			this.bu_waver.Size = new System.Drawing.Size(47, 27);
-			this.bu_waver.TabIndex = 2;
+			this.bu_waver.TabIndex = 1;
 			this.bu_waver.Text = "~";
 			this.bu_waver.UseVisualStyleBackColor = true;
 			this.bu_waver.Click += new System.EventHandler(this.click_Waver);
@@ -230,7 +230,7 @@ namespace lipsync_editor
 			this.bu_ok.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_ok.Name = "bu_ok";
 			this.bu_ok.Size = new System.Drawing.Size(70, 27);
-			this.bu_ok.TabIndex = 1;
+			this.bu_ok.TabIndex = 2;
 			this.bu_ok.Text = "ok";
 			this.bu_ok.UseVisualStyleBackColor = true;
 			// 
