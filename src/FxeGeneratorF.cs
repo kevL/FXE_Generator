@@ -664,7 +664,7 @@ namespace lipsync_editor
 		{
 			if (_dt1 != null && _dt1.Rows.Count != 0)
 			{
-				using (var editor = new EditorPhonF(_dt1))
+				using (var editor = new EditorPhonF(this, _dt1))
 				{
 					editor.ShowDialog(this);
 				}
