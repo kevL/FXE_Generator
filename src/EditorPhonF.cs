@@ -12,6 +12,8 @@ namespace lipsync_editor
 		#region fields (static)
 		static int _x = -1;
 		static int _y = -1;
+
+		const int START_H = 600;
 		#endregion fields (static)
 
 
@@ -37,13 +39,6 @@ namespace lipsync_editor
 			InitializeComponent();
 			_f = f;
 
-			if (_x != -1)
-			{
-				Location = new Point(_x, _y);
-			}
-			else
-				Location = new Point(_f.Left + 20, _f.Top + 20);
-
 			int i = 0;
 			for (; i != dt.Rows.Count; ++i)
 			{
@@ -60,11 +55,37 @@ namespace lipsync_editor
 				  + (eg_phons.RowTemplate.Height + 1) * (i + 2)
 				  + pa_bot.Height;
 
-			if (h > 750) h = 750;
+			if (h > START_H) h = START_H;
 
 			ClientSize  = new Size(w, h);
 			MaximumSize = new Size(w, 1000);
 			MinimumSize = new Size(w, 0);
+
+			Screen screen = Screen.FromControl(this);
+			int height = screen.WorkingArea.Height;
+
+			int bordersVert = Height - h;
+
+			int x,y;
+			if (_x != -1)
+			{
+				x = _x;
+
+				if (_y + h + bordersVert > height)
+					y = height - h - bordersVert;
+				else
+					y = _y;
+			}
+			else
+			{
+				x = _f.Left + 20;
+
+				if (_f.Top + 20 + h + bordersVert > height)
+					y = height - h - bordersVert;
+				else
+					y = _f.Top + 20;
+			}
+			Location = new Point(x,y);
 		}
 		#endregion cTor
 
