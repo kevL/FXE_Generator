@@ -58,6 +58,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
     <Compile Include="src\AudioConverter.cs" />
+    <Compile Include="src\EditorGrid.cs" />
     <Compile Include="src\EditorPhonF.cs" />
     <Compile Include="src\FxeData.cs" />
     <Compile Include="src\FxeDataBlock.cs" />
