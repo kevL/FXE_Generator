@@ -694,8 +694,6 @@ namespace lipsync_editor
 			logfile.Log();
 #endif
 			tb_expected.Text = expected;
-
-			Cursor = Cursors.Default;
 		}
 
 		/// <summary>
@@ -789,6 +787,8 @@ namespace lipsync_editor
 				FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
 				Application.Exit();
 			}
+			else
+				Cursor = Cursors.Default;
 		}
 
 		/// <summary>

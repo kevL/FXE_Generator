@@ -231,7 +231,6 @@ namespace lipsync_editor
 			this.ClientSize = new System.Drawing.Size(227, 574);
 			this.Controls.Add(this.eg_phons);
 			this.Controls.Add(this.pa_bot);
-			this.Cursor = System.Windows.Forms.Cursors.Default;
 			this.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.MaximizeBox = false;
 			this.Name = "EditorPhonF";

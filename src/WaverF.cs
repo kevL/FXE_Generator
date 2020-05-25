@@ -156,11 +156,27 @@ namespace lipsync_editor
 	sealed class BufferedPanel
 		: Panel
 	{
+//		#region Properties (override)
+//		/// <summary>
+//		/// This works great. Absolutely kills flicker on redraws.
+//		/// </summary>
+//		protected override CreateParams CreateParams
+//		{
+//			get
+//			{
+//				CreateParams cp = base.CreateParams;
+//				cp.ExStyle |= 0x02000000;
+//				return cp;
+//			}
+//		}
+//		#endregion Properties (override)
+
+
 		#region cTor
 		public BufferedPanel()
 		{
 			DoubleBuffered =
-			ResizeRedraw   = true;
+			ResizeRedraw = true;
 		}
 		#endregion cTor
 	}
