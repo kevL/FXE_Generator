@@ -77,15 +77,27 @@ namespace lipsync_editor
 
 			int offsetVert = pa_wave.Height / 2;
 
-			decimal factorHori = (decimal)pa_wave.Width  / _samples.Length;
+			decimal factorHori = (decimal)pa_wave.Width / _samples.Length;
 			decimal factorVert = (decimal)pa_wave.Height * _factor / 65536;
 
-			for (int i = 0; i != _samples.Length; ++i)
+			int pixelGroupCount = _samples.Length / pa_wave.Width + 1;
+
+			int hi, hitest, j, x, length = _samples.Length;
+			for (int i = 0; i < length; ++i)
 			{
-				int x = (int)(i * factorHori);
+				hi = 0; // draw only the highest/lowest amplitude in each pixel-group ->
+				for (j = 0; j != pixelGroupCount && i + j < length; ++j)
+				{
+					hitest = _samples[i + j];
+					if (Math.Abs(hitest) > Math.Abs(hi))
+						hi = hitest;
+				}
+				i += j - 1;
+
+				x = (int)(i * factorHori);
 				e.Graphics.DrawLine(Pens.Lime,
 									x, offsetVert,
-									x, offsetVert + (int)(_samples[i] * factorVert));
+									x, offsetVert + (int)(hi * factorVert));
 			}
 			Cursor = Cursors.Default;
 		}
@@ -138,7 +150,6 @@ namespace lipsync_editor
 			this.ClientSize = new System.Drawing.Size(567, 139);
 			this.Controls.Add(this.pa_wave);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.MaximizeBox = false;
 			this.Name = "WaverF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "Waver";
