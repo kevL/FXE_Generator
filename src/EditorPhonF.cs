@@ -9,6 +9,12 @@ namespace lipsync_editor
 	sealed class EditorPhonF
 		: Form
 	{
+		#region fields (static)
+		static int _x = -1;
+		static int _y = -1;
+		#endregion fields (static)
+
+
 		#region cTor
 		/// <summary>
 		/// cTor.
@@ -19,7 +25,12 @@ namespace lipsync_editor
 		{
 			InitializeComponent();
 
-			Location = new Point(f.Left + 20, f.Top + 20);
+			if (_x != -1)
+			{
+				Location = new Point(_x, _y);
+			}
+			else
+				Location = new Point(f.Left + 20, f.Top + 20);
 
 			int i = 0;
 			for (; i != dt.Rows.Count; ++i)
@@ -44,6 +55,30 @@ namespace lipsync_editor
 			MinimumSize = new Size(w, 0);
 		}
 		#endregion cTor
+
+
+		#region handlers (override)
+		protected override void OnFormClosing(FormClosingEventArgs e)
+		{
+			//logfile.Log("e.CloseReason= " + e.CloseReason);
+			switch (e.CloseReason)
+			{
+//				case CloseReason.ApplicationExitCall:
+//				case CloseReason.FormOwnerClosing:
+//				case CloseReason.MdiFormClosing:
+//				case CloseReason.TaskManagerClosing:
+//				case CloseReason.WindowsShutDown:
+//					break;
+
+				case CloseReason.UserClosing:
+				case CloseReason.None:
+					_x = Left;
+					_y = Top;
+					break;
+			}
+			base.OnFormClosing(e);
+		}
+		#endregion handlers (override)
 
 
 

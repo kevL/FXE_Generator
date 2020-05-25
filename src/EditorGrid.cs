@@ -42,7 +42,7 @@ namespace lipsync_editor
 					case Keys.Escape:
 						CancelEdit();	// Sorry but this does not cancel edit.
 										// It reverts a cell's text to what it was before and selects the text.
-						EndEdit();		// <- so that shall workaround (text was reverted and gets committed).
+						EndEdit();		// <- so that shall workaround (text has been reverted and gets committed).
 						return true;
 				}
 			}
