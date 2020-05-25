@@ -60,20 +60,12 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			//logfile.Log("e.CloseReason= " + e.CloseReason);
 			switch (e.CloseReason)
 			{
-//				case CloseReason.ApplicationExitCall:
-//				case CloseReason.FormOwnerClosing:
-//				case CloseReason.MdiFormClosing:
-//				case CloseReason.TaskManagerClosing:
-//				case CloseReason.WindowsShutDown:
-//					break;
-
 				case CloseReason.UserClosing:
 				case CloseReason.None:
-					_x = Left;
-					_y = Top;
+					_x = Math.Max(0, Left);
+					_y = Math.Max(0, Top);
 					break;
 			}
 			base.OnFormClosing(e);
