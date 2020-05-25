@@ -118,7 +118,7 @@ namespace lipsync_editor
 			if (Waver == null)
 			{
 				Waver = new WaverF(this, _f._sapi.Audiopath);
-				Waver.Show(this);
+				Waver.Show(_f);
 			}
 		}
 		#endregion handlers
