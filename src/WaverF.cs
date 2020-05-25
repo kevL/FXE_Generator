@@ -105,9 +105,14 @@ namespace lipsync_editor
 
 
 		#region methods
+		/// <summary>
+		/// Parses and pushes 16-bit samples to an array.
+		/// @note The wavefile shall be PCM 16-bit Mono.
+		/// </summary>
+		/// <param name="wavefile"></param>
 		void Conatiner(string wavefile)
 		{
-			using (var fs = new FileStream(wavefile, FileMode.Open))
+			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read))
 			{
 				var br = new BinaryReader(fs);
 
