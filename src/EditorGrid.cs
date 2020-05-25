@@ -50,10 +50,32 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Begins edit if the currently active cell is clicked.
+		/// </summary>
+		/// <param name="e"></param>
+		protected override void OnCellMouseDown(DataGridViewCellMouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				if (this[e.ColumnIndex, e.RowIndex] == CurrentCell)
+				{
+					BeginEdit(false);
+				}
+				else
+					base.OnCellMouseDown(e);
+			}
+		}
+
+
+		/// <summary>
+		/// Colors rows at word-starts.
+		/// </summary>
+		/// <param name="e"></param>
 		protected override void OnRowPrePaint(DataGridViewRowPrePaintEventArgs e)
 		{
 			object val = Rows[e.RowIndex].HeaderCell.Value;
-			if (val != null && val.ToString().EndsWith(".0", StringComparison.CurrentCultureIgnoreCase))
+			if (val != null && val.ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 			{
 				Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Thistle;
 			}
