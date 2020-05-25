@@ -80,6 +80,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\TypedText.cs" />
     <Compile Include="src\VoiceSynthF.cs" />
+    <Compile Include="src\WaverF.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resource.resx">
@@ -97,6 +98,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="src\VoiceSynthF.resx">
       <DependentUpon>VoiceSynthF.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="src\WaverF.resx">
+      <DependentUpon>WaverF.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

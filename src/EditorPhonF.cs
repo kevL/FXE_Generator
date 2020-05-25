@@ -15,6 +15,17 @@ namespace lipsync_editor
 		#endregion fields (static)
 
 
+		#region fields
+		FxeGeneratorF _f;
+		#endregion fields
+
+
+		#region properties
+		internal WaverF Waver
+		{ private get; set; }
+		#endregion properties
+
+
 		#region cTor
 		/// <summary>
 		/// cTor.
@@ -24,13 +35,14 @@ namespace lipsync_editor
 		internal EditorPhonF(FxeGeneratorF f, DataTable dt)
 		{
 			InitializeComponent();
+			_f = f;
 
 			if (_x != -1)
 			{
 				Location = new Point(_x, _y);
 			}
 			else
-				Location = new Point(f.Left + 20, f.Top + 20);
+				Location = new Point(_f.Left + 20, _f.Top + 20);
 
 			int i = 0;
 			for (; i != dt.Rows.Count; ++i)
@@ -60,6 +72,12 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			if (Waver != null)
+			{
+				Waver.Dispose();
+				Waver = null;
+			}
+
 			switch (e.CloseReason)
 			{
 				case CloseReason.UserClosing:
@@ -73,6 +91,18 @@ namespace lipsync_editor
 		#endregion handlers (override)
 
 
+		#region handlers
+		void click_Waver(object sender, EventArgs e)
+		{
+			if (Waver == null)
+			{
+				Waver = new WaverF(this, _f._sapi.Audiopath);
+				Waver.Show(this);
+			}
+		}
+		#endregion handlers
+
+
 
 		#region designer
 		EditorGrid eg_phons;
@@ -83,6 +113,8 @@ namespace lipsync_editor
 		DataGridViewTextBoxColumn phon;
 		DataGridViewTextBoxColumn stop;
 
+		Button bu_waver;
+
 
 		void InitializeComponent()
 		{
@@ -90,6 +122,7 @@ namespace lipsync_editor
 			this.phon = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.stop = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.pa_bot = new System.Windows.Forms.Panel();
+			this.bu_waver = new System.Windows.Forms.Button();
 			this.bu_ok = new System.Windows.Forms.Button();
 			this.bu_cancel = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.eg_phons)).BeginInit();
@@ -145,6 +178,7 @@ namespace lipsync_editor
 			// 
 			// pa_bot
 			// 
+			this.pa_bot.Controls.Add(this.bu_waver);
 			this.pa_bot.Controls.Add(this.bu_ok);
 			this.pa_bot.Controls.Add(this.bu_cancel);
 			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
@@ -154,14 +188,27 @@ namespace lipsync_editor
 			this.pa_bot.Size = new System.Drawing.Size(227, 32);
 			this.pa_bot.TabIndex = 1;
 			// 
+			// bu_waver
+			// 
+			this.bu_waver.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+			| System.Windows.Forms.AnchorStyles.Right)));
+			this.bu_waver.Location = new System.Drawing.Point(90, 3);
+			this.bu_waver.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_waver.Name = "bu_waver";
+			this.bu_waver.Size = new System.Drawing.Size(47, 27);
+			this.bu_waver.TabIndex = 2;
+			this.bu_waver.Text = "~";
+			this.bu_waver.UseVisualStyleBackColor = true;
+			this.bu_waver.Click += new System.EventHandler(this.click_Waver);
+			// 
 			// bu_ok
 			// 
 			this.bu_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.bu_ok.Location = new System.Drawing.Point(131, 3);
+			this.bu_ok.Location = new System.Drawing.Point(141, 3);
 			this.bu_ok.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_ok.Name = "bu_ok";
-			this.bu_ok.Size = new System.Drawing.Size(80, 27);
+			this.bu_ok.Size = new System.Drawing.Size(70, 27);
 			this.bu_ok.TabIndex = 1;
 			this.bu_ok.Text = "ok";
 			this.bu_ok.UseVisualStyleBackColor = true;
@@ -172,7 +219,7 @@ namespace lipsync_editor
 			this.bu_cancel.Location = new System.Drawing.Point(16, 3);
 			this.bu_cancel.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_cancel.Name = "bu_cancel";
-			this.bu_cancel.Size = new System.Drawing.Size(80, 27);
+			this.bu_cancel.Size = new System.Drawing.Size(70, 27);
 			this.bu_cancel.TabIndex = 0;
 			this.bu_cancel.Text = "cancel";
 			this.bu_cancel.UseVisualStyleBackColor = true;

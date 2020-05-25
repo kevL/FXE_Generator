@@ -44,7 +44,7 @@ namespace lipsync_editor
 		/// <summary>
 		/// SAPI setup and usage object.
 		/// </summary>
-		readonly SapiLipsync _sapi;
+		internal readonly SapiLipsync _sapi;
 
 		/// <summary>
 		/// The fullpath of an audio-file to be analyzed.
