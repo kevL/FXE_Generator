@@ -56,7 +56,8 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		protected override void OnCellMouseDown(DataGridViewCellMouseEventArgs e)
 		{
-			if (e.Button == MouseButtons.Left)
+			if (e.Button == MouseButtons.Left
+				&& e.RowIndex != -1 && e.ColumnIndex != -1)
 			{
 				if (this[e.ColumnIndex, e.RowIndex] == CurrentCell)
 				{
