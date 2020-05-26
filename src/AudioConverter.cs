@@ -20,22 +20,22 @@ namespace lipsync_editor
 
 		#region methods (static)
 		/// <summary>
-		/// 
+		/// Determines the file to use for the SpeechRecognition filestream
+		/// converting it from BMU/MP3 to WAV if necessary.
+		/// @note The result shall be PCM 44.1kHz 16-bit Mono.
 		/// </summary>
-		/// <param name="file"></param>
-		/// <returns></returns>
-		internal static string deterAudiopath(string file)
+		/// <param name="pfe">path_file_extension</param>
+		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>
+		internal static string deterwave(string pfe)
 		{
-			//logfile.Log("AudioConverter.deterAudiopath() file= " + file);
-
-			string fullpath = String.Empty;
+			//logfile.Log("AudioConverter.deterAudiopath() pfe= " + pfe);
 
 			string pathT = Path.GetTempPath();
 			//logfile.Log(". path= " + pathT);
 
-			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // prep .BMU ->
+			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // prep .BMU ->
 			{
-				var fi = new FileInfo(file);
+				var fi = new FileInfo(pfe);
 				var br = new BinaryReader(fi.OpenRead());
 
 				char[] c = br.ReadChars(3);
@@ -45,26 +45,25 @@ namespace lipsync_editor
 					&& c[1] == 'M'
 					&& c[2] == 'U')
 				{
-					file = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
-					//logfile.Log(". file= " + file);
+					pfe = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
+					//logfile.Log(". pfe= " + pfe);
 
-					fi.CopyTo(file, true);
+					fi.CopyTo(pfe, true);
 				}
 			}
 
-			if (file.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
+			if (pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
-				string fileT = Path.Combine(pathT, TMP_WAV);
-				//logfile.Log(". wave= " + waveT);
+				string pfeT = Path.Combine(pathT, TMP_WAV);
+				//logfile.Log(". pfeT= " + pfeT);
 
-
-				if (File.Exists(fileT))
-					File.Delete(fileT);
+				if (File.Exists(pfeT))
+					File.Delete(pfeT);
 
 //				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 //				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
 				var info = new ProcessStartInfo(Path.Combine(Application.StartupPath, LAME_EXE));
-				info.Arguments = "--decode \"" + file + "\" \"" + fileT + "\"";
+				info.Arguments = "--decode \"" + pfe + "\" \"" + pfeT + "\"";
 				info.WindowStyle = ProcessWindowStyle.Hidden;
 				info.UseShellExecute = false;
 				info.CreateNoWindow  = true;
@@ -79,7 +78,7 @@ namespace lipsync_editor
 //				if (File.Exists(t))
 //					File.Delete(t);
 
-				file = fileT;
+				pfe = pfeT;
 			}
 
 // http://www.topherlee.com/software/pcm-tut-wavformat.html
@@ -97,42 +96,46 @@ namespace lipsync_editor
 // 37-40	"data"				"data" chunk header. Marks the beginning of the data section.
 // 41-44	File size (data)	Size of the data section.
 
-			if (file.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
+			string fullpath = String.Empty;
+
+			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
-				var fi = new FileInfo(file);
-				var br = new BinaryReader(fi.OpenRead());
-
-				char[] c = br.ReadChars(16);					// start 0
-
-				if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
-					&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
-					&& c[12] == 'f' && c[13] == 'm' && c[14] == 't' && c[15] == ' ')
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read))
 				{
-					br.ReadBytes(4);							// start 16
+					var br = new BinaryReader(fs);
 
-					short format = br.ReadInt16();				// start 20: is PCM
-					if (format == 1)
+					char[] c = br.ReadChars(16);					// start 0
+
+					if (   c[ 0] == 'R' && c[ 1] == 'I' && c[ 2] == 'F' && c[ 3] == 'F'
+						&& c[ 8] == 'W' && c[ 9] == 'A' && c[10] == 'V' && c[11] == 'E'
+						&& c[12] == 'f' && c[13] == 'm' && c[14] == 't' && c[15] == ' ')
 					{
-						short channels = br.ReadInt16();		// start 22: is Mono
-						if (channels == 1)
-						{
-							// TODO: Sample-rate and bit-depth should probably be relaxed.
+						br.ReadBytes(4);							// start 16
 
-							int rate = br.ReadInt32();			// start 24: is 44.1kHz
-							if (rate == 44100)
+						short format = br.ReadInt16();				// start 20: is PCM
+						if (format == 1)
+						{
+							short channels = br.ReadInt16();		// start 22: is Mono
+							if (channels == 1)
 							{
-								br.ReadBytes(6);				// start 28
-								short bits = br.ReadInt16();	// start 34: is 16-bit
-								if (bits == 16)
+								// TODO: Sample-rate and bit-depth should probably be relaxed.
+
+								int rate = br.ReadInt32();			// start 24: is 44.1kHz
+								if (rate == 44100)
 								{
-									fullpath = file;
-									//logfile.Log(". AudioConverter.fullpath= " + fullpath);
+									br.ReadBytes(6);				// start 28
+									short bits = br.ReadInt16();	// start 34: is 16-bit
+									if (bits == 16)
+									{
+										fullpath = pfe;
+										//logfile.Log(". AudioConverter.fullpath= " + fullpath);
+									}
 								}
 							}
 						}
 					}
+					br.Close();
 				}
-				br.Close();
 			}
 
 			if (!FxeGeneratorF.isConsole && fullpath == String.Empty)

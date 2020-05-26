@@ -55,7 +55,7 @@ namespace lipsync_editor
 
 
 		#region properties
-		internal string Audiopath
+		internal string Wavefile
 		{ get; set; }
 
 		List<string> _expected = new List<string>();
@@ -96,12 +96,12 @@ namespace lipsync_editor
 		/// <summary>
 		/// cTor.
 		/// </summary>
-		/// <param name="wavefile">blank string if '!isConsole'</param>
-		internal SapiLipsync(string wavefile = "")
+		/// <param name="pfe">blank string if '!isConsole'</param>
+		internal SapiLipsync(string pfe = "")
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("SapiLipsync() cTor wavefile= " + wavefile);
+			logfile.Log("SapiLipsync() cTor pfe= " + pfe);
 
 			logfile.Log(". create (SpVoice)_voice");
 #endif
@@ -147,9 +147,9 @@ namespace lipsync_editor
 			if (FxeGeneratorF.isConsole)
 			{
 				_phoneConverter.LanguageId = 1033; // EnglishUS (default) // TODO: <--
-				Audiopath = AudioConverter.deterAudiopath(wavefile);
+				Wavefile = AudioConverter.deterwave(pfe);
 #if DEBUG
-				logfile.Log(". Audiopath= " + Audiopath);
+				logfile.Log(". Wavefile= " + Wavefile);
 #endif
 			}
 		}
@@ -455,9 +455,9 @@ namespace lipsync_editor
 //			_fs.Format.Type = SpeechAudioFormatType.SAFT44kHz16BitMono;
 
 #if DEBUG
-			logfile.Log(". Open Audiopath _fs");
+			logfile.Log(". Open Wavefile _fs");
 #endif
-			_fs.Open(Audiopath);
+			_fs.Open(Wavefile);
 #if DEBUG
 			logfile.Log(". assign _fs to _recognizer.AudioInputStream");
 #endif

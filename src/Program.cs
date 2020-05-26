@@ -15,7 +15,7 @@ namespace lipsync_editor
 #if DEBUG
 			logfile.CreateLog(); // NOTE: The logfile works in debug-builds only.
 			// To write a line to the logfile:
-			// logfile.Log("what you want to know here");
+			// logfile.Log("what you want to know string");
 			//
 			// The logfile ought appear in the directory with the executable.
 #endif

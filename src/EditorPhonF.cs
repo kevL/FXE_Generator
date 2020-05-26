@@ -121,7 +121,7 @@ namespace lipsync_editor
 		{
 			if (Waver == null)
 			{
-				Waver = new WaverF(this, _f._sapi.Audiopath, _dt);
+				Waver = new WaverF(this, _f._sapi.Wavefile, _dt);
 				Waver.Show(_f);
 			}
 		}

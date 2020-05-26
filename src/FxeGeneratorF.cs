@@ -26,14 +26,14 @@ namespace lipsync_editor
 				 const string EXT_TXT = "txt";
 
 		const string HEAD_PHONS_0 = "pos";
-		const string HEAD_PHONS_1 = "phoneme"; // headers for the phonemes table ->
+		const string HEAD_PHONS_1 = "phoneme"; // headers for the PHONEMES table ->
 		const string HEAD_PHONS_2 = "start";
 		const string HEAD_PHONS_3 = "stop";
 		const string HEAD_PHONS_4 = "viseme";
 		const string HEAD_PHONS_5 = "truth";
 		const string HEAD_PHONS_6 = "level";
 
-		const string HEAD_BLOCKS_0 = "viseme"; // headers for the datablocks table ->
+		const string HEAD_BLOCKS_0 = "viseme"; // headers for the DataBlocks table ->
 		const string HEAD_BLOCKS_1 = "frame stop";
 		const string HEAD_BLOCKS_2 = "morph weight";
 
@@ -49,8 +49,9 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// The fullpath of an audio-file to be analyzed.
+		/// @note pfe = path_file_extension
 		/// </summary>
-		string _wavefile = String.Empty;
+		string _pfe = String.Empty;
 
 		/// <summary>
 		/// The headtype of the model/skeleton that a generated FXE will be used
@@ -109,13 +110,13 @@ namespace lipsync_editor
 		/// <summary>
 		/// cTor.
 		/// </summary>
-		/// <param name="wavefile">blank string if '!isConsole'</param>
+		/// <param name="pfe">blank string if '!isConsole'</param>
 		/// <param name="headtype">blank string if '!isConsole'</param>
-		internal FxeGeneratorF(string wavefile = "", string headtype = "")
+		internal FxeGeneratorF(string pfe = "", string headtype = "")
 		{
 #if DEBUG
 //			LogSpeechRecognitionEngines();
-			logfile.Log("FxeGeneratorF() cTor wavefile= " + wavefile + " headtype= " + headtype);
+			logfile.Log("FxeGeneratorF() cTor pfe= " + pfe + " headtype= " + headtype);
 #endif
 
 			That = this;
@@ -124,7 +125,7 @@ namespace lipsync_editor
 
 			bool fatality = false;
 
-			if (wavefile == String.Empty) // is GUI interface ->
+			if (pfe == String.Empty) // is GUI interface ->
 			{
 #if DEBUG
 				logfile.Log(". is GUI");
@@ -230,7 +231,7 @@ namespace lipsync_editor
 					fatality = true;
 				}
 			}
-			else if (headtype != String.Empty && File.Exists(wavefile)) // is Console interface ->
+			else if (headtype != String.Empty && File.Exists(pfe)) // is Console interface ->
 			{
 #if DEBUG
 				logfile.Log(". is Console");
@@ -242,11 +243,11 @@ namespace lipsync_editor
 
 				isConsole = true;
 
-				_wavefile = wavefile;
+				_pfe = pfe;
 				_headtype = headtype;
 
-				_sapi = new SapiLipsync(_wavefile);
-				if (_sapi.Audiopath != String.Empty)
+				_sapi = new SapiLipsync(_pfe);
+				if (_sapi.Wavefile != String.Empty)
 				{
 					_sapi.SrStreamEnded += OnSrStreamEnded;
 					_sapi.Start(LoadTypedTextFile());
@@ -356,8 +357,8 @@ namespace lipsync_editor
 		/// Gets the current recognizer from the Recognizers combobox.
 		/// @note The '_sapi._recognizer' needs to be re-created when the
 		/// Generate button is clicked; if not then (roughly speaking) the
-		/// handle to the wavefile on disk remains open, even though the call
-		/// that closes it appears to be correctly implemented. In short, it's
+		/// handle to the file on disk remains open, even though the call that
+		/// closes it appears to be correctly implemented. In short, it's
 		/// really effin' borked - just re-instantiate the recognizer ...
 		/// 
 		/// If you want to see what the bad behavior is like just remark the
@@ -392,9 +393,9 @@ namespace lipsync_editor
 
 				if (ofd.ShowDialog() == DialogResult.OK)
 				{
-					tb_wavefile.Text = _wavefile = ofd.FileName;
+					tb_wavefile.Text = _pfe = ofd.FileName;
 #if DEBUG
-					logfile.Log(". _wavefile= " + _wavefile);
+					logfile.Log(". _pfe= " + _pfe);
 #endif
 					tb_text.Text = LoadTypedTextFile();
 
@@ -424,15 +425,15 @@ namespace lipsync_editor
 					_fxedata_def.Clear();
 					_fxedata_enh.Clear();
 
-					if (FxeReader.ReadFile(_wavefile, _fxedata))
+					if (FxeReader.ReadFile(_pfe, _fxedata))
 						PopulateDataGrid(_fxedata);
 
-					_sapi.Audiopath = AudioConverter.deterAudiopath(_wavefile);
+					_sapi.Wavefile = AudioConverter.deterwave(_pfe);
 #if DEBUG
-					logfile.Log(". _sapi.Audiopath= " + _sapi.Audiopath);
+					logfile.Log(". _sapi.Wavefile= " + _sapi.Wavefile);
 #endif
 					bu_generate .Enabled =
-					bu_play     .Enabled = (_sapi.Audiopath != String.Empty);
+					bu_play     .Enabled = (_sapi.Wavefile != String.Empty);
 				}
 			}
 		}
@@ -443,7 +444,7 @@ namespace lipsync_editor
 		/// <returns></returns>
 		string LoadTypedTextFile()
 		{
-			string file = _wavefile.Substring(0, _wavefile.Length - 3) + EXT_TXT;
+			string file = _pfe.Substring(0, _pfe.Length - 3) + EXT_TXT;
 			if (File.Exists(file))
 			{
 				using (StreamReader sr = File.OpenText(file))
@@ -507,7 +508,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("click_CreateFxe()");
 #endif
-			FxeWriter.WriteFile(_wavefile, co_headtype.Text, _fxedata);
+			FxeWriter.WriteFile(_pfe, co_headtype.Text, _fxedata);
 		}
 
 		/// <summary>
@@ -519,10 +520,10 @@ namespace lipsync_editor
 		{
 			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
 
-			using (var wavefile = new FileStream(_sapi.Audiopath, FileMode.Open))
-			using (var player   = new SoundPlayer(wavefile))
+			using (var fs = new FileStream(_sapi.Wavefile, FileMode.Open))
+			using (var player = new SoundPlayer(fs))
 			{
-				player.SoundLocation = _sapi.Audiopath;
+				player.SoundLocation = _sapi.Wavefile;
 				player.Play();
 			}
 		}
@@ -790,7 +791,7 @@ namespace lipsync_editor
 
 			if (isConsole)
 			{
-				FxeWriter.WriteFile(_wavefile, _headtype, _fxedata);
+				FxeWriter.WriteFile(_pfe, _headtype, _fxedata);
 				Application.Exit();
 			}
 			else
