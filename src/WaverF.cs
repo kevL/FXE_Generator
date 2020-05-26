@@ -85,18 +85,18 @@ namespace lipsync_editor
 
 			Cursor = Cursors.WaitCursor;
 
-			e.Graphics.DrawLine(Pens.OliveDrab,
-								pa_wave.Left,  pa_wave.Height / 2,
-								pa_wave.Right, pa_wave.Height / 2);
-
 			int offsetVert = pa_wave.Height / 2;
+
+			e.Graphics.DrawLine(Pens.OliveDrab,
+								pa_wave.Left,  offsetVert,
+								pa_wave.Right, offsetVert);
 
 			decimal factorHori = (decimal)pa_wave.Width / _samples.Length;
 			decimal factorVert = (decimal)pa_wave.Height * _factor / 65536;
 
 			int pixelGroupCount = _samples.Length / pa_wave.Width + 1;
 
-			int hi, hitest, j, x, length = _samples.Length;
+			int hi, hitest, j, x,y, length = _samples.Length;
 			for (int i = 0; i < length; ++i)
 			{
 				hi = 0; // draw only the highest/lowest amplitude in each pixel-group ->
@@ -108,10 +108,17 @@ namespace lipsync_editor
 				}
 				i += j - 1;
 
-				x = (int)(i * factorHori);
-				e.Graphics.DrawLine(Pens.Lime,
-									x, offsetVert,
-									x, offsetVert + (int)(hi * factorVert));
+				if (hi != 0)
+				{
+					x = (int)(i  * factorHori);
+					y = (int)(hi * factorVert);
+					if (y == 0) // always pip a non-zero amplitude ->
+						y = hi / Math.Abs(hi); // pos/neg
+
+					e.Graphics.DrawLine(Pens.Lime,
+										x, offsetVert,
+										x, offsetVert + y);
+				}
 			}
 
 
@@ -123,7 +130,7 @@ namespace lipsync_editor
 				string pos = _dt.Rows[i][0].ToString(); // pos
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((decimal)_dt.Rows[i][2] + _durOffset) * factorHori); // start
+					x = (int)(((decimal)_dt.Rows[i][2] + _durOffset) * factorHori); // start-line
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -132,7 +139,7 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((decimal)_dt.Rows[i][3] + _durOffset) * factorHori); // stop
+				x = (int)(((decimal)_dt.Rows[i][3] + _durOffset) * factorHori); // stop-line
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 0,
 									x, pa_wave.Height);
@@ -166,7 +173,7 @@ namespace lipsync_editor
 					val = br.ReadInt16();
 					_samples[++i] = val;
 
-					if (_durOffset == 0 && val > 999) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+					if (_durOffset == 0 && val > 29) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
 						_durOffset = (decimal)i / 44100;
 				}
 				br.Close();
