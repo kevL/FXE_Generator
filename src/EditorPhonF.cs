@@ -47,13 +47,14 @@ namespace lipsync_editor
 				eg_phons.Rows.Add();
 				eg_phons.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
 				eg_phons.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
-				// TODO: start
-				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][3].ToString(); // stop
+				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString(); // start
+				eg_phons.Rows[i].Cells[2]  .Value = _dt.Rows[i][3].ToString(); // stop
 			}
 
 			int w = eg_phons.RowHeadersWidth
 				  + eg_phons.Columns[0].Width
-				  + eg_phons.Columns[1].Width;
+				  + eg_phons.Columns[1].Width
+				  + eg_phons.Columns[2].Width;
 			int h = eg_phons.ColumnHeadersHeight
 				  + (eg_phons.RowTemplate.Height + 1) * (i + 2)
 				  + pa_bot.Height;
@@ -135,6 +136,7 @@ namespace lipsync_editor
 		Button bu_cancel;
 
 		DataGridViewTextBoxColumn phon;
+		DataGridViewTextBoxColumn start;
 		DataGridViewTextBoxColumn stop;
 
 		Button bu_waver;
@@ -144,6 +146,7 @@ namespace lipsync_editor
 		{
 			this.eg_phons = new lipsync_editor.EditorGrid();
 			this.phon = new System.Windows.Forms.DataGridViewTextBoxColumn();
+			this.start = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.stop = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.pa_bot = new System.Windows.Forms.Panel();
 			this.bu_waver = new System.Windows.Forms.Button();
@@ -161,6 +164,7 @@ namespace lipsync_editor
 			this.eg_phons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
 			this.eg_phons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 			this.phon,
+			this.start,
 			this.stop});
 			this.eg_phons.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.eg_phons.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
@@ -174,7 +178,7 @@ namespace lipsync_editor
 			this.eg_phons.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.eg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.eg_phons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-			this.eg_phons.Size = new System.Drawing.Size(227, 542);
+			this.eg_phons.Size = new System.Drawing.Size(332, 542);
 			this.eg_phons.StandardTab = true;
 			this.eg_phons.TabIndex = 0;
 			// 
@@ -188,6 +192,17 @@ namespace lipsync_editor
 			this.phon.Resizable = System.Windows.Forms.DataGridViewTriState.False;
 			this.phon.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
 			this.phon.Width = 55;
+			// 
+			// start
+			// 
+			this.start.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.ColumnHeader;
+			this.start.Frozen = true;
+			this.start.HeaderText = "start";
+			this.start.MinimumWidth = 105;
+			this.start.Name = "start";
+			this.start.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.start.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.NotSortable;
+			this.start.Width = 105;
 			// 
 			// stop
 			// 
@@ -209,7 +224,7 @@ namespace lipsync_editor
 			this.pa_bot.Location = new System.Drawing.Point(0, 542);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(227, 32);
+			this.pa_bot.Size = new System.Drawing.Size(332, 32);
 			this.pa_bot.TabIndex = 1;
 			// 
 			// bu_waver
@@ -219,7 +234,7 @@ namespace lipsync_editor
 			this.bu_waver.Location = new System.Drawing.Point(90, 3);
 			this.bu_waver.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_waver.Name = "bu_waver";
-			this.bu_waver.Size = new System.Drawing.Size(47, 27);
+			this.bu_waver.Size = new System.Drawing.Size(152, 27);
 			this.bu_waver.TabIndex = 1;
 			this.bu_waver.Text = "~";
 			this.bu_waver.UseVisualStyleBackColor = true;
@@ -229,7 +244,7 @@ namespace lipsync_editor
 			// 
 			this.bu_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.bu_ok.Location = new System.Drawing.Point(146, 3);
+			this.bu_ok.Location = new System.Drawing.Point(251, 3);
 			this.bu_ok.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_ok.Name = "bu_ok";
 			this.bu_ok.Size = new System.Drawing.Size(70, 27);
@@ -252,7 +267,7 @@ namespace lipsync_editor
 			// 
 			this.AcceptButton = this.bu_ok;
 			this.CancelButton = this.bu_cancel;
-			this.ClientSize = new System.Drawing.Size(227, 574);
+			this.ClientSize = new System.Drawing.Size(332, 574);
 			this.Controls.Add(this.eg_phons);
 			this.Controls.Add(this.pa_bot);
 			this.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
