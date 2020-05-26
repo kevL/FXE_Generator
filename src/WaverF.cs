@@ -23,6 +23,7 @@ namespace lipsync_editor
 
 		short[] _samples;
 		decimal _dur;
+		decimal _durOffset;
 		#endregion fields
 
 
@@ -122,7 +123,7 @@ namespace lipsync_editor
 				string pos = _dt.Rows[i][0].ToString(); // pos
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)((decimal)_dt.Rows[i][2] * factorHori); // start
+					x = (int)(((decimal)_dt.Rows[i][2] + _durOffset) * factorHori); // start
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -131,7 +132,7 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)((decimal)_dt.Rows[i][3] * factorHori); // stop
+				x = (int)(((decimal)_dt.Rows[i][3] + _durOffset) * factorHori); // stop
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 0,
 									x, pa_wave.Height);
@@ -159,12 +160,17 @@ namespace lipsync_editor
 				_samples = new short[size];
 
 				int i = -1;
+				short val;
 				while (br.BaseStream.Position < br.BaseStream.Length)
-					_samples[++i] = br.ReadInt16();
+				{
+					val = br.ReadInt16();
+					_samples[++i] = val;
 
+					if (_durOffset == 0 && val > 999) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+						_durOffset = (decimal)i / 44100;
+				}
 				br.Close();
 			}
-
 			_dur = (decimal)_samples.Length / 44100;
 		}
 		#endregion methods
