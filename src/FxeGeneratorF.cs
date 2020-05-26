@@ -147,27 +147,27 @@ namespace lipsync_editor
 
 
 				DataColumn col;
-				col = new DataColumn(HEAD_PHONS_0, typeof(string));
+				col = new DataColumn(HEAD_PHONS_0, typeof(string));		// pos
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_1, typeof(string));
+				col = new DataColumn(HEAD_PHONS_1, typeof(string));		// phon
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_2, typeof(decimal));
+				col = new DataColumn(HEAD_PHONS_2, typeof(decimal));	// stop
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_3, typeof(string));
+				col = new DataColumn(HEAD_PHONS_3, typeof(string));		// vis
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_4, typeof(string));
+				col = new DataColumn(HEAD_PHONS_4, typeof(string));		// truth
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_5, typeof(string));
+				col = new DataColumn(HEAD_PHONS_5, typeof(string));		// level
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
