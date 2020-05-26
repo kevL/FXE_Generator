@@ -19,6 +19,7 @@ namespace lipsync_editor
 
 		#region fields
 		FxeGeneratorF _f;
+		DataTable _dt;
 		#endregion fields
 
 
@@ -37,15 +38,16 @@ namespace lipsync_editor
 		internal EditorPhonF(FxeGeneratorF f, DataTable dt)
 		{
 			InitializeComponent();
-			_f = f;
+			_f  = f;
+			_dt = dt;
 
 			int i = 0;
-			for (; i != dt.Rows.Count; ++i)
+			for (; i != _dt.Rows.Count; ++i)
 			{
 				eg_phons.Rows.Add();
-				eg_phons.Rows[i].HeaderCell.Value = dt.Rows[i][0].ToString();
-				eg_phons.Rows[i].Cells[0]  .Value = dt.Rows[i][1].ToString();
-				eg_phons.Rows[i].Cells[1]  .Value = dt.Rows[i][2].ToString();
+				eg_phons.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString();
+				eg_phons.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString();
+				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString();
 			}
 
 			int w = eg_phons.RowHeadersWidth
@@ -117,7 +119,7 @@ namespace lipsync_editor
 		{
 			if (Waver == null)
 			{
-				Waver = new WaverF(this, _f._sapi.Audiopath);
+				Waver = new WaverF(this, _f._sapi.Audiopath, _dt);
 				Waver.Show(_f);
 			}
 		}
@@ -226,7 +228,7 @@ namespace lipsync_editor
 			// 
 			this.bu_ok.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-			this.bu_ok.Location = new System.Drawing.Point(141, 3);
+			this.bu_ok.Location = new System.Drawing.Point(146, 3);
 			this.bu_ok.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_ok.Name = "bu_ok";
 			this.bu_ok.Size = new System.Drawing.Size(70, 27);
@@ -237,7 +239,7 @@ namespace lipsync_editor
 			// bu_cancel
 			// 
 			this.bu_cancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-			this.bu_cancel.Location = new System.Drawing.Point(16, 3);
+			this.bu_cancel.Location = new System.Drawing.Point(11, 3);
 			this.bu_cancel.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_cancel.Name = "bu_cancel";
 			this.bu_cancel.Size = new System.Drawing.Size(70, 27);

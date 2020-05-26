@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -10,13 +11,18 @@ namespace lipsync_editor
 		: Form
 	{
 		#region fields (static)
+		const string TITLE = "Waver";
+
 		static int _factor = 2;
 		#endregion fields (static)
 
 
 		#region fields
 		EditorPhonF _f;
+		DataTable _dt;
+
 		short[] _samples;
+		decimal _dur;
 		#endregion fields
 
 
@@ -26,12 +32,16 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="f">parent</param>
 		/// <param name="wavefile">fullpath of PCM-wave file</param>
-		internal WaverF(EditorPhonF f, string wavefile)
+		/// <param name="dt">datatable</param>
+		internal WaverF(EditorPhonF f, string wavefile, DataTable dt)
 		{
 			InitializeComponent();
-			_f = f;
+			_f  = f;
+			_dt = dt;
 
 			Conatiner(wavefile);
+
+			Text = TITLE + " - " + _dur.ToString("F3") + " sec";
 		}
 		#endregion cTor
 
@@ -69,6 +79,9 @@ namespace lipsync_editor
 		#region handlers
 		void paint_WavePanel(object sender, PaintEventArgs e)
 		{
+			//logfile.Log();
+			//logfile.Log("paint_WavePanel() w= " + pa_wave.Width);
+
 			Cursor = Cursors.WaitCursor;
 
 			e.Graphics.DrawLine(Pens.Snow,
@@ -99,6 +112,33 @@ namespace lipsync_editor
 									x, offsetVert,
 									x, offsetVert + (int)(hi * factorVert));
 			}
+
+
+			// draw the word-stops
+			factorHori = (decimal)pa_wave.Width / _dur;
+			//logfile.Log("factorHori= " + factorHori);
+
+			Pen pen;
+			for (int i = 0; i != _dt.Rows.Count; ++i)
+			{
+				if (_dt.Rows[i][0].ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase))
+				{
+					if (_dt.Rows[i][1].ToString() == "[x]")
+						pen = Pens.LightYellow;
+					else
+						pen = Pens.Red;
+				}
+				else
+					pen = Pens.Blue;
+
+				x = (int)((decimal)_dt.Rows[i][2] * factorHori);
+				//logfile.Log(". x= " + x);
+
+				e.Graphics.DrawLine(pen,
+									x, 0,
+									x, pa_wave.Height);
+			}
+
 			Cursor = Cursors.Default;
 		}
 		#endregion handlers
@@ -110,6 +150,7 @@ namespace lipsync_editor
 		/// @note The wavefile shall be PCM 16-bit Mono.
 		/// </summary>
 		/// <param name="wavefile"></param>
+		/// <returns></returns>
 		void Conatiner(string wavefile)
 		{
 			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read))
@@ -126,6 +167,8 @@ namespace lipsync_editor
 
 				br.Close();
 			}
+
+			_dur = (decimal)_samples.Length / 44100;
 		}
 		#endregion methods
 
@@ -157,7 +200,6 @@ namespace lipsync_editor
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "WaverF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-			this.Text = "Waver";
 			this.ResumeLayout(false);
 
 		}
