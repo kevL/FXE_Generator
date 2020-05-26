@@ -121,9 +121,16 @@ namespace lipsync_editor
 			Pen pen;
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
-				if (_dt.Rows[i][0].ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase))
+				if (_dt.Rows[i][0].ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase)) // pos
 				{
-					if (_dt.Rows[i][1].ToString() == "[x]")
+					x = (int)((decimal)_dt.Rows[i][2] * factorHori); // start
+					//logfile.Log(". x= " + x);
+
+					e.Graphics.DrawLine(Pens.MediumSeaGreen,
+										x, 0,
+										x, pa_wave.Height);
+
+					if (_dt.Rows[i][1].ToString() == "[x]") // phon
 						pen = Pens.LightYellow;
 					else
 						pen = Pens.Red;
@@ -131,7 +138,7 @@ namespace lipsync_editor
 				else
 					pen = Pens.Blue;
 
-				x = (int)((decimal)_dt.Rows[i][2] * factorHori);
+				x = (int)((decimal)_dt.Rows[i][3] * factorHori); // stop
 				//logfile.Log(". x= " + x);
 
 				e.Graphics.DrawLine(pen,

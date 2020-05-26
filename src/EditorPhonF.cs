@@ -45,9 +45,10 @@ namespace lipsync_editor
 			for (; i != _dt.Rows.Count; ++i)
 			{
 				eg_phons.Rows.Add();
-				eg_phons.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString();
-				eg_phons.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString();
-				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString();
+				eg_phons.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
+				eg_phons.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
+				// TODO: start
+				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][3].ToString(); // stop
 			}
 
 			int w = eg_phons.RowHeadersWidth
