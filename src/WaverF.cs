@@ -84,7 +84,7 @@ namespace lipsync_editor
 
 			Cursor = Cursors.WaitCursor;
 
-			e.Graphics.DrawLine(Pens.Snow,
+			e.Graphics.DrawLine(Pens.OliveDrab,
 								pa_wave.Left,  pa_wave.Height / 2,
 								pa_wave.Right, pa_wave.Height / 2);
 
@@ -114,34 +114,21 @@ namespace lipsync_editor
 			}
 
 
-			// draw the word-stops
+			// draw the word starts and stops
 			factorHori = (decimal)pa_wave.Width / _dur;
-			//logfile.Log("factorHori= " + factorHori);
 
-			Pen pen;
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
 				if (_dt.Rows[i][0].ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase)) // pos
 				{
 					x = (int)((decimal)_dt.Rows[i][2] * factorHori); // start
-					//logfile.Log(". x= " + x);
-
-					e.Graphics.DrawLine(Pens.MediumSeaGreen,
+					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
-
-					if (_dt.Rows[i][1].ToString() == "[x]") // phon
-						pen = Pens.LightYellow;
-					else
-						pen = Pens.Red;
 				}
-				else
-					pen = Pens.Blue;
 
 				x = (int)((decimal)_dt.Rows[i][3] * factorHori); // stop
-				//logfile.Log(". x= " + x);
-
-				e.Graphics.DrawLine(pen,
+				e.Graphics.DrawLine(Pens.Blue,
 									x, 0,
 									x, pa_wave.Height);
 			}
