@@ -27,10 +27,11 @@ namespace lipsync_editor
 
 		const string HEAD_PHONS_0 = "pos";
 		const string HEAD_PHONS_1 = "phoneme"; // headers for the phonemes table ->
-		const string HEAD_PHONS_2 = "stop (secs)";
-		const string HEAD_PHONS_3 = "viseme";
-		const string HEAD_PHONS_4 = "truth";
-		const string HEAD_PHONS_5 = "level";
+		const string HEAD_PHONS_2 = "start";
+		const string HEAD_PHONS_3 = "stop";
+		const string HEAD_PHONS_4 = "viseme";
+		const string HEAD_PHONS_5 = "truth";
+		const string HEAD_PHONS_6 = "level";
 
 		const string HEAD_BLOCKS_0 = "viseme"; // headers for the datablocks table ->
 		const string HEAD_BLOCKS_1 = "frame stop";
@@ -155,19 +156,23 @@ namespace lipsync_editor
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_2, typeof(decimal));	// stop
+				col = new DataColumn(HEAD_PHONS_2, typeof(decimal));	// start
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_3, typeof(string));		// vis
+				col = new DataColumn(HEAD_PHONS_3, typeof(decimal));	// stop
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_4, typeof(string));		// truth
+				col = new DataColumn(HEAD_PHONS_4, typeof(string));		// vis
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
-				col = new DataColumn(HEAD_PHONS_5, typeof(string));		// level
+				col = new DataColumn(HEAD_PHONS_5, typeof(string));		// truth
+				col.ReadOnly = true;
+				_dt1.Columns.Add(col);
+
+				col = new DataColumn(HEAD_PHONS_6, typeof(string));		// level
 				col.ReadOnly = true;
 				_dt1.Columns.Add(col);
 
@@ -175,9 +180,10 @@ namespace lipsync_editor
 				dg_phons.Columns[0].Width = 50; // 50
 				dg_phons.Columns[1].Width = 76; // 76
 				dg_phons.Columns[2].Width = 86; // 86
-				dg_phons.Columns[3].Width = 67; // 67
-				dg_phons.Columns[4].Width = 57; // 57
-				dg_phons.Columns[5].Width = 61; // 56
+				dg_phons.Columns[3].Width = 86; // 86
+				dg_phons.Columns[4].Width = 67; // 67
+				dg_phons.Columns[5].Width = 57; // 57
+				dg_phons.Columns[6].Width = 61; // 56
 
 				col = new DataColumn(HEAD_BLOCKS_0, typeof(string));
 				col.ReadOnly = true;
@@ -625,15 +631,15 @@ namespace lipsync_editor
 			{
 				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[5].Value.ToString() == "Low")
+			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "Low")
 			{
 				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[5].Value.ToString() == "Normal")
+			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "Normal")
 			{
 				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[5].Value.ToString() == "High")
+			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "High")
 			{
 				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Aquamarine;
 			}
@@ -878,11 +884,14 @@ namespace lipsync_editor
 			_dt1.Rows.Clear();
 
 			int j = -1;
-			string confidence, level;
+			ulong start;
+			string confi, level;
 			foreach (OrthographicResult ar in ars)
 			{
 				++j;
-				confidence = ar.Confidence.ToString("F3");
+
+				start = ar.Start;
+				confi = ar.Confidence.ToString("F3");
 				level = ar.Level;
 #if DEBUG
 				logfile.Log(". word= " + ar.Orthography);
@@ -907,11 +916,16 @@ namespace lipsync_editor
 
 					_dt1.Rows.Add(new object[] { j + "." + i,
 												 phon,
+												 (decimal)start         / 10000000,
 												 (decimal)ar.phStops[i] / 10000000,
 												 vis,
-												 confidence,
+												 confi,
 												 level });
-					confidence = level = String.Empty;
+					if (i == 0)
+					{
+						start = 0u;
+						confi = level = String.Empty;
+					}
 				}
 			}
 //			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);

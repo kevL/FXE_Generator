@@ -229,7 +229,7 @@ namespace lipsync_editor
 			this.dg_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.dg_phons.Name = "dg_phons";
 			this.dg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_phons.Size = new System.Drawing.Size(400, 420);
+			this.dg_phons.Size = new System.Drawing.Size(486, 420);
 			this.dg_phons.TabIndex = 26;
 			this.dg_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgphons_RowPrePaint);
 			// 
@@ -364,7 +364,7 @@ namespace lipsync_editor
 			this.la_phons.Location = new System.Drawing.Point(470, 40);
 			this.la_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_phons.Name = "la_phons";
-			this.la_phons.Size = new System.Drawing.Size(400, 15);
+			this.la_phons.Size = new System.Drawing.Size(486, 15);
 			this.la_phons.TabIndex = 25;
 			this.la_phons.Text = "PHONEMES";
 			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -379,7 +379,7 @@ namespace lipsync_editor
 			this.dg_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 			| System.Windows.Forms.AnchorStyles.Right)));
 			this.dg_blocks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dg_blocks.Location = new System.Drawing.Point(876, 60);
+			this.dg_blocks.Location = new System.Drawing.Point(962, 60);
 			this.dg_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.dg_blocks.Name = "dg_blocks";
 			this.dg_blocks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
@@ -467,7 +467,7 @@ namespace lipsync_editor
 			// la_blocks
 			// 
 			this.la_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_blocks.Location = new System.Drawing.Point(876, 40);
+			this.la_blocks.Location = new System.Drawing.Point(962, 40);
 			this.la_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.la_blocks.Name = "la_blocks";
 			this.la_blocks.Size = new System.Drawing.Size(290, 15);
@@ -548,7 +548,7 @@ namespace lipsync_editor
 			this.tssl_langids});
 			this.ss_bot.Location = new System.Drawing.Point(0, 484);
 			this.ss_bot.Name = "ss_bot";
-			this.ss_bot.Size = new System.Drawing.Size(1170, 22);
+			this.ss_bot.Size = new System.Drawing.Size(1256, 22);
 			this.ss_bot.TabIndex = 32;
 			// 
 			// tssl_token
@@ -577,7 +577,7 @@ namespace lipsync_editor
 			this.tssl_langids.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
 			this.tssl_langids.Margin = new System.Windows.Forms.Padding(0);
 			this.tssl_langids.Name = "tssl_langids";
-			this.tssl_langids.Size = new System.Drawing.Size(498, 22);
+			this.tssl_langids.Size = new System.Drawing.Size(584, 22);
 			this.tssl_langids.Spring = true;
 			this.tssl_langids.Text = "tssl_langids";
 			this.tssl_langids.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -586,7 +586,7 @@ namespace lipsync_editor
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(1170, 506);
+			this.ClientSize = new System.Drawing.Size(1256, 506);
 			this.Controls.Add(this.ss_bot);
 			this.Controls.Add(this.rb_enh);
 			this.Controls.Add(this.rb_def);

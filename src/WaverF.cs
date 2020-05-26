@@ -150,7 +150,6 @@ namespace lipsync_editor
 		/// @note The wavefile shall be PCM 16-bit Mono.
 		/// </summary>
 		/// <param name="wavefile"></param>
-		/// <returns></returns>
 		void Conatiner(string wavefile)
 		{
 			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read))
