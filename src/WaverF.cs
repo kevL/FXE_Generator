@@ -119,12 +119,16 @@ namespace lipsync_editor
 
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
-				if (_dt.Rows[i][0].ToString().EndsWith(".0", StringComparison.OrdinalIgnoreCase)) // pos
+				string pos = _dt.Rows[i][0].ToString(); // pos
+				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
 					x = (int)((decimal)_dt.Rows[i][2] * factorHori); // start
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
+
+					pos = pos.Substring(0, pos.Length - 2);
+					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
 				x = (int)((decimal)_dt.Rows[i][3] * factorHori); // stop
@@ -179,6 +183,7 @@ namespace lipsync_editor
 			// 
 			this.pa_wave.BackColor = System.Drawing.Color.Black;
 			this.pa_wave.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.pa_wave.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.pa_wave.Location = new System.Drawing.Point(0, 0);
 			this.pa_wave.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_wave.Name = "pa_wave";
