@@ -14,7 +14,7 @@ namespace lipsync_editor
 		#region fields (static)
 		const string TITLE = "Waver";
 
-		const int THRESHOLD = 29;
+		const short THRESHOLD = (short)59;
 		static int _factor = 2;
 
 		static int _x = -1;
@@ -29,8 +29,9 @@ namespace lipsync_editor
 		DataTable _dt;
 
 		short[] _samples;
+
 		decimal _dur;
-		decimal _durOffset;
+		decimal _durSapistart;
 		#endregion fields
 
 
@@ -128,10 +129,11 @@ namespace lipsync_editor
 
 			Pen pen;
 
-			int hi, hitest, j, x,y, length = _samples.Length;
+			short hi, hitest;
+			int j, x,y, length = _samples.Length;
 			for (int i = 0; i < length; ++i)
 			{
-				hi = 0; // draw only the highest/lowest amplitude in each pixel-group ->
+				hi = (short)0; // draw only the highest/lowest amplitude in each pixel-group ->
 				for (j = 0; j != pixelGroupCount && i + j < length; ++j)
 				{
 					hitest = _samples[i + j];
@@ -140,15 +142,15 @@ namespace lipsync_editor
 				}
 				i += j - 1;
 
-				if (hi != 0)
+				if (hi != (short)0)
 				{
 					if (Math.Abs(hi) > THRESHOLD) pen = Pens.Lime;
 					else                          pen = Pens.Firebrick;
 
-					x = (int)(i  * factorHori);
-					y = (int)(hi * factorVert);
+					x = (int)((decimal)i  * factorHori);
+					y = (int)((decimal)hi * factorVert);
 					if (y == 0) // always pip a non-zero amplitude ->
-						y = hi / Math.Abs(hi); // pos/neg
+						y = (int)hi / Math.Abs(hi); // pos/neg
 
 					e.Graphics.DrawLine(pen,
 										x, offsetVert,
@@ -165,7 +167,7 @@ namespace lipsync_editor
 				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durOffset) * factorHori); // start-line
+					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori); // start-line
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -174,10 +176,10 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durOffset) * factorHori); // stop-line
+				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori); // stop-line
 				e.Graphics.DrawLine(Pens.Blue,
-									x, 0,
-									x, pa_wave.Height);
+									x, 16,
+									x, pa_wave.Height - 16);
 			}
 
 			Cursor = Cursors.Default;
@@ -188,7 +190,7 @@ namespace lipsync_editor
 		#region methods
 		/// <summary>
 		/// Parses and pushes 16-bit samples to an array.
-		/// @note The wavefile shall be PCM 16-bit Mono.
+		/// @note The wavefile shall be PCM 44.1kHz 16-bit Mono.
 		/// </summary>
 		/// <param name="wavefile"></param>
 		void Conatiner(string wavefile)
@@ -208,8 +210,8 @@ namespace lipsync_editor
 					val = br.ReadInt16();
 					_samples[++i] = val;
 
-					if (_durOffset == 0 && val > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
-						_durOffset = (decimal)i / 44100;
+					if (_durSapistart == 0 && val > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+						_durSapistart = (decimal)i / 44100;
 				}
 				br.Close();
 			}
