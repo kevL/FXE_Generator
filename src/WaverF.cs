@@ -114,8 +114,6 @@ namespace lipsync_editor
 			//logfile.Log();
 			//logfile.Log("paint_WavePanel() w= " + pa_wave.Width);
 
-			Cursor = Cursors.WaitCursor;
-
 			int offsetVert = pa_wave.Height / 2;
 
 			e.Graphics.DrawLine(Pens.OliveDrab,
@@ -181,8 +179,6 @@ namespace lipsync_editor
 									x, 16,
 									x, pa_wave.Height - 16);
 			}
-
-			Cursor = Cursors.Default;
 		}
 		#endregion handlers
 
