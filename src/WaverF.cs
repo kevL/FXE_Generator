@@ -14,7 +14,7 @@ namespace lipsync_editor
 		#region fields (static)
 		const string TITLE = "Waver";
 
-		const short THRESHOLD = (short)59;
+		const short THRESHOLD = (short)60;
 		static int _factor = 2;
 
 		static int _x = -1;
@@ -206,7 +206,7 @@ namespace lipsync_editor
 					val = br.ReadInt16();
 					_samples[++i] = val;
 
-					if (_durSapistart == 0 && val > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+					if (_durSapistart == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
 						_durSapistart = (decimal)i / 44100;
 				}
 				br.Close();
