@@ -99,7 +99,7 @@ namespace lipsync_editor
 		{
 			if (Waver != null)
 			{
-				Waver.Dispose();
+				Waver.Close(); //Dispose()
 				Waver = null;
 			}
 
@@ -260,7 +260,7 @@ namespace lipsync_editor
 			this.bu_cancel.Name = "bu_cancel";
 			this.bu_cancel.Size = new System.Drawing.Size(70, 27);
 			this.bu_cancel.TabIndex = 0;
-			this.bu_cancel.Text = "cancel";
+			this.bu_cancel.Text = "no";
 			this.bu_cancel.UseVisualStyleBackColor = true;
 			// 
 			// EditorPhonF
@@ -275,7 +275,7 @@ namespace lipsync_editor
 			this.Name = "EditorPhonF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "Edit phons";
+			this.Text = "Editor";
 			((System.ComponentModel.ISupportInitialize)(this.eg_phons)).EndInit();
 			this.pa_bot.ResumeLayout(false);
 			this.ResumeLayout(false);

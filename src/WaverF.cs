@@ -15,6 +15,11 @@ namespace lipsync_editor
 		const string TITLE = "Waver";
 
 		static int _factor = 2;
+
+		static int _x = -1;
+		static int _y = -1;
+		static int _w = -1;
+		static int _h = -1;
 		#endregion fields (static)
 
 
@@ -41,6 +46,15 @@ namespace lipsync_editor
 			_f  = f;
 			_dt = dt;
 
+			if (_x != -1)
+			{
+				Location = new Point(_x, _y);
+				ClientSize = new Size(_w, _h);
+			}
+			else
+				Location = new Point(_f.Left + 20, _f.Top + 20);
+
+
 			Conatiner(wavefile);
 
 			Text = TITLE + " - " + _dur.ToString("F3") + " sec";
@@ -52,6 +66,20 @@ namespace lipsync_editor
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
 			_f.Waver = null;
+
+			switch (e.CloseReason)
+			{
+				case CloseReason.UserClosing:
+				case CloseReason.None:
+					if (WindowState == FormWindowState.Normal)
+					{
+						_x = Math.Max(0, Left);
+						_y = Math.Max(0, Top);
+						_w = ClientSize.Width;
+						_h = ClientSize.Height;
+					}
+					break;
+			}
 			base.OnFormClosing(e);
 		}
 
@@ -212,6 +240,7 @@ namespace lipsync_editor
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.Name = "WaverF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.ResumeLayout(false);
 
 		}
