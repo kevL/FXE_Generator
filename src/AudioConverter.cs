@@ -11,6 +11,7 @@ namespace lipsync_editor
 		#region fields (static)
 		const string EXT_MP3 = ".mp3";
 		const string EXT_WAV = ".wav";
+		const string EXT_BMU = ".bmu";
 		const string TMP_MP3 = "sapi_lipsync" + EXT_MP3;
 		const string TMP_WAV = "sapi_lipsync" + EXT_WAV;
 
@@ -23,7 +24,6 @@ namespace lipsync_editor
 		/// Determines the file to use for the SpeechRecognition filestream
 		/// converting it from BMU/MP3 to WAV if necessary.
 		/// @note The result shall be PCM 44.1kHz 16-bit Mono.
-		/// TODO: This doesn't handle an MP3 with a BMU extension.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
 		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>
@@ -34,32 +34,37 @@ namespace lipsync_editor
 			string pathT = Path.GetTempPath();
 			//logfile.Log(". path= " + pathT);
 
-			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // prep .BMU ->
+			if (   pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase) // prep .BMU ->
+				|| pfe.EndsWith(EXT_BMU, StringComparison.InvariantCultureIgnoreCase))
 			{
-				var fi = new FileInfo(pfe);
-				var br = new BinaryReader(fi.OpenRead());
-
-				char[] c = br.ReadChars(3);
-				br.Close();
-
-				if (   c[0] == 'B' // because .BMUs are .MP3s and NwN2 labels them as .WAVs
-					&& c[1] == 'M'
-					&& c[2] == 'U')
+				var chars = new char[3];
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
-					pfe = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
-					//logfile.Log(". pfe= " + pfe);
+					var br = new BinaryReader(fs);
+					chars = br.ReadChars(3);
+					br.Close();
+				}
 
-					fi.CopyTo(pfe, true);
+				if (   chars[0] == 'B' // because .BMUs are .MP3s and NwN2 labels them as .WAVs
+					&& chars[1] == 'M'
+					&& chars[2] == 'U')
+				{
+					string pfeT = Path.Combine(pathT, TMP_MP3); // so label it as .MP3 and allow the next block to catch it.
+					//logfile.Log(". pfeT(MP3)= " + pfeT);
+
+					File.Delete(pfeT);
+					File.Copy(pfe, pfeT);
+
+					pfe = pfeT;
 				}
 			}
 
 			if (pfe.EndsWith(EXT_MP3, StringComparison.InvariantCultureIgnoreCase)) // convert to .WAV file ->
 			{
 				string pfeT = Path.Combine(pathT, TMP_WAV);
-				//logfile.Log(". pfeT= " + pfeT);
+				//logfile.Log(". pfeT(WAV)= " + pfeT);
 
-				if (File.Exists(pfeT))
-					File.Delete(pfeT);
+				File.Delete(pfeT);
 
 //				string execpath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 //				var info = new ProcessStartInfo(Path.Combine(execpath, LAME_EXE));
@@ -73,11 +78,6 @@ namespace lipsync_editor
 				{
 					proc.WaitForExit();
 				}
-
-//				string t = Path.Combine(pathT, TMP_MP3);
-//				logfile.Log(". t= " + t);
-//				if (File.Exists(t))
-//					File.Delete(t);
 
 				pfe = pfeT;
 			}
@@ -114,10 +114,10 @@ namespace lipsync_editor
 						br.ReadBytes(4);							// start 16
 
 						short format = br.ReadInt16();				// start 20: is PCM
-						if (format == 1)
+						if (format == (short)1)
 						{
 							short channels = br.ReadInt16();		// start 22: is Mono
-							if (channels == 1)
+							if (channels == (short)1)
 							{
 								// TODO: Sample-rate and bit-depth should probably be relaxed.
 
@@ -126,7 +126,7 @@ namespace lipsync_editor
 								{
 									br.ReadBytes(6);				// start 28
 									short bits = br.ReadInt16();	// start 34: is 16-bit
-									if (bits == 16)
+									if (bits == (short)16)
 									{
 										fullpath = pfe;
 										//logfile.Log(". AudioConverter.fullpath= " + fullpath);
