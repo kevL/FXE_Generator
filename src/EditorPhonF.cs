@@ -99,7 +99,9 @@ namespace lipsync_editor
 		{
 			if (Waver != null)
 			{
-				Waver.Close(); //Dispose()
+				// NOTE: Dispose() bypasses the OnFormClosing event that's
+				// needed to cache the Waver's telemetry.
+				Waver.Close();
 				Waver = null;
 			}
 
