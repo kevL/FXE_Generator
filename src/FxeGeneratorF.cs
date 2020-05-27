@@ -25,6 +25,9 @@ namespace lipsync_editor
 		internal const string EXT_FXE = "fxe";
 				 const string EXT_TXT = "txt";
 
+		const int GRID_COL_PHON  = 1;
+		const int GRID_COL_LEVEL = 6;
+
 		const string HEAD_PHONS_0 = "pos";
 		const string HEAD_PHONS_1 = "phoneme"; // headers for the PHONEMES table ->
 		const string HEAD_PHONS_2 = "start";
@@ -148,68 +151,68 @@ namespace lipsync_editor
 				tb_enh_phons.BackColor = Color.GhostWhite;
 
 
-				DataColumn col;
-				col = new DataColumn(HEAD_PHONS_0, typeof(string));		// pos
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				DataColumn dc;
+				dc = new DataColumn(HEAD_PHONS_0, typeof(string)); // pos
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_1, typeof(string));		// phon
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_1, typeof(string)); // phon
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_2, typeof(decimal));	// start
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_2, typeof(string)); // start
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_3, typeof(decimal));	// stop
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_3, typeof(string)); // stop
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_4, typeof(string));		// vis
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_4, typeof(string)); // vis
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_5, typeof(string));		// truth
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_5, typeof(string)); // truth
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_PHONS_6, typeof(string));		// level
-				col.ReadOnly = true;
-				_dt1.Columns.Add(col);
+				dc = new DataColumn(HEAD_PHONS_6, typeof(string)); // level
+				dc.ReadOnly = true;
+				_dt1.Columns.Add(dc);
 
-				dg_phons.DataSource = _dt1;
-				dg_phons.Columns[0].Width = 50; // 50
-				dg_phons.Columns[1].Width = 76; // 76
-				dg_phons.Columns[2].Width = 86; // 86
-				dg_phons.Columns[3].Width = 86; // 86
-				dg_phons.Columns[4].Width = 67; // 67
-				dg_phons.Columns[5].Width = 57; // 57
-				dg_phons.Columns[6].Width = 61; // 56
+				grid_phons.DataSource = _dt1;
+				grid_phons.Columns[0].Width = 50; // 50
+				grid_phons.Columns[1].Width = 76; // 76
+				grid_phons.Columns[2].Width = 86; // 86
+				grid_phons.Columns[3].Width = 86; // 86
+				grid_phons.Columns[4].Width = 67; // 67
+				grid_phons.Columns[5].Width = 57; // 57
+				grid_phons.Columns[6].Width = 61; // 56
 
-				col = new DataColumn(HEAD_BLOCKS_0, typeof(string));
-				col.ReadOnly = true;
-				_dt2.Columns.Add(col);
+				dc = new DataColumn(HEAD_BLOCKS_0, typeof(string));
+				dc.ReadOnly = true;
+				_dt2.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_BLOCKS_1, typeof(float));
-				col.ReadOnly = true;
-				_dt2.Columns.Add(col);
+				dc = new DataColumn(HEAD_BLOCKS_1, typeof(float));
+				dc.ReadOnly = true;
+				_dt2.Columns.Add(dc);
 
-				col = new DataColumn(HEAD_BLOCKS_2, typeof(float));
-				col.ReadOnly = true;
-				_dt2.Columns.Add(col);
+				dc = new DataColumn(HEAD_BLOCKS_2, typeof(float));
+				dc.ReadOnly = true;
+				_dt2.Columns.Add(dc);
 
-				dg_blocks.DataSource = _dt2;
-				dg_blocks.Columns[0].Width =  80; //  68
-				dg_blocks.Columns[1].Width =  97; //  87
-				dg_blocks.Columns[2].Width = 110; // 100
+				grid_blocs.DataSource = _dt2;
+				grid_blocs.Columns[0].Width =  80; //  68
+				grid_blocs.Columns[1].Width =  97; //  87
+				grid_blocs.Columns[2].Width = 110; // 100
 
-				dg_phons .RowHeadersVisible =
-				dg_blocks.RowHeadersVisible = false;
+				grid_phons.RowHeadersVisible =
+				grid_blocs.RowHeadersVisible = false;
 
 				printversion();
 
 
-				// initialize SAPI
+				// instantiate/initialize SAPI
 				_sapi = new SapiLipsync();
 				_sapi.TtsStreamEnded += OnTtsStreamEnded;
 				_sapi.SrStreamEnded  += OnSrStreamEnded;
@@ -309,18 +312,18 @@ namespace lipsync_editor
 		/// </summary>
 		void printversion()
 		{
-			var ver = Assembly.GetExecutingAssembly().GetName().Version;
+			Version ver = Assembly.GetExecutingAssembly().GetName().Version;
 			string version = "version " + ver.Major
 						   + "."        + ver.Minor
 						   + "."        + ver.Build
 						   + "."        + ver.Revision;
 
-//			if (an.Version.Build != 0 || an.Version.Revision != 0)
+//			if (ver.Build != 0 || ver.Revision != 0)
 //			{
-//				ver += "." + an.Version.Build;
+//				version += "." + ver.Build;
 //
-//				if (an.Version.Revision != 0)
-//					ver += "." + an.Version.Revision;
+//				if (ver.Revision != 0)
+//					version += "." + ver.Revision;
 //			}
 #if DEBUG
 			version += "-d";
@@ -465,7 +468,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("click_Generate() ===============================================================");
 #endif
-			Cursor = Cursors.WaitCursor;
+			Cursor = Cursors.WaitCursor; // shall return to Default cursor either OnSrStreamEnded() or an InfoDialog error.
 
 			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
 
@@ -626,21 +629,21 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
-			if (dg_phons.Rows[e.RowIndex].Cells[1].Value.ToString() == "[x]")
+			if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_PHON].Value.ToString() == "[x]")
 			{
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
+				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "Low")
+			else if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_LEVEL].Value.ToString() == "Low")
 			{
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
+				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "Normal")
+			else if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_LEVEL].Value.ToString() == "Normal")
 			{
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
+				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightYellow;
 			}
-			else if (dg_phons.Rows[e.RowIndex].Cells[6].Value.ToString() == "High")
+			else if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_LEVEL].Value.ToString() == "High")
 			{
-				dg_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Aquamarine;
+				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Aquamarine;
 			}
 
 //			if (dg_phons.Rows[e.RowIndex].Cells[0].Value.ToString().EndsWith(".0", StringComparison.Ordinal))
@@ -864,7 +867,7 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// Populates the PHONEMES datagrid.
+		/// Populates the PHONEMES datagrid via checkedchanged_Radio().
 		/// </summary>
 		/// <param name="ars"></param>
 		void PopulatePhonGrid(List<OrthographicResult> ars)
@@ -874,32 +877,35 @@ namespace lipsync_editor
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
 #endif
 			int col = -1, row = -1;
-			if (dg_phons.SelectedCells.Count != 0)
+//			if (grid_phons.SelectedCells.Count != 0)
+//			{
+//				col = grid_phons.SelectedCells[0].ColumnIndex;
+//				row = grid_phons.SelectedCells[0].RowIndex;
+//			}
+			if (grid_phons.CurrentCell != null)
 			{
-				col = dg_phons.SelectedCells[0].ColumnIndex;
-				row = dg_phons.SelectedCells[0].RowIndex;
+				col = grid_phons.CurrentCell.ColumnIndex;
+				row = grid_phons.CurrentCell.RowIndex;
 			}
 
 			_dt1.Rows.Clear();
 
 			int j = -1;
-			ulong start;
-			string confi, level;
+			string start, truth, level, phon, vis;
 			foreach (OrthographicResult ar in ars)
 			{
 				++j;
 
-				start = ar.Start;
-				confi = ar.Confidence.ToString("F3");
+				start = StaticData.millisecs(ar.Start).ToString("F3");
+				truth = ar.Confidence.ToString("F3");
 				level = ar.Level;
 #if DEBUG
 				logfile.Log(". word= " + ar.Orthography);
 #endif
 				for (int i = 0; i != ar.Phons.Count; ++i)
 				{
-					string phon = ar.Phons[i];
+					phon = ar.Phons[i];
 
-					string vis;
 					if (StaticData.Vices.ContainsKey(phon)) // fudge ->
 					{
 						vis = StaticData.Vices[phon];
@@ -908,37 +914,38 @@ namespace lipsync_editor
 						vis = "INVALID";
 
 					if (phon == "x") // silence
+					{
 						phon = "[x]";
+						truth = String.Empty;
+					}
 #if DEBUG
 					logfile.Log(". . " + phon + " -> "+ vis);
 #endif
-
 					_dt1.Rows.Add(new object[] { j + "." + i,
 												 phon,
-												 (decimal)start         / 10000000,
-												 (decimal)ar.phStops[i] / 10000000,
+												 start,
+												 StaticData.millisecs(ar.phStops[i]).ToString("F3"),
 												 vis,
-												 confi,
+												 truth,
 												 level });
 					if (i == 0)
 					{
-						start = 0u;
-						confi = level = String.Empty;
+						start = truth = level = String.Empty;
 					}
 				}
 			}
 //			dg_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
 
-			if (row != -1 && dg_phons.Rows.Count > row)
+			if (row != -1 && grid_phons.Rows.Count > row)
 			{
-				dg_phons.CurrentCell = dg_phons[col,row];
+				grid_phons.CurrentCell = grid_phons[col,row];
 			}
 			else
-				dg_phons.ClearSelection();
+				grid_phons.ClearSelection();
 		}
 
 		/// <summary>
-		/// Populates the Data Blocks datagrid.
+		/// Populates the Data Blocks datagrid via checkedchanged_Radio().
 		/// </summary>
 		/// <param name="fxedata"></param>
 		void PopulateDataGrid(Dictionary<string, List<FxeDataBlock>> fxedata)
@@ -948,10 +955,10 @@ namespace lipsync_editor
 			logfile.Log("PopulateDataGrid() fxedata.Count= " + fxedata.Count);
 #endif
 			int col = -1, row = -1;
-			if (dg_blocks.SelectedCells.Count != 0)
+			if (grid_blocs.SelectedCells.Count != 0)
 			{
-				col = dg_blocks.SelectedCells[0].ColumnIndex;
-				row = dg_blocks.SelectedCells[0].RowIndex;
+				col = grid_blocs.SelectedCells[0].ColumnIndex;
+				row = grid_blocs.SelectedCells[0].RowIndex;
 			}
 
 			var blocks = new List<FxeDataBlock>();
@@ -965,16 +972,18 @@ namespace lipsync_editor
 			int j = -1;
 			foreach (FxeDataBlock block in blocks)
 			{
-				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Vis, block.Val1, block.Val2 });
+				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Vis,
+																block.Val1,
+																block.Val2 });
 			}
 //			dg_blocks.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 
-			if (row != -1 && dg_blocks.Rows.Count > row)
+			if (row != -1 && grid_blocs.Rows.Count > row)
 			{
-				dg_blocks.CurrentCell = dg_blocks[col,row];
+				grid_blocs.CurrentCell = grid_blocs[col,row];
 			}
 			else
-				dg_blocks.ClearSelection();
+				grid_blocs.ClearSelection();
 		}
 		#endregion lipsync handlers
 	}

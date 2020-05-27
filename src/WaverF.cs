@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
@@ -127,10 +128,10 @@ namespace lipsync_editor
 
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
-				string pos = _dt.Rows[i][0].ToString(); // pos
+				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((decimal)_dt.Rows[i][2] + _durOffset) * factorHori); // start-line
+					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durOffset) * factorHori); // start-line
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -139,7 +140,7 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((decimal)_dt.Rows[i][3] + _durOffset) * factorHori); // stop-line
+				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durOffset) * factorHori); // stop-line
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 0,
 									x, pa_wave.Height);

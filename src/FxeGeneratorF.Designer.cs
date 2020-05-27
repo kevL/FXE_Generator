@@ -60,9 +60,9 @@ namespace lipsync_editor
 		Label la_enh_phon_pct;
 
 		Label la_phons;
-		DataGridView dg_phons;
+		DataGridView grid_phons;
 		Label la_blocks;
-		DataGridView dg_blocks;
+		DataGridView grid_blocs;
 
 		RadioButton rb_def;
 		RadioButton rb_enh;
@@ -88,7 +88,7 @@ namespace lipsync_editor
 			this.tb_def_phons = new System.Windows.Forms.TextBox();
 			this.la_def_phons = new System.Windows.Forms.Label();
 			this.tb_text = new System.Windows.Forms.TextBox();
-			this.dg_phons = new System.Windows.Forms.DataGridView();
+			this.grid_phons = new System.Windows.Forms.DataGridView();
 			this.la_text = new System.Windows.Forms.Label();
 			this.la_expected = new System.Windows.Forms.Label();
 			this.tb_expected = new System.Windows.Forms.TextBox();
@@ -101,7 +101,7 @@ namespace lipsync_editor
 			this.la_enh_word_pct = new System.Windows.Forms.Label();
 			this.la_enh_phon_pct = new System.Windows.Forms.Label();
 			this.la_phons = new System.Windows.Forms.Label();
-			this.dg_blocks = new System.Windows.Forms.DataGridView();
+			this.grid_blocs = new System.Windows.Forms.DataGridView();
 			this.bu_createfxe = new System.Windows.Forms.Button();
 			this.co_headtype = new System.Windows.Forms.ComboBox();
 			this.la_headtype = new System.Windows.Forms.Label();
@@ -116,8 +116,8 @@ namespace lipsync_editor
 			this.tssl_token = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tssl_langids_ = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tssl_langids = new System.Windows.Forms.ToolStripStatusLabel();
-			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).BeginInit();
-			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).BeginInit();
 			this.ss_bot.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -216,22 +216,23 @@ namespace lipsync_editor
 			this.tb_text.TextChanged += new System.EventHandler(this.textchanged_Text);
 			this.tb_text.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keydown_TypedText);
 			// 
-			// dg_phons
+			// grid_phons
 			// 
-			this.dg_phons.AllowUserToAddRows = false;
-			this.dg_phons.AllowUserToDeleteRows = false;
-			this.dg_phons.AllowUserToResizeColumns = false;
-			this.dg_phons.AllowUserToResizeRows = false;
-			this.dg_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.grid_phons.AllowUserToAddRows = false;
+			this.grid_phons.AllowUserToDeleteRows = false;
+			this.grid_phons.AllowUserToResizeColumns = false;
+			this.grid_phons.AllowUserToResizeRows = false;
+			this.grid_phons.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.dg_phons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dg_phons.Location = new System.Drawing.Point(470, 60);
-			this.dg_phons.Margin = new System.Windows.Forms.Padding(0);
-			this.dg_phons.Name = "dg_phons";
-			this.dg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_phons.Size = new System.Drawing.Size(486, 420);
-			this.dg_phons.TabIndex = 26;
-			this.dg_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgphons_RowPrePaint);
+			this.grid_phons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+			this.grid_phons.Location = new System.Drawing.Point(470, 60);
+			this.grid_phons.Margin = new System.Windows.Forms.Padding(0);
+			this.grid_phons.Name = "grid_phons";
+			this.grid_phons.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Consolas", 8F);
+			this.grid_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.grid_phons.Size = new System.Drawing.Size(486, 420);
+			this.grid_phons.TabIndex = 26;
+			this.grid_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgphons_RowPrePaint);
 			// 
 			// la_text
 			// 
@@ -370,21 +371,22 @@ namespace lipsync_editor
 			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			this.la_phons.Click += new System.EventHandler(this.click_PhonLabel);
 			// 
-			// dg_blocks
+			// grid_blocs
 			// 
-			this.dg_blocks.AllowUserToAddRows = false;
-			this.dg_blocks.AllowUserToDeleteRows = false;
-			this.dg_blocks.AllowUserToResizeColumns = false;
-			this.dg_blocks.AllowUserToResizeRows = false;
-			this.dg_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+			this.grid_blocs.AllowUserToAddRows = false;
+			this.grid_blocs.AllowUserToDeleteRows = false;
+			this.grid_blocs.AllowUserToResizeColumns = false;
+			this.grid_blocs.AllowUserToResizeRows = false;
+			this.grid_blocs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
 			| System.Windows.Forms.AnchorStyles.Right)));
-			this.dg_blocks.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-			this.dg_blocks.Location = new System.Drawing.Point(962, 60);
-			this.dg_blocks.Margin = new System.Windows.Forms.Padding(0);
-			this.dg_blocks.Name = "dg_blocks";
-			this.dg_blocks.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.dg_blocks.Size = new System.Drawing.Size(290, 420);
-			this.dg_blocks.TabIndex = 28;
+			this.grid_blocs.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+			this.grid_blocs.Location = new System.Drawing.Point(962, 60);
+			this.grid_blocs.Margin = new System.Windows.Forms.Padding(0);
+			this.grid_blocs.Name = "grid_blocs";
+			this.grid_blocs.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Consolas", 8F);
+			this.grid_blocs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.grid_blocs.Size = new System.Drawing.Size(290, 420);
+			this.grid_blocs.TabIndex = 28;
 			// 
 			// bu_createfxe
 			// 
@@ -598,8 +600,8 @@ namespace lipsync_editor
 			this.Controls.Add(this.bu_generate);
 			this.Controls.Add(this.bu_play);
 			this.Controls.Add(this.tb_wavefile);
-			this.Controls.Add(this.dg_phons);
-			this.Controls.Add(this.dg_blocks);
+			this.Controls.Add(this.grid_phons);
+			this.Controls.Add(this.grid_blocs);
 			this.Controls.Add(this.la_blocks);
 			this.Controls.Add(this.la_phons);
 			this.Controls.Add(this.la_version);
@@ -625,8 +627,8 @@ namespace lipsync_editor
 			this.Name = "FxeGeneratorF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.Text = "0x22 - FXE LipSyncer";
-			((System.ComponentModel.ISupportInitialize)(this.dg_phons)).EndInit();
-			((System.ComponentModel.ISupportInitialize)(this.dg_blocks)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).EndInit();
 			this.ss_bot.ResumeLayout(false);
 			this.ss_bot.PerformLayout();
 			this.ResumeLayout(false);

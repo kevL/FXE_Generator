@@ -27,6 +27,12 @@ namespace lipsync_editor
 
 
 		#region methods (static)
+		internal static decimal millisecs(ulong nanoseconds_100)
+		{
+			return ((decimal)nanoseconds_100 / 10000000);
+		}
+
+
 		/// <summary>
 		/// Fills the 'Vices' dictionary that maps phoneme-strings to
 		/// viseme-strings.

@@ -23,6 +23,7 @@ namespace lipsync_editor
 		/// Determines the file to use for the SpeechRecognition filestream
 		/// converting it from BMU/MP3 to WAV if necessary.
 		/// @note The result shall be PCM 44.1kHz 16-bit Mono.
+		/// TODO: This doesn't handle an MP3 with a BMU extension.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
 		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>

@@ -56,12 +56,11 @@ namespace lipsync_editor
 #endif
 						if (StaticData.Vices.ContainsKey(phon)) // fudge ->
 						{
-							string vice = StaticData.Vices[phon];
+							string vis = StaticData.Vices[phon];
 #if DEBUG
-							log += vice;
+							log += vis;
 #endif
-							decimal stop = (decimal)ar.phStops[i] / 10000000;
-							visuals.Add(new KeyValuePair<string, decimal>(vice, stop));
+							visuals.Add(new KeyValuePair<string, decimal>(vis, StaticData.millisecs(ar.phStops[i])));
 						}
 #if DEBUG
 						else log += "INVALID";
