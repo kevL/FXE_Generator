@@ -241,14 +241,12 @@ namespace lipsync_editor
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
-				isConsole = true;
-
-				_pfe = pfe;
-				_headtype = headtype;
-
-				_sapi = new SapiLipsync(_pfe);
+				_sapi = new SapiLipsync(_pfe = pfe);
 				if (_sapi.Wavefile != String.Empty)
 				{
+					isConsole = true;
+					_headtype = headtype;
+
 					_sapi.SrStreamEnded += OnSrStreamEnded;
 					_sapi.Start(LoadTypedTextFile());
 				}
