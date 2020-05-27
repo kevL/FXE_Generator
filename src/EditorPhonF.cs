@@ -277,7 +277,7 @@ namespace lipsync_editor
 			this.Name = "EditorPhonF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
-			this.Text = "Editor";
+			this.Text = "Edit";
 			((System.ComponentModel.ISupportInitialize)(this.eg_phons)).EndInit();
 			this.pa_bot.ResumeLayout(false);
 			this.ResumeLayout(false);
