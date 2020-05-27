@@ -521,7 +521,7 @@ namespace lipsync_editor
 		{
 			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
 
-			using (var fs = new FileStream(_sapi.Wavefile, FileMode.Open))
+			using (var fs = new FileStream(_sapi.Wavefile, FileMode.Open, FileAccess.Read, FileShare.Read))
 			using (var player = new SoundPlayer(fs))
 			{
 				player.SoundLocation = _sapi.Wavefile;

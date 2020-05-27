@@ -20,21 +20,27 @@ namespace lipsync_editor
 
 
 		#region write methods (static)
-		internal static bool ReadFile(string file, Dictionary<string, List<FxeDataBlock>> fxedata)
+		/// <summary>
+		/// Reads an FXE-file and stores its data in a dictionary.
+		/// </summary>
+		/// <param name="pfe">fullpath of a (audio) file</param>
+		/// <param name="fxedata">pointer to store the result</param>
+		/// <returns>true if the FXE-file exists</returns>
+		internal static bool ReadFile(string pfe, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
 			_d = false;
 			logfile.Log("FxeReader.ReadFile()");
 #endif
-			file = file.Substring(0, file.Length - 3) + FxeGeneratorF.EXT_FXE;
+			pfe = pfe.Substring(0, pfe.Length - 3) + FxeGeneratorF.EXT_FXE;
 #if DEBUG
-			logfile.Log(". file= " + file);
+			logfile.Log(". pfe= " + pfe);
 #endif
-			if (File.Exists(file))
+			if (File.Exists(pfe))
 			{
 				StaticData.MapFxeViscodes(fxedata);
 
-				using (FileStream fs = File.Open(file, FileMode.Open))
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
 					_br = new BinaryReader(fs);
 #if DEBUG
@@ -135,16 +141,21 @@ namespace lipsync_editor
 
 
 		#region test methods (static)
-		internal static bool TestFile(string file)
+		/// <summary>
+		/// Reads an FXE-file as a test of its integrity only.
+		/// </summary>
+		/// <param name="pfe">fullpath of an FXE-file</param>
+		/// <returns>true if it doesn't throw (i think)</returns>
+		internal static bool TestFile(string pfe)
 		{
 #if DEBUG
 			_d = false;
 			logfile.Log("FxeReader.TestFile()");
-			logfile.Log(". file= " + file);
+			logfile.Log(". pfe= " + pfe);
 #endif
-			if (File.Exists(file))
+			if (File.Exists(pfe))
 			{
-				using (FileStream fs = File.Open(file, FileMode.Open))
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
 					_br = new BinaryReader(fs);
 #if DEBUG

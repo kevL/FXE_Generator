@@ -101,7 +101,7 @@ namespace lipsync_editor
 
 			if (pfe.EndsWith(EXT_WAV, StringComparison.InvariantCultureIgnoreCase)) // check .WAV ->
 			{
-				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read))
+				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
 					var br = new BinaryReader(fs);
 

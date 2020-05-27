@@ -14,6 +14,7 @@ namespace lipsync_editor
 		#region fields (static)
 		const string TITLE = "Waver";
 
+		const int THRESHOLD = 29;
 		static int _factor = 2;
 
 		static int _x = -1;
@@ -125,6 +126,8 @@ namespace lipsync_editor
 
 			int pixelGroupCount = _samples.Length / pa_wave.Width + 1;
 
+			Pen pen;
+
 			int hi, hitest, j, x,y, length = _samples.Length;
 			for (int i = 0; i < length; ++i)
 			{
@@ -139,12 +142,15 @@ namespace lipsync_editor
 
 				if (hi != 0)
 				{
+					if (Math.Abs(hi) > THRESHOLD) pen = Pens.Lime;
+					else                          pen = Pens.Firebrick;
+
 					x = (int)(i  * factorHori);
 					y = (int)(hi * factorVert);
 					if (y == 0) // always pip a non-zero amplitude ->
 						y = hi / Math.Abs(hi); // pos/neg
 
-					e.Graphics.DrawLine(Pens.Lime,
+					e.Graphics.DrawLine(pen,
 										x, offsetVert,
 										x, offsetVert + y);
 				}
@@ -187,7 +193,7 @@ namespace lipsync_editor
 		/// <param name="wavefile"></param>
 		void Conatiner(string wavefile)
 		{
-			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read))
+			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				var br = new BinaryReader(fs);
 
@@ -202,7 +208,7 @@ namespace lipsync_editor
 					val = br.ReadInt16();
 					_samples[++i] = val;
 
-					if (_durOffset == 0 && val > 29) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+					if (_durOffset == 0 && val > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
 						_durOffset = (decimal)i / 44100;
 				}
 				br.Close();

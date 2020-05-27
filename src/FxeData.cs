@@ -175,7 +175,7 @@ namespace lipsync_editor
 		{
 			InitTrigrams();
 
-			using (FileStream fs = File.OpenRead(TRIGRAMTABLE))
+			using (var fs = new FileStream(TRIGRAMTABLE, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				var br = new BinaryReader(fs);
 				while (br.BaseStream.Position < br.BaseStream.Length)
@@ -196,21 +196,21 @@ namespace lipsync_editor
 		static void InitTrigrams()
 		{
 			List<string> vices = StaticData.GetStandardViscodes();
-			foreach (string vice2 in vices)
+			foreach (string vis2 in vices)
 			{
 				var bilateral = new Dictionary<string, Dictionary<string, Trival>>();
-				TriGramTable.Add(vice2, bilateral);
+				TriGramTable.Add(vis2, bilateral);
 
-				foreach (string vice1 in vices)
+				foreach (string vis1 in vices)
 				{
-					if (vice1 != "S" || vice2 == "S")
+					if (vis1 != "S" || vis2 == "S")
 					{
 						var unilateral = new Dictionary<string, Trival>();
-						bilateral.Add(vice1, unilateral);
+						bilateral.Add(vis1, unilateral);
 
-						foreach (string vice0 in vices)
+						foreach (string vis0 in vices)
 						{
-							if (vice0 != "S") unilateral.Add(vice0, new Trival());
+							if (vis0 != "S") unilateral.Add(vis0, new Trival());
 						}
 					}
 				}

@@ -13,21 +13,27 @@ namespace lipsync_editor
 
 
 		#region write methods (static)
-		internal static void WriteFile(string wavefile, string headtype, Dictionary<string, List<FxeDataBlock>> fxedata)
+		/// <summary>
+		/// Writes FXE-data to a file.
+		/// </summary>
+		/// <param name="pfe">fullpath of a (audio) file</param>
+		/// <param name="head">skeleton head type</param>
+		/// <param name="fxedata">pointer to the data</param>
+		internal static void WriteFile(string pfe, string head, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
 			logfile.Log("FxeWriter.WriteFile()");
 #endif
-			string file = wavefile.Substring(0, wavefile.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
+			pfe = pfe.Substring(0, pfe.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
 #if DEBUG
-			logfile.Log(". file= " + file);
+			logfile.Log(". pfe= " + pfe);
 #endif
-			using (FileStream fs = File.Open(file, FileMode.Create))
+			using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
 			{
 				_bw = new BinaryWriter(fs);
 
 				WriteHeader();
-				WriteString(headtype);
+				WriteString(head);
 
 				_bw.Write((short)0);
 				_bw.Write(0);
@@ -40,13 +46,13 @@ namespace lipsync_editor
 
 				_bw.Write(0);
 
-				int pos = wavefile.LastIndexOf('\\') + 1;
-				string filelabel = wavefile.Substring(pos, wavefile.Length - pos - 4).ToLower();
-				WriteString(filelabel);
+				int pos = pfe.LastIndexOf('\\') + 1;
+				string file = pfe.Substring(pos, pfe.Length - pos - 4).ToLower();
+				WriteString(file);
 
 				_bw.Write((short)3);
 
-				long fileLengthOffsetLocation = _bw.BaseStream.Position;
+				long position = _bw.BaseStream.Position;
 
 				_bw.Write(0);
 				_bw.Write((short)0);
@@ -54,7 +60,7 @@ namespace lipsync_editor
 				_bw.Write(0L);
 
 				WriteData(fxedata);
-				WriteFooter(fileLengthOffsetLocation);
+				WriteFooter(position);
 
 				_bw.Close();
 			}
@@ -63,15 +69,15 @@ namespace lipsync_editor
 			if (!FxeGeneratorF.isConsole)
 			{
 				string titl, info;
-				if (FxeReader.TestFile(file))
+				if (FxeReader.TestFile(pfe))
 				{
 					titl = "Write SUCCESS";
-					info = file;
+					info = pfe;
 				}
 				else
 				{
 					titl = "Write FAILED";
-					info = "Borked file" + Environment.NewLine + file;
+					info = "Borked file" + Environment.NewLine + pfe;
 				}
 
 				using (var d = new InfoDialog(titl, info))
@@ -101,7 +107,7 @@ namespace lipsync_editor
 		{
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
-				WriteString(pair.Key); // key=codeword
+				WriteString(pair.Key); // viscode
 
 				_bw.Write(0L);
 
@@ -123,7 +129,7 @@ namespace lipsync_editor
 			}
 		}
 
-		static void WriteFooter(long fileLengthOffsetLocation)
+		static void WriteFooter(long position)
 		{
 			_bw.Write(4494952716784883466L);
 			_bw.Write((short)0);
@@ -134,10 +140,9 @@ namespace lipsync_editor
 
 			_bw.Write(-1);
 
-			_bw.BaseStream.Seek(fileLengthOffsetLocation, SeekOrigin.Begin);
+			_bw.BaseStream.Seek(position, SeekOrigin.Begin);
 
-			int length = (int)_bw.BaseStream.Length;
-			_bw.Write(length);
+			_bw.Write((int)_bw.BaseStream.Length);
 		}
 
 		static void WriteString(string str)
