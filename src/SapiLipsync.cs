@@ -157,6 +157,8 @@ namespace lipsync_editor
 
 
 //		/// <summary>
+//		/// IMPORTANT: This will crash the Lipsyncer.
+//		/// 
 //		/// Get this. I only have EnglishUS and EnglishGB recognizers for my OS
 //		/// (win7 pro) but can output the phonemes of French and perhaps other
 //		/// languages.
@@ -327,7 +329,9 @@ namespace lipsync_editor
 				_recoContext.SoundEnd         += rc_SoundEnd;
 				_recoContext.PhraseStart      += rc_PhraseStart;
 				_recoContext.Interference     += rc_Interference;
+//				_recoContext.AudioLevel       += rc_AudioLevel; // does not fire. SURPRISE!
 
+//				_recoContext.EventInterests = SpeechRecoEvents.SREAllEvents;
 				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
 															  + (int)SpeechRecoEvents.SRERecognition
 															  + (int)SpeechRecoEvents.SREStreamEnd
@@ -337,6 +341,7 @@ namespace lipsync_editor
 															  + (int)SpeechRecoEvents.SRESoundEnd
 															  + (int)SpeechRecoEvents.SREPhraseStart
 															  + (int)SpeechRecoEvents.SREInterference;
+//															  + (int)SpeechRecoEvents.SREAudioLevel; // does not fire. SURPRISE!
 				logfile.Log(". _recoContext.EventInterests= " + _recoContext.EventInterests);
 #else
 				_recoContext.EventInterests = (SpeechRecoEvents)(int)SpeechRecoEvents.SREFalseRecognition
@@ -459,9 +464,31 @@ namespace lipsync_editor
 #endif
 			_fs.Open(Wavefile);
 #if DEBUG
+			logfile.Log(". _fs.Format.Type= " + _fs.Format.Type); // SpeechAudioFormatType.SAFT44kHz16BitMono
+			SpWaveFormatEx data = _fs.Format.GetWaveFormatEx();
+			logfile.Log(". . SamplesPerSec= "  + data.SamplesPerSec);
+			logfile.Log(". . BitsPerSample= "  + data.BitsPerSample);
+			logfile.Log(". . AvgBytesPerSec= " + data.AvgBytesPerSec);
+			logfile.Log(". . Channels= "       + data.Channels);
+			logfile.Log(". . BlockAlign= "     + data.BlockAlign);
+			logfile.Log(". . FormatTag= "      + data.FormatTag);
+			logfile.Log(". . ExtraData= "      + data.ExtraData);
+
+			// filestream byte-data ->
+//			int bytes, tally = 0;
+//			object o = new byte[2];
+//			while ((bytes = _fs.Read(out o, 2)) > 0)
+//			{
+//				var buffer = (byte[])o;
+//				logfile.Log(tally + " : " + buffer[1] + " " + buffer[0]); // treat as little-endian shorts
+//				tally += bytes;
+//			}
+//			_fs.Seek(0, SpeechStreamSeekPositionType.SSSPTRelativeToStart);
+
+
 			logfile.Log(". assign _fs to _recognizer.AudioInputStream");
 #endif
-			_recognizer.AudioInputStream = _fs;
+			_recognizer.AudioInputStream = _fs; // <- start Recognition <--
 #if DEBUG
 			logfile.Log("Generate() DONE");
 			logfile.Log();
@@ -489,7 +516,7 @@ namespace lipsync_editor
 						 short CurrentPhoneId)
 		{
 #if DEBUG
-			string ttsinfo = "tts_Phoneme() PhoneId= " + CurrentPhoneId;
+			string ttsinfo = "tts_Phoneme() #" + StreamNumber + " StreamPosition= " + StreamPosition + " PhoneId= " + CurrentPhoneId;
 #endif
 			if (CurrentPhoneId > 9) // NOTE: This causes signifiers like silence #7 "_" and nasalvowel #9 "~" to bypass.
 			{
@@ -524,7 +551,8 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("tts_EndStream() - fire TtsStreamEnded event");
+			logfile.Log("tts_EndStream() #" + StreamNumber + " StreamPosition= " + StreamPosition);
+			logfile.Log(". fire TtsStreamEnded event");
 #endif
 //			if (TtsStreamEnded != null)
 			TtsStreamEnded();
@@ -541,7 +569,7 @@ namespace lipsync_editor
 		/// <param name="StreamPosition"></param>
 		void rc_StartStream(int StreamNumber, object StreamPosition)
 		{
-			logfile.Log("rc_StartStream() StreamPosition= " + StreamPosition);
+			logfile.Log("rc_StartStream() #" + StreamNumber + " StreamPosition= " + StreamPosition);
 		}
 
 		/// <summary>
@@ -551,7 +579,7 @@ namespace lipsync_editor
 		/// <param name="StreamPosition"></param>
 		void rc_SoundStart(int StreamNumber, object StreamPosition)
 		{
-			logfile.Log("rc_SoundStart() StreamPosition= " + StreamPosition);
+			logfile.Log("rc_SoundStart() #" + StreamNumber + " StreamPosition= " + StreamPosition);
 		}
 
 		/// <summary>
@@ -561,7 +589,7 @@ namespace lipsync_editor
 		/// <param name="StreamPosition"></param>
 		void rc_SoundEnd(int StreamNumber, object StreamPosition)
 		{
-			logfile.Log("rc_SoundEnd() StreamPosition= " + StreamPosition);
+			logfile.Log("rc_SoundEnd() #" + StreamNumber + " StreamPosition= " + StreamPosition);
 		}
 
 		/// <summary>
@@ -571,7 +599,7 @@ namespace lipsync_editor
 		/// <param name="StreamPosition"></param>
 		void rc_PhraseStart(int StreamNumber, object StreamPosition)
 		{
-			logfile.Log("rc_PhraseStart() StreamPosition= " + StreamPosition);
+			logfile.Log("rc_PhraseStart() #" + StreamNumber + " StreamPosition= " + StreamPosition);
 		}
 
 		/// <summary>
@@ -582,8 +610,21 @@ namespace lipsync_editor
 		/// <param name="Interference"></param>
 		void rc_Interference(int StreamNumber, object StreamPosition, SpeechInterference Interference)
 		{
-			logfile.Log("rc_Interference() StreamPosition= " + StreamPosition + " Interference= " + Interference);
+			logfile.Log("rc_Interference() #" + StreamNumber + " StreamPosition= " + StreamPosition + " Interference= " + Interference);
 		}
+
+//		/// <summary>
+//		/// does not fire. SURPRISE!
+//		/// 
+//		/// Handles 'SpInProcRecoContext.AudioLevel' event.
+//		/// </summary>
+//		/// <param name="StreamNumber"></param>
+//		/// <param name="StreamPosition"></param>
+//		/// <param name="AudioLevel"></param>
+//		void rc_AudioLevel(int StreamNumber, object StreamPosition, int AudioLevel)
+//		{
+//			logfile.Log("rc_AudioLevel() #" + StreamNumber + " StreamPosition= " + StreamPosition + " AudioLevel= " + AudioLevel);
+//		}
 
 
 		/// <summary>
@@ -595,7 +636,7 @@ namespace lipsync_editor
 		/// <param name="Result"></param>
 		void rc_Hypothesis(int StreamNumber, object StreamPosition, ISpeechRecoResult Result)
 		{
-			logfile.Log("rc_Hypothesis() _generato= " + _generato);
+			logfile.Log("rc_Hypothesis() #" + StreamNumber + " StreamPosition= " + StreamPosition + " _generato= " + _generato);
 			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 //			logfile.Log(". Result.PhraseInfo.Rule.Name= "             + Result.PhraseInfo.Rule.Name); // <- blank.
@@ -638,7 +679,7 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("rc_FalseRecognition() _generato= " + _generato);
+			logfile.Log("rc_FalseRecognition() #" + StreamNumber + " StreamPosition= " + StreamPosition + " _generato= " + _generato);
 #endif
 			rc_Recognition(StreamNumber, StreamPosition, SpeechRecognitionType.SRTStandard, Result); // force Recognition.
 
@@ -688,8 +729,7 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("rc_Recognition() _generato= " + _generato);
-			logfile.Log(". StreamNumber= " + StreamNumber);
+			logfile.Log("rc_Recognition() #" + StreamNumber + " StreamPosition= " + StreamPosition + " _generato= " + _generato);
 			logfile.Log(". RecognitionType= " + RecognitionType); // <- standard.
 
 			logfile.Log(". _phoneConverter.LanguageId= " + _phoneConverter.LanguageId);
@@ -697,7 +737,6 @@ namespace lipsync_editor
 			logfile.Log(". " + Result.PhraseInfo.GetText()); // (0, -1, true)
 
 			logfile.Log(". _offset                       = " + _offset);
-			logfile.Log(". StreamPosition                = " + StreamPosition);
 			logfile.Log(". PhraseInfo.AudioStreamPosition= " + Result.PhraseInfo.AudioStreamPosition);
 //			logfile.Log(". . sec= " + GetAudioStreamPositionSeconds(Result.PhraseInfo.AudioStreamPosition.ToString()));
 
@@ -781,7 +820,7 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log();
-			logfile.Log("rc_EndStream() _generato= " + _generato);
+			logfile.Log("rc_EndStream() #" + StreamNumber + " StreamPosition= " + StreamPosition + " _generato= " + _generato);
 			//logfile.Log(". StreamReleased= " + StreamReleased);
 #endif
 			switch (_generato)
@@ -804,6 +843,7 @@ namespace lipsync_editor
 					break;
 			}
 //			_recoGrammar.DictationUnload();
+
 #if DEBUG
 			logfile.Log(". close _fs");
 #endif
