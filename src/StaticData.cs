@@ -35,7 +35,7 @@ namespace lipsync_editor
 		internal static string GetFilelabel(string file)
 		{
 			int pos = file.LastIndexOf('\\') + 1;
-			if (pos != -1)
+			if (pos != 0)
 				file = file.Substring(pos, file.Length - pos);
 
 			if ((pos = file.LastIndexOf('.')) != -1)
