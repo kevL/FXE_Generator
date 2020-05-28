@@ -46,9 +46,7 @@ namespace lipsync_editor
 
 				_bw.Write(0);
 
-				int pos = pfe.LastIndexOf('\\') + 1;
-				string file = pfe.Substring(pos, pfe.Length - pos - 4).ToLower();
-				WriteString(file);
+				WriteString(StaticData.GetFilelabel(pfe).ToLower());
 
 				_bw.Write((short)3);
 

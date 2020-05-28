@@ -32,6 +32,18 @@ namespace lipsync_editor
 			return ((decimal)nanoseconds_100 / 10000000);
 		}
 
+		internal static string GetFilelabel(string file)
+		{
+			int pos = file.LastIndexOf('\\') + 1;
+			if (pos != -1)
+				file = file.Substring(pos, file.Length - pos);
+
+			if ((pos = file.LastIndexOf('.')) != -1)
+				file = file.Substring(0, pos);
+
+			return file;
+		}
+
 
 		/// <summary>
 		/// Fills the 'Vices' dictionary that maps phoneme-strings to

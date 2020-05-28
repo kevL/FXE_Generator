@@ -59,7 +59,7 @@ namespace lipsync_editor
 
 			Conatiner(wavefile);
 
-			Text = TITLE + " - " + _dur.ToString("F3") + " sec";
+			Text = TITLE + " - " + FxeGeneratorF.Filelabel + " - " + _dur.ToString("F3") + " sec";
 		}
 		#endregion cTor
 

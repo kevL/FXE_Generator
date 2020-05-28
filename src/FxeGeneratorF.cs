@@ -41,6 +41,8 @@ namespace lipsync_editor
 		const string HEAD_BLOCKS_2 = "morph weight";
 
 		internal static bool isConsole;
+
+		internal static string Filelabel;
 		#endregion fields (static)
 
 
@@ -398,6 +400,8 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". _pfe= " + _pfe);
 #endif
+					Filelabel = StaticData.GetFilelabel(_pfe);
+
 					tb_text.Text = LoadTypedTextFile();
 
 					tb_expected    .Text =
