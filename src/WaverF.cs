@@ -111,9 +111,6 @@ namespace lipsync_editor
 		#region handlers
 		void paint_WavePanel(object sender, PaintEventArgs e)
 		{
-			//logfile.Log();
-			//logfile.Log("paint_WavePanel() w= " + pa_wave.Width);
-
 			int offsetVert = pa_wave.Height / 2;
 
 			e.Graphics.DrawLine(Pens.OliveDrab,
