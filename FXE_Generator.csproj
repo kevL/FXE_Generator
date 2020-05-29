@@ -70,6 +70,89 @@
     <Compile Include="src\FxeWriter.cs" />
     <Compile Include="src\InfoDialog.cs" />
     <Compile Include="src\logger.cs" />
+    <Compile Include="src\NAudio\AcmDriverAddFlags.cs" />
+    <Compile Include="src\NAudio\AcmDriverDetails.cs" />
+    <Compile Include="src\NAudio\AcmDriverDetailsSupportFlags.cs" />
+    <Compile Include="src\NAudio\AcmDriverEnumFlags.cs" />
+    <Compile Include="src\NAudio\AcmFormatChoose.cs" />
+    <Compile Include="src\NAudio\AcmFormatChooseStyleFlags.cs" />
+    <Compile Include="src\NAudio\AcmFormatDetails.cs" />
+    <Compile Include="src\NAudio\AcmFormatEnumFlags.cs" />
+    <Compile Include="src\NAudio\AcmFormatSuggestFlags.cs" />
+    <Compile Include="src\NAudio\AcmFormatTagDetails.cs" />
+    <Compile Include="src\NAudio\AcmInterop.cs" />
+    <Compile Include="src\NAudio\AcmMetrics.cs" />
+    <Compile Include="src\NAudio\AcmMp3FrameDecompressor.cs" />
+    <Compile Include="src\NAudio\AcmStream.cs" />
+    <Compile Include="src\NAudio\AcmStreamConvertFlags.cs" />
+    <Compile Include="src\NAudio\AcmStreamHeader.cs" />
+    <Compile Include="src\NAudio\AcmStreamHeaderStatusFlags.cs" />
+    <Compile Include="src\NAudio\AcmStreamHeaderStruct.cs" />
+    <Compile Include="src\NAudio\AcmStreamOpenFlags.cs" />
+    <Compile Include="src\NAudio\AcmStreamSizeFlags.cs" />
+    <Compile Include="src\NAudio\AdpcmWaveFormat.cs" />
+    <Compile Include="src\NAudio\AiffFileReader.cs" />
+    <Compile Include="src\NAudio\AudioFileReader.cs" />
+    <Compile Include="src\NAudio\AudioMediaSubtypes.cs" />
+    <Compile Include="src\NAudio\BlockAlignReductionStream.cs" />
+    <Compile Include="src\NAudio\BufferHelpers.cs" />
+    <Compile Include="src\NAudio\ByteArrayExtensions.cs" />
+    <Compile Include="src\NAudio\ChannelMode.cs" />
+    <Compile Include="src\NAudio\ChunkIdentifier.cs" />
+    <Compile Include="src\NAudio\CircularBuffer.cs" />
+    <Compile Include="src\NAudio\Gsm610WaveFormat.cs" />
+    <Compile Include="src\NAudio\Id3v2Tag.cs" />
+    <Compile Include="src\NAudio\IEEE.cs" />
+    <Compile Include="src\NAudio\IMp3FrameDecompressor.cs" />
+    <Compile Include="src\NAudio\ISampleProvider.cs" />
+    <Compile Include="src\NAudio\IWaveBuffer.cs" />
+    <Compile Include="src\NAudio\IWavePlayer.cs" />
+    <Compile Include="src\NAudio\IWaveProvider.cs" />
+    <Compile Include="src\NAudio\MarshalHelpers.cs" />
+    <Compile Include="src\NAudio\MeteringSampleProvider.cs" />
+    <Compile Include="src\NAudio\MmException.cs" />
+    <Compile Include="src\NAudio\MmResult.cs" />
+    <Compile Include="src\NAudio\MmTime.cs" />
+    <Compile Include="src\NAudio\MonoToStereoSampleProvider.cs" />
+    <Compile Include="src\NAudio\Mp3FileReader.cs" />
+    <Compile Include="src\NAudio\Mp3Frame.cs" />
+    <Compile Include="src\NAudio\Mp3WaveFormat.cs" />
+    <Compile Include="src\NAudio\MpegLayer.cs" />
+    <Compile Include="src\NAudio\MpegVersion.cs" />
+    <Compile Include="src\NAudio\Pcm16BitToSampleProvider.cs" />
+    <Compile Include="src\NAudio\Pcm24BitToSampleProvider.cs" />
+    <Compile Include="src\NAudio\Pcm32BitToSampleProvider.cs" />
+    <Compile Include="src\NAudio\Pcm8BitToSampleProvider.cs" />
+    <Compile Include="src\NAudio\PlaybackState.cs" />
+    <Compile Include="src\NAudio\RiffChunk.cs" />
+    <Compile Include="src\NAudio\SampleChannel.cs" />
+    <Compile Include="src\NAudio\SampleProviderConverterBase.cs" />
+    <Compile Include="src\NAudio\SampleProviderConverters.cs" />
+    <Compile Include="src\NAudio\StoppedEventArgs.cs" />
+    <Compile Include="src\NAudio\VolumeSampleProvider.cs" />
+    <Compile Include="src\NAudio\WaveBuffer.cs" />
+    <Compile Include="src\NAudio\WaveFileChunkReader.cs" />
+    <Compile Include="src\NAudio\WaveFileReader.cs" />
+    <Compile Include="src\NAudio\WaveFilter.cs" />
+    <Compile Include="src\NAudio\WaveFormat.cs" />
+    <Compile Include="src\NAudio\WaveFormatConversionProvider.cs" />
+    <Compile Include="src\NAudio\WaveFormatConversionStream.cs" />
+    <Compile Include="src\NAudio\WaveFormatEncoding.cs" />
+    <Compile Include="src\NAudio\WaveFormatExtensible.cs" />
+    <Compile Include="src\NAudio\WaveFormatExtraData.cs" />
+    <Compile Include="src\NAudio\WaveHeader.cs" />
+    <Compile Include="src\NAudio\WaveHeaderFlags.cs" />
+    <Compile Include="src\NAudio\WaveInCapabilities.cs" />
+    <Compile Include="src\NAudio\WaveInterop.cs" />
+    <Compile Include="src\NAudio\WaveOutBuffer.cs" />
+    <Compile Include="src\NAudio\WaveOutCapabilities.cs" />
+    <Compile Include="src\NAudio\WaveOutEvent.cs" />
+    <Compile Include="src\NAudio\WaveOutSupport.cs" />
+    <Compile Include="src\NAudio\WaveOutUtils.cs" />
+    <Compile Include="src\NAudio\WaveStream.cs" />
+    <Compile Include="src\NAudio\WaveToSampleProvider.cs" />
+    <Compile Include="src\NAudio\WaveToSampleProvider64.cs" />
+    <Compile Include="src\NAudio\XingHeader.cs" />
     <Compile Include="src\OrthographicResult.cs" />
     <Compile Include="src\Program.cs" />
     <Compile Include="src\Recognizer.cs" />
@@ -81,6 +164,9 @@
     <Compile Include="src\TypedText.cs" />
     <Compile Include="src\VoiceSynthF.cs" />
     <Compile Include="src\WaverF.cs" />
+    <Compile Include="src\WaverF.Designer.cs">
+      <DependentUpon>WaverF.cs</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Properties\Resource.resx">
@@ -108,6 +194,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src" />
+    <Folder Include="src\NAudio" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
