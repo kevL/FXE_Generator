@@ -32,6 +32,9 @@ namespace lipsync_editor
 
 		decimal _dur;
 		decimal _durSapistart;
+		decimal _durSapistart0;
+
+		string _offsetPre;
 		#endregion fields
 
 
@@ -58,8 +61,19 @@ namespace lipsync_editor
 
 
 			Conatiner(wavefile);
+			_durSapistart0 = _durSapistart;
 
 			Text = TITLE + " - " + FxeGeneratorF.Filelabel + " - " + _dur.ToString("F3") + " sec";
+
+			tb_offset.BackColor = Color.MintCream;
+			tb_offset.Text = _durSapistart.ToString("F3");
+			tb_offset.TextChanged += textchanged_Visdelay;
+			tb_offset.Leave       += leave_Visdelay;
+
+			bu_reset.Text = tb_offset.Text;
+			bu_reset.Click += click_Reset;
+
+			pa_wave.Select();
 		}
 		#endregion cTor
 
@@ -105,10 +119,46 @@ namespace lipsync_editor
 			else
 				base.OnKeyDown(e);
 		}
+
+		protected override bool ProcessDialogKey(Keys keyData)
+		{
+			if (keyData == Keys.Enter)
+			{
+				pa_wave.Select();
+				return true;
+			}
+			return base.ProcessDialogKey(keyData);
+		}
 		#endregion handlers (override)
 
 
 		#region handlers
+		void textchanged_Visdelay(object sender, EventArgs e)
+		{
+			decimal result;
+			if (Decimal.TryParse(tb_offset.Text, out result)
+				&& result >= 0 && result < 1000)
+			{
+				_offsetPre = tb_offset.Text;
+				_durSapistart = result;
+				pa_wave.Invalidate();
+			}
+			else
+				tb_offset.Text = _offsetPre;
+		}
+
+		void leave_Visdelay(object sender, EventArgs e)
+		{
+			tb_offset.Text = _durSapistart.ToString("F3");
+		}
+
+		void click_Reset(object sender, EventArgs e)
+		{
+			_durSapistart = _durSapistart0;
+			tb_offset.Text = _durSapistart.ToString("F3");
+		}
+
+
 		void paint_WavePanel(object sender, PaintEventArgs e)
 		{
 			int offsetVert = pa_wave.Height / 2;
@@ -216,10 +266,19 @@ namespace lipsync_editor
 
 		#region designer
 		BufferedPanel pa_wave;
+		private System.Windows.Forms.Panel pa_bot;
+		private System.Windows.Forms.TextBox tb_offset;
+		private System.Windows.Forms.Label la_offset;
+		private System.Windows.Forms.Button bu_reset;
 
 		void InitializeComponent()
 		{
 			this.pa_wave = new lipsync_editor.BufferedPanel();
+			this.pa_bot = new System.Windows.Forms.Panel();
+			this.bu_reset = new System.Windows.Forms.Button();
+			this.tb_offset = new System.Windows.Forms.TextBox();
+			this.la_offset = new System.Windows.Forms.Label();
+			this.pa_bot.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// pa_wave
@@ -230,18 +289,64 @@ namespace lipsync_editor
 			this.pa_wave.Location = new System.Drawing.Point(0, 0);
 			this.pa_wave.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_wave.Name = "pa_wave";
-			this.pa_wave.Size = new System.Drawing.Size(567, 139);
+			this.pa_wave.Size = new System.Drawing.Size(567, 114);
 			this.pa_wave.TabIndex = 0;
 			this.pa_wave.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_WavePanel);
+			// 
+			// pa_bot
+			// 
+			this.pa_bot.Controls.Add(this.bu_reset);
+			this.pa_bot.Controls.Add(this.tb_offset);
+			this.pa_bot.Controls.Add(this.la_offset);
+			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
+			this.pa_bot.Location = new System.Drawing.Point(0, 114);
+			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
+			this.pa_bot.Name = "pa_bot";
+			this.pa_bot.Size = new System.Drawing.Size(567, 25);
+			this.pa_bot.TabIndex = 1;
+			// 
+			// bu_reset
+			// 
+			this.bu_reset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.bu_reset.Location = new System.Drawing.Point(121, 2);
+			this.bu_reset.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_reset.Name = "bu_reset";
+			this.bu_reset.Size = new System.Drawing.Size(60, 22);
+			this.bu_reset.TabIndex = 3;
+			this.bu_reset.UseVisualStyleBackColor = true;
+			// 
+			// tb_offset
+			// 
+			this.tb_offset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tb_offset.Location = new System.Drawing.Point(68, 3);
+			this.tb_offset.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_offset.Name = "tb_offset";
+			this.tb_offset.Size = new System.Drawing.Size(51, 20);
+			this.tb_offset.TabIndex = 0;
+			this.tb_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// la_offset
+			// 
+			this.la_offset.Location = new System.Drawing.Point(5, 5);
+			this.la_offset.Margin = new System.Windows.Forms.Padding(0);
+			this.la_offset.Name = "la_offset";
+			this.la_offset.Size = new System.Drawing.Size(65, 15);
+			this.la_offset.TabIndex = 1;
+			this.la_offset.Text = "sync Delay";
+			this.la_offset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
 			// WaverF
 			// 
 			this.ClientSize = new System.Drawing.Size(567, 139);
 			this.Controls.Add(this.pa_wave);
+			this.Controls.Add(this.pa_bot);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.KeyPreview = true;
 			this.Name = "WaverF";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
+			this.pa_bot.ResumeLayout(false);
+			this.pa_bot.PerformLayout();
 			this.ResumeLayout(false);
 
 		}
