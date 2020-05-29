@@ -475,15 +475,15 @@ namespace lipsync_editor
 			logfile.Log(". . ExtraData= "      + data.ExtraData);
 
 			// filestream byte-data ->
-//			int bytes, tally = 0;
+//			int bytes, pos = 0;
 //			object o = new byte[2];
 //			while ((bytes = _fs.Read(out o, 2)) > 0)
 //			{
 //				var buffer = (byte[])o;
-//				logfile.Log(tally + " : " + buffer[1] + " " + buffer[0]); // treat as little-endian shorts
-//				tally += bytes;
+//				logfile.Log(pos + " : " + buffer[1] + " " + buffer[0]); // treat as little-endian shorts
+//				pos += bytes;
 //			}
-//			_fs.Seek(0, SpeechStreamSeekPositionType.SSSPTRelativeToStart);
+//			_fs.Seek(0);
 
 
 			logfile.Log(". assign _fs to _recognizer.AudioInputStream");
