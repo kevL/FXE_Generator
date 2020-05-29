@@ -40,6 +40,9 @@ namespace lipsync_editor
 
 		WaveOutEvent _waveout = new WaveOutEvent();
 		AudioFileReader _audioreader;
+
+		Timer _t1 = new Timer();
+		bool _closing;
 		#endregion fields
 
 
@@ -80,6 +83,9 @@ namespace lipsync_editor
 			_audioreader = new AudioFileReader(SapiLipsync.That.Wavefile);
 			_waveout.Init(_audioreader);
 			_waveout.PlaybackStopped += OnPlaybackStopped;
+
+			_t1.Tick += Track;
+			_t1.Interval = 15;
 		}
 		#endregion cTor
 
@@ -87,6 +93,7 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			_closing = true;
 			_waveout.Dispose();
 			_audioreader.Dispose();
 
@@ -123,7 +130,7 @@ namespace lipsync_editor
 			{
 				e.Handled = e.SuppressKeyPress = true;
 				_factor = factor;
-				pa_wave.Refresh();
+				pa_wave.Invalidate();
 			}
 			else
 				base.OnKeyDown(e);
@@ -176,30 +183,47 @@ namespace lipsync_editor
 				case PlaybackState.Stopped:
 					bu_play.Text = "pause";
 					_waveout.Play();
+					_t1.Start();
 					break;
 
 				case PlaybackState.Playing:
 					bu_play.Text = "play";
+					_t1.Stop();
+
 					_waveout.Pause();
 					break;
 
 				case PlaybackState.Paused:
 					bu_play.Text = "pause";
 					_waveout.Play();
+					_t1.Start();
 					break;
 			}
 		}
 
 		void click_Stop(object sender, EventArgs args)
 		{
-			if (_waveout != null)
-				_waveout.Stop();
+			_waveout.Stop();
 		}
 
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
+			_waveout.Dispose(); // ... gr
+			_waveout.Init(_audioreader);
+			_waveout.PlaybackStopped += OnPlaybackStopped;
+
+			if (!_closing)
+				_audioreader.Position = 0L;
+
 			bu_play.Text = "play";
-			_audioreader.Position = 0L;
+
+			_t1.Stop();
+			pa_wave.Invalidate();
+		}
+
+		void Track(object sender, EventArgs e)
+		{
+			pa_wave.Invalidate();
 		}
 #endregion NAudio
 
@@ -247,6 +271,14 @@ namespace lipsync_editor
 										x, offsetVert + y);
 				}
 			}
+
+
+			// draw the caret-line
+			//logfile.Log(_waveout.GetPosition().ToString());
+			x = (int)((decimal)_waveout.GetPosition() / 4 * factorHori); // TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
+			e.Graphics.DrawLine(Pens.White,
+								x, 0,
+								x, pa_wave.Height);
 
 
 			// draw the word starts and stops
@@ -308,3 +340,28 @@ namespace lipsync_editor
 		#endregion methods
 	}
 }
+
+/*		void Track()
+		{
+			var thread = new Thread(new ThreadStart(track)); // track the Audio-Data on 'track' method
+			thread.Start();
+		}
+		void track()
+		{
+			while (_track) // create a pseudo-infinite loop
+			{
+				if (_waveout.PlaybackState == PlaybackState.Playing)
+				{
+					logfile.Log("bytes= " + _waveout.GetPosition());
+
+					double millisec = _waveout.GetPosition() * 1000.0
+						/ _waveout.OutputWaveFormat.BitsPerSample
+						/ _waveout.OutputWaveFormat.Channels * 8
+						/ _waveout.OutputWaveFormat.SampleRate;
+
+					logfile.Log(millisec.ToString("F3"));
+				}
+
+				Thread.Sleep(1000); // sleep for 1 sec
+			}
+		} */
