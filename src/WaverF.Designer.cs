@@ -67,7 +67,7 @@ namespace lipsync_editor
 			// 
 			// bu_play
 			// 
-			this.bu_play.Location = new System.Drawing.Point(250, 2);
+			this.bu_play.Location = new System.Drawing.Point(251, 2);
 			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_play.Name = "bu_play";
 			this.bu_play.Size = new System.Drawing.Size(60, 22);

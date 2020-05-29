@@ -37,6 +37,9 @@ namespace lipsync_editor
 		decimal _durSapistart0;	// for reseting the offset to its hardcoded estimation
 
 		string _offsetPre;		// for reseting the offset on user-error
+
+		WaveOutEvent _waveout = new WaveOutEvent();
+		AudioFileReader _audioreader;
 		#endregion fields
 
 
@@ -73,6 +76,10 @@ namespace lipsync_editor
 			bu_reset.Text = tb_offset.Text;
 
 			pa_wave.Select();
+
+			_audioreader = new AudioFileReader(SapiLipsync.That.Wavefile);
+			_waveout.Init(_audioreader);
+			_waveout.PlaybackStopped += OnPlaybackStopped;
 		}
 		#endregion cTor
 
@@ -80,7 +87,9 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			click_Stop(null, EventArgs.Empty);
+			_waveout.Dispose();
+			_audioreader.Dispose();
+
 			_f.Waver = null;
 
 			switch (e.CloseReason)
@@ -122,9 +131,9 @@ namespace lipsync_editor
 
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
-			if (keyData == Keys.Enter)
+			if (tb_offset.Focused && keyData == Keys.Enter)
 			{
-				pa_wave.Select();
+				bu_reset.Select();
 				return true;
 			}
 			return base.ProcessDialogKey(keyData);
@@ -160,42 +169,37 @@ namespace lipsync_editor
 
 
 #region NAudio
-		WaveOutEvent outputDevice;
-		AudioFileReader audioFile;
-
 		void click_Play(object sender, EventArgs e)
 		{
-			bu_play.Enabled = false;
-
-			if (outputDevice == null)
+			switch (_waveout.PlaybackState)
 			{
-				outputDevice = new WaveOutEvent();
-				outputDevice.PlaybackStopped += OnPlaybackStopped;
-			}
+				case PlaybackState.Stopped:
+					bu_play.Text = "pause";
+					_waveout.Play();
+					break;
 
-			if (audioFile == null)
-			{
-				audioFile = new AudioFileReader(SapiLipsync.That.Wavefile);
-				outputDevice.Init(audioFile);
+				case PlaybackState.Playing:
+					bu_play.Text = "play";
+					_waveout.Pause();
+					break;
+
+				case PlaybackState.Paused:
+					bu_play.Text = "pause";
+					_waveout.Play();
+					break;
 			}
-			outputDevice.Play();
 		}
 
 		void click_Stop(object sender, EventArgs args)
 		{
-			if (outputDevice != null)
-				outputDevice.Stop();
+			if (_waveout != null)
+				_waveout.Stop();
 		}
 
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
-			bu_play.Enabled = true;
-
-			outputDevice.Dispose();
-			outputDevice = null;
-
-			audioFile.Dispose();
-			audioFile = null;
+			bu_play.Text = "play";
+			_audioreader.Position = 0L;
 		}
 #endregion NAudio
 
