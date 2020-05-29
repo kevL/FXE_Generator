@@ -5,6 +5,8 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
+using NAudio.Wave;
+
 
 namespace lipsync_editor
 {
@@ -30,11 +32,11 @@ namespace lipsync_editor
 
 		short[] _samples;
 
-		decimal _dur;
-		decimal _durSapistart;
-		decimal _durSapistart0;
+		decimal _dur;			// total duration of the wavefile
+		decimal _durSapistart;	// sync-delay starttime offset
+		decimal _durSapistart0;	// for reseting the offset to its hardcoded estimation
 
-		string _offsetPre;
+		string _offsetPre;		// for reseting the offset on user-error
 		#endregion fields
 
 
@@ -67,11 +69,8 @@ namespace lipsync_editor
 
 			tb_offset.BackColor = Color.MintCream;
 			tb_offset.Text = _durSapistart.ToString("F3");
-			tb_offset.TextChanged += textchanged_Visdelay;
-			tb_offset.Leave       += leave_Visdelay;
 
 			bu_reset.Text = tb_offset.Text;
-			bu_reset.Click += click_Reset;
 
 			pa_wave.Select();
 		}
@@ -81,6 +80,7 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			click_Stop(null, EventArgs.Empty);
 			_f.Waver = null;
 
 			switch (e.CloseReason)
@@ -157,6 +157,47 @@ namespace lipsync_editor
 			_durSapistart = _durSapistart0;
 			tb_offset.Text = _durSapistart.ToString("F3");
 		}
+
+
+#region NAudio
+		WaveOutEvent outputDevice;
+		AudioFileReader audioFile;
+
+		void click_Play(object sender, EventArgs e)
+		{
+			bu_play.Enabled = false;
+
+			if (outputDevice == null)
+			{
+				outputDevice = new WaveOutEvent();
+				outputDevice.PlaybackStopped += OnPlaybackStopped;
+			}
+
+			if (audioFile == null)
+			{
+				audioFile = new AudioFileReader(SapiLipsync.That.Wavefile);
+				outputDevice.Init(audioFile);
+			}
+			outputDevice.Play();
+		}
+
+		void click_Stop(object sender, EventArgs args)
+		{
+			if (outputDevice != null)
+				outputDevice.Stop();
+		}
+
+		void OnPlaybackStopped(object sender, StoppedEventArgs args)
+		{
+			bu_play.Enabled = true;
+
+			outputDevice.Dispose();
+			outputDevice = null;
+
+			audioFile.Dispose();
+			audioFile = null;
+		}
+#endregion NAudio
 
 
 		void paint_WavePanel(object sender, PaintEventArgs e)
@@ -266,15 +307,19 @@ namespace lipsync_editor
 
 		#region designer
 		BufferedPanel pa_wave;
-		private System.Windows.Forms.Panel pa_bot;
-		private System.Windows.Forms.TextBox tb_offset;
-		private System.Windows.Forms.Label la_offset;
-		private System.Windows.Forms.Button bu_reset;
+		Panel pa_bot;
+		TextBox tb_offset;
+		Label la_offset;
+		Button bu_reset;
+		Button bu_play;
+		Button bu_stop;
 
 		void InitializeComponent()
 		{
 			this.pa_wave = new lipsync_editor.BufferedPanel();
 			this.pa_bot = new System.Windows.Forms.Panel();
+			this.bu_stop = new System.Windows.Forms.Button();
+			this.bu_play = new System.Windows.Forms.Button();
 			this.bu_reset = new System.Windows.Forms.Button();
 			this.tb_offset = new System.Windows.Forms.TextBox();
 			this.la_offset = new System.Windows.Forms.Label();
@@ -295,6 +340,8 @@ namespace lipsync_editor
 			// 
 			// pa_bot
 			// 
+			this.pa_bot.Controls.Add(this.bu_stop);
+			this.pa_bot.Controls.Add(this.bu_play);
 			this.pa_bot.Controls.Add(this.bu_reset);
 			this.pa_bot.Controls.Add(this.tb_offset);
 			this.pa_bot.Controls.Add(this.la_offset);
@@ -305,6 +352,28 @@ namespace lipsync_editor
 			this.pa_bot.Size = new System.Drawing.Size(567, 25);
 			this.pa_bot.TabIndex = 1;
 			// 
+			// bu_stop
+			// 
+			this.bu_stop.Location = new System.Drawing.Point(310, 2);
+			this.bu_stop.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_stop.Name = "bu_stop";
+			this.bu_stop.Size = new System.Drawing.Size(60, 22);
+			this.bu_stop.TabIndex = 5;
+			this.bu_stop.Text = "stop";
+			this.bu_stop.UseVisualStyleBackColor = true;
+			this.bu_stop.Click += new System.EventHandler(this.click_Stop);
+			// 
+			// bu_play
+			// 
+			this.bu_play.Location = new System.Drawing.Point(250, 2);
+			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_play.Name = "bu_play";
+			this.bu_play.Size = new System.Drawing.Size(60, 22);
+			this.bu_play.TabIndex = 4;
+			this.bu_play.Text = "play";
+			this.bu_play.UseVisualStyleBackColor = true;
+			this.bu_play.Click += new System.EventHandler(this.click_Play);
+			// 
 			// bu_reset
 			// 
 			this.bu_reset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -314,6 +383,7 @@ namespace lipsync_editor
 			this.bu_reset.Size = new System.Drawing.Size(60, 22);
 			this.bu_reset.TabIndex = 3;
 			this.bu_reset.UseVisualStyleBackColor = true;
+			this.bu_reset.Click += new System.EventHandler(this.click_Reset);
 			// 
 			// tb_offset
 			// 
@@ -324,6 +394,8 @@ namespace lipsync_editor
 			this.tb_offset.Size = new System.Drawing.Size(51, 20);
 			this.tb_offset.TabIndex = 0;
 			this.tb_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.tb_offset.TextChanged += new System.EventHandler(this.textchanged_Visdelay);
+			this.tb_offset.Leave += new System.EventHandler(this.leave_Visdelay);
 			// 
 			// la_offset
 			// 

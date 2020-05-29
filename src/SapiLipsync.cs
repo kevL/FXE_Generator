@@ -15,6 +15,11 @@ namespace lipsync_editor
 	/// </summary>
 	public sealed class SapiLipsync
 	{
+		#region fields (static)
+		internal static SapiLipsync That;
+		#endregion fields (static)
+
+
 		#region events
 		internal TtsStreamEndedEvent TtsStreamEnded;
 		internal SrStreamEndedEvent SrStreamEnded;
@@ -99,6 +104,7 @@ namespace lipsync_editor
 		/// <param name="pfe">blank string if '!isConsole'</param>
 		internal SapiLipsync(string pfe = "")
 		{
+			That = this;
 #if DEBUG
 			logfile.Log();
 			logfile.Log("SapiLipsync() cTor pfe= " + pfe);
