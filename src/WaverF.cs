@@ -55,6 +55,10 @@ namespace lipsync_editor
 		/// <param name="dt">datatable</param>
 		internal WaverF(EditorPhonF f, string wavefile, DataTable dt)
 		{
+#if DEBUG
+			logfile.Log();
+			logfile.Log("WaverF.cTor");
+#endif
 			InitializeComponent();
 			_f  = f;
 			_dt = dt;
@@ -81,6 +85,22 @@ namespace lipsync_editor
 			pa_wave.Select();
 
 			_audioreader = new AudioFileReader(SapiLipsync.That.Wavefile);
+#if DEBUG
+			logfile.Log(". _audioreader.FileName= "     + _audioreader.FileName);
+			logfile.Log(". _audioreader.Volume= "       + _audioreader.Volume);
+			logfile.Log(". _audioreader.WaveFormat= "   + _audioreader.WaveFormat);
+			logfile.Log(". _audioreader.Length= "       + _audioreader.Length);
+			logfile.Log(". _audioreader.TotalTime= "    + _audioreader.TotalTime);
+			logfile.Log(". _audioreader.Position= "     + _audioreader.Position);
+			logfile.Log(". _audioreader.CurrentTime= "  + _audioreader.CurrentTime);
+			logfile.Log(". _audioreader.BlockAlign= "   + _audioreader.BlockAlign);
+//			logfile.Log(". _audioreader.ReadTimeout= "  + _audioreader.ReadTimeout);	// not supported.
+//			logfile.Log(". _audioreader.WriteTimeout= " + _audioreader.WriteTimeout);	// not supported.
+			logfile.Log(". _audioreader.CanTimeout= "   + _audioreader.CanTimeout);
+			logfile.Log(". _audioreader.CanRead= "      + _audioreader.CanRead);
+			logfile.Log(". _audioreader.CanWrite= "     + _audioreader.CanWrite);
+			logfile.Log(". _audioreader.CanSeek= "      + _audioreader.CanSeek);
+#endif
 			_waveout.Init(_audioreader);
 			_waveout.PlaybackStopped += OnPlaybackStopped;
 
@@ -90,7 +110,40 @@ namespace lipsync_editor
 		#endregion cTor
 
 
-		#region handlers (override)
+		#region methods
+		/// <summary>
+		/// Parses and pushes 16-bit samples to an array.
+		/// @note The wavefile shall be PCM 44.1kHz 16-bit Mono.
+		/// </summary>
+		/// <param name="wavefile"></param>
+		void Conatiner(string wavefile)
+		{
+			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				var br = new BinaryReader(fs);
+
+				br.BaseStream.Seek(40, SeekOrigin.Begin);
+				uint size = br.ReadUInt32() / 2u;
+				_samples = new short[size];
+
+				int i = -1;
+				short val;
+				while (br.BaseStream.Position < br.BaseStream.Length)
+				{
+					val = br.ReadInt16();
+					_samples[++i] = val;
+
+					if (_durSapistart == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+						_durSapistart = (decimal)i / 44100;
+				}
+				br.Close();
+			}
+			_dur = (decimal)_samples.Length / 44100;
+		}
+		#endregion methods
+
+
+		#region handlers override
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
 			_closing = true;
@@ -145,10 +198,10 @@ namespace lipsync_editor
 			}
 			return base.ProcessDialogKey(keyData);
 		}
-		#endregion handlers (override)
+		#endregion handlers override
 
 
-		#region handlers
+		#region handlers sync delay
 		void textchanged_Visdelay(object sender, EventArgs e)
 		{
 			decimal result;
@@ -173,9 +226,10 @@ namespace lipsync_editor
 			_durSapistart = _durSapistart0;
 			tb_offset.Text = _durSapistart.ToString("F3");
 		}
+		#endregion handlers sync delay
 
 
-#region NAudio
+		#region handlers NAudio
 		void click_Play(object sender, EventArgs e)
 		{
 			switch (_waveout.PlaybackState)
@@ -225,9 +279,10 @@ namespace lipsync_editor
 		{
 			pa_wave.Invalidate();
 		}
-#endregion NAudio
+		#endregion handlers NAudio
 
 
+		#region handlers paint
 		void paint_WavePanel(object sender, PaintEventArgs e)
 		{
 			int offsetVert = pa_wave.Height / 2;
@@ -275,7 +330,10 @@ namespace lipsync_editor
 
 			// draw the caret-line
 			//logfile.Log(_waveout.GetPosition().ToString());
-			x = (int)((decimal)_waveout.GetPosition() / 4 * factorHori); // TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
+			x = (int)((decimal)_waveout.GetPosition() / 4 * factorHori);	// TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
+																			// It's because NAudio is converting 16-bit to 32-bit float
+																			// and it could be forcing stereo-channels and whatever else
+																			// it feels like.
 			e.Graphics.DrawLine(Pens.White,
 								x, 0,
 								x, pa_wave.Height);
@@ -304,40 +362,7 @@ namespace lipsync_editor
 									x, pa_wave.Height - 16);
 			}
 		}
-		#endregion handlers
-
-
-		#region methods
-		/// <summary>
-		/// Parses and pushes 16-bit samples to an array.
-		/// @note The wavefile shall be PCM 44.1kHz 16-bit Mono.
-		/// </summary>
-		/// <param name="wavefile"></param>
-		void Conatiner(string wavefile)
-		{
-			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read, FileShare.Read))
-			{
-				var br = new BinaryReader(fs);
-
-				br.BaseStream.Seek(40, SeekOrigin.Begin);
-				uint size = br.ReadUInt32() / 2u;
-				_samples = new short[size];
-
-				int i = -1;
-				short val;
-				while (br.BaseStream.Position < br.BaseStream.Length)
-				{
-					val = br.ReadInt16();
-					_samples[++i] = val;
-
-					if (_durSapistart == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
-						_durSapistart = (decimal)i / 44100;
-				}
-				br.Close();
-			}
-			_dur = (decimal)_samples.Length / 44100;
-		}
-		#endregion methods
+		#endregion handlers paint
 	}
 }
 
