@@ -250,9 +250,7 @@ namespace lipsync_editor
 				case PlaybackState.Playing:
 					bu_play.Text = "play";
 					_t1.Stop();
-
 					_waveout.Pause();
-
 					pa_wave.Invalidate();
 					break;
 
@@ -339,6 +337,9 @@ namespace lipsync_editor
 
 			// draw the caret-line
 			//logfile.Log(_waveout.GetPosition().ToString());
+			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
+			// latter is very sluggish here - be aware that the streams are NOT
+			// the same however.
 			x = (int)((decimal)_waveout.GetPosition() / 4 * factorHori);	// TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
 																			// It's because NAudio is converting 16-bit to 32-bit float
 																			// and it could be forcing stereo-channels and whatever else
@@ -370,6 +371,20 @@ namespace lipsync_editor
 									x, 16,
 									x, pa_wave.Height - 16);
 			}
+		}
+
+
+		void paint_BotPanel(object sender, PaintEventArgs e)
+		{
+			e.Graphics.DrawLine(Pens.Black, // bot-line
+								1,            pa_bot.Height - 1,
+								pa_bot.Width, pa_bot.Height - 1);
+			e.Graphics.DrawLine(Pens.Black, // left-line
+								0, 0,
+								0, pa_bot.Height - 1);
+			e.Graphics.DrawLine(Pens.Black, // right-line
+								pa_bot.Width - 1, 0,
+								pa_bot.Width - 1, pa_bot.Height - 1);
 		}
 		#endregion handlers paint
 	}

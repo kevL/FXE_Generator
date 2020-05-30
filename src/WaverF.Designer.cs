@@ -36,7 +36,7 @@ namespace lipsync_editor
 			this.pa_wave.Location = new System.Drawing.Point(0, 0);
 			this.pa_wave.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_wave.Name = "pa_wave";
-			this.pa_wave.Size = new System.Drawing.Size(567, 114);
+			this.pa_wave.Size = new System.Drawing.Size(567, 115);
 			this.pa_wave.TabIndex = 0;
 			this.pa_wave.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_WavePanel);
 			// 
@@ -48,15 +48,16 @@ namespace lipsync_editor
 			this.pa_bot.Controls.Add(this.tb_offset);
 			this.pa_bot.Controls.Add(this.la_offset);
 			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pa_bot.Location = new System.Drawing.Point(0, 114);
+			this.pa_bot.Location = new System.Drawing.Point(0, 115);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(567, 25);
+			this.pa_bot.Size = new System.Drawing.Size(567, 24);
 			this.pa_bot.TabIndex = 1;
+			this.pa_bot.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_BotPanel);
 			// 
 			// bu_stop
 			// 
-			this.bu_stop.Location = new System.Drawing.Point(310, 2);
+			this.bu_stop.Location = new System.Drawing.Point(310, 1);
 			this.bu_stop.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_stop.Name = "bu_stop";
 			this.bu_stop.Size = new System.Drawing.Size(60, 22);
@@ -67,7 +68,7 @@ namespace lipsync_editor
 			// 
 			// bu_play
 			// 
-			this.bu_play.Location = new System.Drawing.Point(251, 2);
+			this.bu_play.Location = new System.Drawing.Point(251, 1);
 			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_play.Name = "bu_play";
 			this.bu_play.Size = new System.Drawing.Size(60, 22);
@@ -79,7 +80,7 @@ namespace lipsync_editor
 			// bu_reset
 			// 
 			this.bu_reset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.bu_reset.Location = new System.Drawing.Point(121, 2);
+			this.bu_reset.Location = new System.Drawing.Point(120, 1);
 			this.bu_reset.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_reset.Name = "bu_reset";
 			this.bu_reset.Size = new System.Drawing.Size(60, 22);
@@ -90,7 +91,7 @@ namespace lipsync_editor
 			// tb_offset
 			// 
 			this.tb_offset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tb_offset.Location = new System.Drawing.Point(68, 3);
+			this.tb_offset.Location = new System.Drawing.Point(68, 2);
 			this.tb_offset.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_offset.Name = "tb_offset";
 			this.tb_offset.Size = new System.Drawing.Size(51, 20);
@@ -101,13 +102,13 @@ namespace lipsync_editor
 			// 
 			// la_offset
 			// 
-			this.la_offset.Location = new System.Drawing.Point(5, 5);
+			this.la_offset.Location = new System.Drawing.Point(5, 4);
 			this.la_offset.Margin = new System.Windows.Forms.Padding(0);
 			this.la_offset.Name = "la_offset";
-			this.la_offset.Size = new System.Drawing.Size(65, 15);
+			this.la_offset.Size = new System.Drawing.Size(62, 15);
 			this.la_offset.TabIndex = 1;
 			this.la_offset.Text = "sync Delay";
-			this.la_offset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+			this.la_offset.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// WaverF
 			// 
@@ -117,7 +118,7 @@ namespace lipsync_editor
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.KeyPreview = true;
 			this.Name = "WaverF";
-			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.pa_bot.ResumeLayout(false);
 			this.pa_bot.PerformLayout();
