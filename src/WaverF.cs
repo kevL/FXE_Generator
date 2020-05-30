@@ -102,6 +102,13 @@ namespace lipsync_editor
 			logfile.Log(". _audioreader.CanSeek= "      + _audioreader.CanSeek);
 #endif
 			_waveout.Init(_audioreader);
+#if DEBUG
+			logfile.Log(". _waveout.OutputWaveFormat= " + _waveout.OutputWaveFormat);
+			logfile.Log(". _waveout.DesiredLatency= "   + _waveout.DesiredLatency);
+			logfile.Log(". _waveout.DeviceNumber= "     + _waveout.DeviceNumber);
+			logfile.Log(". _waveout.NumberOfBuffers= "  + _waveout.NumberOfBuffers);
+			logfile.Log(". _waveout.Volume= "           + _waveout.Volume);
+#endif
 			_waveout.PlaybackStopped += OnPlaybackStopped;
 
 			_t1.Tick += Track;
@@ -245,6 +252,8 @@ namespace lipsync_editor
 					_t1.Stop();
 
 					_waveout.Pause();
+
+					pa_wave.Invalidate();
 					break;
 
 				case PlaybackState.Paused:
