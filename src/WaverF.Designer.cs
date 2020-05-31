@@ -86,7 +86,7 @@ namespace lipsync_editor
 			this.bu_reset.Size = new System.Drawing.Size(60, 22);
 			this.bu_reset.TabIndex = 3;
 			this.bu_reset.UseVisualStyleBackColor = true;
-			this.bu_reset.Click += new System.EventHandler(this.click_Reset);
+			this.bu_reset.Click += new System.EventHandler(this.click_Syncreset);
 			// 
 			// tb_offset
 			// 
@@ -97,8 +97,8 @@ namespace lipsync_editor
 			this.tb_offset.Size = new System.Drawing.Size(51, 20);
 			this.tb_offset.TabIndex = 0;
 			this.tb_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.tb_offset.TextChanged += new System.EventHandler(this.textchanged_Visdelay);
-			this.tb_offset.Leave += new System.EventHandler(this.leave_Visdelay);
+			this.tb_offset.TextChanged += new System.EventHandler(this.textchanged_Syncdelay);
+			this.tb_offset.Leave += new System.EventHandler(this.leave_Syncdelay);
 			// 
 			// la_offset
 			// 
