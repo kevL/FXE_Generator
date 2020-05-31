@@ -406,17 +406,31 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Positions the start-caret at the start of the previous word.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		void click_Back(object sender, EventArgs args)
 		{
-			Cycle(false);
+			FindWordStartPosition(false);
 		}
 
+		/// <summary>
+		/// Positions the start-caret at the start of the next word.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
 		void click_Next(object sender, EventArgs args)
 		{
-			Cycle(true);
+			FindWordStartPosition(true);
 		}
 
-		void Cycle(bool next)
+		/// <summary>
+		/// Positions the start-caret at the start of the previous or next word.
+		/// </summary>
+		/// <param name="next">true for nextword; false for previousword</param>
+		void FindWordStartPosition(bool next)
 		{
 			if (_waveout.PlaybackState == PlaybackState.Stopped)
 			{
@@ -433,7 +447,7 @@ namespace lipsync_editor
 				{
 					for (int i = x + 1; i != pa_wave.Width; ++i)
 					{
-						if (SetStartCaret(b,i,j))
+						if (PositionStartCaret(b,i,j))
 							break;
 					}
 				}
@@ -441,14 +455,22 @@ namespace lipsync_editor
 				{
 					for (int i = x - 1; i != -1; --i)
 					{
-						if (SetStartCaret(b,i,j))
+						if (PositionStartCaret(b,i,j))
 							break;
 					}
 				}
 			}
 		}
 
-		bool SetStartCaret(Bitmap b, int i, int j)
+		/// <summary>
+		/// helper for FindWordStartPosition(). Finds a red pixel in a specified
+		/// bitmap-object.
+		/// </summary>
+		/// <param name="b">the bitmap</param>
+		/// <param name="i">x-position to check</param>
+		/// <param name="j">y-position to check</param>
+		/// <returns></returns>
+		bool PositionStartCaret(Bitmap b, int i, int j)
 		{
 			Color color = b.GetPixel(i,j);
 			if (color.R == 255)// || color.B == 255)
