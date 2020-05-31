@@ -484,6 +484,19 @@ namespace lipsync_editor
 								pa_bot.Width - 1, 0,
 								pa_bot.Width - 1, pa_bot.Height - 1);
 		}
+
+		/// <summary>
+		/// Redraws the bot-panel when its size changes because the first time
+		/// the user resizes the form the right edge border-line doesn't get
+		/// cleared. It does clear correctly without this after the first resize
+		/// though.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void sizechanged_BotPanel(object sender, EventArgs e)
+		{
+			pa_bot.Invalidate();
+		}
 		#endregion handlers paint
 	}
 }

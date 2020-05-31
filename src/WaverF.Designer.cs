@@ -54,6 +54,7 @@ namespace lipsync_editor
 			this.pa_bot.Name = "pa_bot";
 			this.pa_bot.Size = new System.Drawing.Size(567, 24);
 			this.pa_bot.TabIndex = 1;
+			this.pa_bot.SizeChanged += new System.EventHandler(this.sizechanged_BotPanel);
 			this.pa_bot.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_BotPanel);
 			// 
 			// bu_stop
