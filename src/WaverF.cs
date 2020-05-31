@@ -447,6 +447,8 @@ namespace lipsync_editor
 
 
 			// draw the track-caret
+			int h_4 = pa_wave.Height / 4;
+
 			//logfile.Log(_waveout.GetPosition().ToString());
 			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
 			// latter is very sluggish here - be aware that the streams are NOT
@@ -456,14 +458,14 @@ namespace lipsync_editor
 																						// and it could be forcing stereo-channels and whatever else
 																						// it feels like.
 			e.Graphics.DrawLine(Pens.White,
-								x, 32,
-								x, pa_wave.Height - 32);
+								x, h_4,
+								x, h_4 * 3);
 
 			// draw the start-caret
 			x = (int)((decimal)_posStart * factorHori);
 			e.Graphics.DrawLine(Pens.LemonChiffon,
-								x, 32,
-								x, pa_wave.Height - 32);
+								x, h_4,
+								x, h_4 * 3);
 		}
 
 
