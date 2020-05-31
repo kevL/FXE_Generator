@@ -463,8 +463,11 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// helper for FindWordStartPosition(). Finds a red pixel in a specified
-		/// bitmap-object.
+		/// helper for FindWordStartPosition(). Checks for a red pixel in a
+		/// specified bitmap-object.
+		/// @note Red-marker shall be used for ortheme-starts and Blue-marker shall
+		/// be used for phoneme-starts. NO OTHER MARKERS SHALL USE FULL RED-
+		/// COMPONENT OR FULL BLUE-COMPONENT.
 		/// </summary>
 		/// <param name="b">the bitmap</param>
 		/// <param name="i">x-position to check</param>
@@ -473,7 +476,7 @@ namespace lipsync_editor
 		bool PositionStartCaret(Bitmap b, int i, int j)
 		{
 			Color color = b.GetPixel(i,j);
-			if (color.R == 255)// || color.B == 255)
+			if (color.R == Byte.MaxValue)// || color.B == Byte.MaxValue)
 			{
 				_posStart = i * _samples.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
