@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 
 namespace lipsync_editor
@@ -175,7 +176,8 @@ namespace lipsync_editor
 		{
 			InitTrigrams();
 
-			using (var fs = new FileStream(TRIGRAMTABLE, FileMode.Open, FileAccess.Read, FileShare.Read))
+			string pfe = Path.Combine(Application.StartupPath, TRIGRAMTABLE);
+			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				var br = new BinaryReader(fs);
 				while (br.BaseStream.Position < br.BaseStream.Length)
