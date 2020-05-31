@@ -320,19 +320,21 @@ namespace lipsync_editor
 		/// <param name="args"></param>
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
-			_waveout.Dispose(); // ... gr
-
-			_waveout = new WaveOutEvent();
-			_waveout.Init(_audioreader);
-			_waveout.PlaybackStopped += OnPlaybackStopped;
-
 			if (!_closing)
-				_audioreader.Position = 0L;
+			{
+				_waveout.Dispose(); // ... gr
 
-			bu_play.Text = "play";
+				_waveout = new WaveOutEvent();
+				_waveout.Init(_audioreader);
+				_waveout.PlaybackStopped += OnPlaybackStopped;
 
-			_t1.Stop();
-			pa_wave.Invalidate();
+				_audioreader.Position = 0L; // NOTE: That will throw on FormClosing if not bypassed.
+
+				bu_play.Text = "play";
+
+				_t1.Stop();
+				pa_wave.Invalidate();
+			}
 		}
 
 		/// <summary>
