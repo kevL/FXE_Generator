@@ -43,6 +43,8 @@ namespace lipsync_editor
 
 		Timer _t1 = new Timer();	// redraws the wave-panel every ~15 millisec
 		bool _closing;				// true to prevent an 'AudioFileReader' exception when this form closes
+
+		int _posStart;				// position of the start-caret in samples
 		#endregion fields
 
 
@@ -279,6 +281,9 @@ namespace lipsync_editor
 			{
 				case PlaybackState.Stopped:
 					bu_play.Text = "pause";
+
+					_audioreader.Position = (long)_posStart * 4L;
+
 					_waveout.Play();
 					_t1.Start();
 					break;
@@ -346,6 +351,22 @@ namespace lipsync_editor
 		{
 			pa_wave.Invalidate();
 		}
+
+
+		/// <summary>
+		/// Positions the start-caret when the wave-panel is clicked.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mousedown_WavePanel(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left
+				&& _waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				_posStart = e.X * _samples.Length / pa_wave.Width;
+				pa_wave.Invalidate();
+			}
+		}
 		#endregion handlers NAudio
 
 
@@ -370,6 +391,7 @@ namespace lipsync_editor
 
 			Pen pen;
 
+			// draw the wave
 			short hi, hitest;
 			int j, x,y, length = _samples.Length;
 			for (int i = 0; i < length; ++i)
@@ -400,29 +422,15 @@ namespace lipsync_editor
 			}
 
 
-			// draw the caret-line
-			//logfile.Log(_waveout.GetPosition().ToString());
-			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
-			// latter is very sluggish here - be aware that the streams are NOT
-			// the same however.
-			x = (int)((decimal)_waveout.GetPosition() / 4 * factorHori);	// TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
-																			// It's because NAudio is converting 16-bit to 32-bit float
-																			// and it could be forcing stereo-channels and whatever else
-																			// it feels like.
-			e.Graphics.DrawLine(Pens.White,
-								x, 0,
-								x, pa_wave.Height);
-
-
-			// draw the word starts and stops
-			factorHori = (decimal)pa_wave.Width / _dur;
+			// draw the ortheme starts and phoneme stops
+			decimal factorHori_dur = (decimal)pa_wave.Width / _dur;
 
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
 				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori); // start-line
+					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori_dur); // start-marker
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -431,11 +439,31 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori); // stop-line
+				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori_dur); // stop-marker
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 16,
 									x, pa_wave.Height - 16);
 			}
+
+
+			// draw the track-caret
+			//logfile.Log(_waveout.GetPosition().ToString());
+			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
+			// latter is very sluggish here - be aware that the streams are NOT
+			// the same however.
+			x = (int)(((decimal)_waveout.GetPosition() / 4 + _posStart) * factorHori);	// TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
+																						// It's because NAudio is converting 16-bit to 32-bit float
+																						// and it could be forcing stereo-channels and whatever else
+																						// it feels like.
+			e.Graphics.DrawLine(Pens.White,
+								x, 32,
+								x, pa_wave.Height - 32);
+
+			// draw the start-caret
+			x = (int)((decimal)_posStart * factorHori);
+			e.Graphics.DrawLine(Pens.LemonChiffon,
+								x, 32,
+								x, pa_wave.Height - 32);
 		}
 
 
