@@ -404,6 +404,61 @@ namespace lipsync_editor
 				pa_wave.Invalidate();
 			}
 		}
+
+
+		void click_Back(object sender, EventArgs args)
+		{
+			Cycle(false);
+		}
+
+		void click_Next(object sender, EventArgs args)
+		{
+			Cycle(true);
+		}
+
+		void Cycle(bool next)
+		{
+			if (_waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				decimal factorHori = (decimal)pa_wave.Width / _samples.Length;
+				int x = (int)((decimal)_posStart * factorHori);
+
+				var b = new Bitmap(pa_wave.Width, pa_wave.Height);
+				pa_wave.DrawToBitmap(b, new Rectangle(0,0, pa_wave.Width, pa_wave.Height));
+//				b.Save("wavepanel.png", System.Drawing.Imaging.ImageFormat.Png);
+
+				int j = pa_wave.Height / 2;
+
+				if (next)
+				{
+					for (int i = x + 1; i != pa_wave.Width; ++i)
+					{
+						if (SetStartCaret(b,i,j))
+							break;
+					}
+				}
+				else // back
+				{
+					for (int i = x - 1; i != -1; --i)
+					{
+						if (SetStartCaret(b,i,j))
+							break;
+					}
+				}
+			}
+		}
+
+		bool SetStartCaret(Bitmap b, int i, int j)
+		{
+			Color color = b.GetPixel(i,j);
+			if (color.R == 255)// || color.B == 255)
+			{
+				_posStart = i * _samples.Length / pa_wave.Width + 1;
+				pa_wave.Invalidate();
+				return true;
+			}
+			return false;
+		}
 		#endregion handlers NAudio
 
 
@@ -500,7 +555,7 @@ namespace lipsync_editor
 
 			// draw the start-caret
 			x = (int)((decimal)_posStart * factorHori);
-			e.Graphics.DrawLine(Pens.LemonChiffon,
+			e.Graphics.DrawLine(Pens.Khaki,
 								x, h_4,
 								x, h_4 * 3);
 		}

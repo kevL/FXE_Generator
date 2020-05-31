@@ -15,12 +15,16 @@ namespace lipsync_editor
 		Button bu_play;
 		Button bu_stop;
 		Button bu_rewind;
+		Button bu_next;
+		Button bu_back;
 
 
 		void InitializeComponent()
 		{
 			this.pa_wave = new lipsync_editor.BufferedPanel();
 			this.pa_bot = new System.Windows.Forms.Panel();
+			this.bu_next = new System.Windows.Forms.Button();
+			this.bu_back = new System.Windows.Forms.Button();
 			this.bu_rewind = new System.Windows.Forms.Button();
 			this.bu_stop = new System.Windows.Forms.Button();
 			this.bu_play = new System.Windows.Forms.Button();
@@ -38,7 +42,7 @@ namespace lipsync_editor
 			this.pa_wave.Location = new System.Drawing.Point(0, 0);
 			this.pa_wave.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_wave.Name = "pa_wave";
-			this.pa_wave.Size = new System.Drawing.Size(592, 150);
+			this.pa_wave.Size = new System.Drawing.Size(792, 125);
 			this.pa_wave.TabIndex = 0;
 			this.pa_wave.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_WavePanel);
 			this.pa_wave.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mousedown_WavePanel);
@@ -47,6 +51,8 @@ namespace lipsync_editor
 			// 
 			// pa_bot
 			// 
+			this.pa_bot.Controls.Add(this.bu_next);
+			this.pa_bot.Controls.Add(this.bu_back);
 			this.pa_bot.Controls.Add(this.bu_rewind);
 			this.pa_bot.Controls.Add(this.bu_stop);
 			this.pa_bot.Controls.Add(this.bu_play);
@@ -54,13 +60,35 @@ namespace lipsync_editor
 			this.pa_bot.Controls.Add(this.tb_offset);
 			this.pa_bot.Controls.Add(this.la_offset);
 			this.pa_bot.Dock = System.Windows.Forms.DockStyle.Bottom;
-			this.pa_bot.Location = new System.Drawing.Point(0, 150);
+			this.pa_bot.Location = new System.Drawing.Point(0, 125);
 			this.pa_bot.Margin = new System.Windows.Forms.Padding(0);
 			this.pa_bot.Name = "pa_bot";
-			this.pa_bot.Size = new System.Drawing.Size(592, 24);
+			this.pa_bot.Size = new System.Drawing.Size(792, 24);
 			this.pa_bot.TabIndex = 1;
 			this.pa_bot.SizeChanged += new System.EventHandler(this.sizechanged_BotPanel);
 			this.pa_bot.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_BotPanel);
+			// 
+			// bu_next
+			// 
+			this.bu_next.Image = global::FXE_Generator.Properties.Resource.transport_next;
+			this.bu_next.Location = new System.Drawing.Point(428, 1);
+			this.bu_next.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_next.Name = "bu_next";
+			this.bu_next.Size = new System.Drawing.Size(60, 22);
+			this.bu_next.TabIndex = 7;
+			this.bu_next.UseVisualStyleBackColor = true;
+			this.bu_next.Click += new System.EventHandler(this.click_Next);
+			// 
+			// bu_back
+			// 
+			this.bu_back.Image = global::FXE_Generator.Properties.Resource.transport_back;
+			this.bu_back.Location = new System.Drawing.Point(369, 1);
+			this.bu_back.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_back.Name = "bu_back";
+			this.bu_back.Size = new System.Drawing.Size(60, 22);
+			this.bu_back.TabIndex = 6;
+			this.bu_back.UseVisualStyleBackColor = true;
+			this.bu_back.Click += new System.EventHandler(this.click_Back);
 			// 
 			// bu_rewind
 			// 
@@ -130,12 +158,12 @@ namespace lipsync_editor
 			// 
 			// WaverF
 			// 
-			this.ClientSize = new System.Drawing.Size(592, 174);
+			this.ClientSize = new System.Drawing.Size(792, 149);
 			this.Controls.Add(this.pa_wave);
 			this.Controls.Add(this.pa_bot);
 			this.Font = new System.Drawing.Font("Comic Sans MS", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.KeyPreview = true;
-			this.MinimumSize = new System.Drawing.Size(400, 100);
+			this.MinimumSize = new System.Drawing.Size(377, 150);
 			this.Name = "WaverF";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.pa_bot.ResumeLayout(false);

@@ -1992,4 +1992,18 @@
         R2L3JsN/ADmGNxUSC7W6AAAAAElFTkSuQmCC
 </value>
   </data>
+  <data name="transport_back" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAYAAAAvOAWIAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAABASURBVChTddDRCQAwCENB95/CTW1a1LZGH0jgPpWS+Ymq7onSo4APEfkLiYi8wkFf8hZ9O+8R
+        Td4jmvwiv05sAf8UO4mlwfFhAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="transport_next" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAsAAAAICAYAAAAvOAWIAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAA+SURBVChTddDRCQAgDEPB7D9FN7UiKbRNfCDK5U/cDs8rIviaXhXuwXrHPljfWIN1i7zFBZh1
+        AWZ9wP/rgAQcMjuJU0q0ywAAAABJRU5ErkJggg==
+</value>
+  </data>
 </root>
