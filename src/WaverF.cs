@@ -313,8 +313,8 @@ namespace lipsync_editor
 		/// @note The wave-device's output buffer needs to be cleared
 		/// (re-initialized) or else the buffer will *usually* just grow larger
 		/// and larger; however 'WaverF' uses the buffer's current position to
-		/// draw the track-caret in the wave-panel so it shall be reset whenever
-		/// the 'PlaybackStopped' event fires.
+		/// draw the track-caret in the wave-panel so the output-buffer needs to
+		/// be reset whenever the 'PlaybackStopped' event fires.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
