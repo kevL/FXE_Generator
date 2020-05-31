@@ -280,25 +280,20 @@ namespace lipsync_editor
 			switch (_waveout.PlaybackState)
 			{
 				case PlaybackState.Stopped:
-					bu_play.Text = "pause";
-
 					_audioreader.Position = (long)_posStart * 4L;
+					goto case PlaybackState.Paused;
 
+				case PlaybackState.Paused:
+					bu_play.Image = global::FXE_Generator.Properties.Resource.transport_pause;
 					_waveout.Play();
 					_t1.Start();
 					break;
 
 				case PlaybackState.Playing:
-					bu_play.Text = "play";
+					bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
 					_t1.Stop();
 					_waveout.Pause();
 					pa_wave.Invalidate();
-					break;
-
-				case PlaybackState.Paused:
-					bu_play.Text = "pause";
-					_waveout.Play();
-					_t1.Start();
 					break;
 			}
 		}
@@ -335,9 +330,9 @@ namespace lipsync_editor
 
 				_audioreader.Position = 0L; // NOTE: That will throw on FormClosing if not bypassed.
 
-				bu_play.Text = "play";
-
+				bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
 				_t1.Stop();
+
 				pa_wave.Invalidate();
 			}
 		}
@@ -364,6 +359,20 @@ namespace lipsync_editor
 				&& _waveout.PlaybackState == PlaybackState.Stopped)
 			{
 				_posStart = e.X * _samples.Length / pa_wave.Width;
+				pa_wave.Invalidate();
+			}
+		}
+
+		/// <summary>
+		/// Sets the start-caret to the start of the wave.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		void click_Rewind(object sender, EventArgs args)
+		{
+			if (_waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				_posStart = 0;
 				pa_wave.Invalidate();
 			}
 		}

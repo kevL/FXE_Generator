@@ -1964,4 +1964,32 @@
         AAAAAAAAAAAAAAAAAACAAAAAwAAAAOABAAD4AwAA//8AAP//AAD//wAA
 </value>
   </data>
+  <data name="transport_stop" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAxSURBVChTY/Dy8vqPCycnJ/9nAAIQgQ9jFUTGWAWRMVZBZIxVEBljFUTGWAWhmOE/AH+/RvyB
+        CXTKAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <data name="transport_play" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAA2SURBVChTY0AC/6GYIIAp/L9gwQIGZIwO4ApBmGiFIEy0QhCmrkKirIYpwqsQWRE+hVgAAwMA
+        zBpNWZGf8h8AAAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="transport_pause" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAtSURBVChTY/Dy8mIAgv8gvGDBAgYQRubDAHEKQAyCCqCAAgV4rQAJkKhgAQMAxDtCf6ay4MUA
+        AAAASUVORK5CYII=
+</value>
+  </data>
+  <data name="transport_rewind" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAA9SURBVChTYwCC/yC8YMECBhBGAmBxOAOHJEIBiAEFyJJgcTgDSqNjBANKo2MEAwqQJcHiYAZB
+        R2L3JsN/ADmGNxUSC7W6AAAAAElFTkSuQmCC
+</value>
+  </data>
 </root>

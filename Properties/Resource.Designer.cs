@@ -80,5 +80,53 @@ namespace FXE_Generator.Properties
 				return ((System.Drawing.Icon)(obj));
 			}
 		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap transport_pause
+		{
+			get
+			{
+				object obj = ResourceManager.GetObject("transport_pause", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap transport_play
+		{
+			get
+			{
+				object obj = ResourceManager.GetObject("transport_play", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap transport_rewind
+		{
+			get
+			{
+				object obj = ResourceManager.GetObject("transport_rewind", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
+		
+		/// <summary>
+		///   Looks up a localized resource of type System.Drawing.Bitmap.
+		/// </summary>
+		internal static System.Drawing.Bitmap transport_stop
+		{
+			get
+			{
+				object obj = ResourceManager.GetObject("transport_stop", resourceCulture);
+				return ((System.Drawing.Bitmap)(obj));
+			}
+		}
 	}
 }
