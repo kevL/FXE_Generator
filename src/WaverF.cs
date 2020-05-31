@@ -348,6 +348,7 @@ namespace lipsync_editor
 		}
 
 
+		bool _dragCaret;
 		/// <summary>
 		/// Positions the start-caret when the wave-panel is clicked.
 		/// </summary>
@@ -357,6 +358,33 @@ namespace lipsync_editor
 		{
 			if (e.Button == MouseButtons.Left
 				&& _waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				_posStart = e.X * _samples.Length / pa_wave.Width;
+				pa_wave.Invalidate();
+
+				_dragCaret = true;
+			}
+		}
+
+		/// <summary>
+		/// Releases '_dragCaret' on MouseUp.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mouseup_WavePanel(object sender, MouseEventArgs e)
+		{
+			_dragCaret = false;
+		}
+
+		/// <summary>
+		/// Drags the start-caret on MouseMove.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mousemove_WavePanel(object sender, MouseEventArgs e)
+		{
+			if (_dragCaret
+				&& e.X > -1 && e.X < pa_wave.Width)
 			{
 				_posStart = e.X * _samples.Length / pa_wave.Width;
 				pa_wave.Invalidate();

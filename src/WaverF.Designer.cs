@@ -42,6 +42,8 @@ namespace lipsync_editor
 			this.pa_wave.TabIndex = 0;
 			this.pa_wave.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_WavePanel);
 			this.pa_wave.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mousedown_WavePanel);
+			this.pa_wave.MouseMove += new System.Windows.Forms.MouseEventHandler(this.mousemove_WavePanel);
+			this.pa_wave.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mouseup_WavePanel);
 			// 
 			// pa_bot
 			// 
