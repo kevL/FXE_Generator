@@ -33,8 +33,8 @@ namespace lipsync_editor
 		short[] _samples;			// the samples of the current wave for drawing the waveform in the wave-panel
 
 		decimal _dur;				// total duration of the wavefile
-		decimal _durSapistart;		// sync-delay starttime offset
-		decimal _durSapistart0;		// for reseting the offset to its hardcoded estimation
+		decimal _sapiDelay;			// sync-delay starttime offset
+		decimal _sapiDelay0;		// for reseting the offset to its hardcoded estimation
 
 		string _offsetPre;			// for reseting the offset on user-error
 
@@ -75,12 +75,28 @@ namespace lipsync_editor
 
 
 			Conatiner(wavefile);
-			_durSapistart0 = _durSapistart;
+			_sapiDelay0 = _sapiDelay;
+
+			if (ClientSize.Width > _samples.Length) // ensure min 1 sample/pixel
+			{
+				ClientSize = new Size(_samples.Length, ClientSize.Height);
+				// TODO: Should set the form's MaxSize restriction here.
+				// But what are the odds that user is going to try to deal with
+				// a wave that's less than ~20 millisecs ...
+				//
+				// I'm just saying that I'm not considering rounding errors/
+				// ambiguities that could and will occur when one sample is
+				// represented by 2+ pixels; my plate is full dealing with the
+				// standard case where one pixel represents 1+ samples: recall
+				// that 1 sec of audio drawn across a 1000 pixel panel shall
+				// have 44.1 samples in each pixel. And that's a lowball
+				// estimate
+			}
 
 			Text = TITLE + " - " + FxeGeneratorF.Filelabel + " - " + _dur.ToString("F3") + " sec";
 
 			tb_offset.BackColor = Color.MintCream;
-			tb_offset.Text = _durSapistart.ToString("F3");
+			tb_offset.Text = _sapiDelay.ToString("F3");
 
 			bu_reset.Text = tb_offset.Text;
 
@@ -142,8 +158,8 @@ namespace lipsync_editor
 					val = br.ReadInt16();
 					_samples[++i] = val;
 
-					if (_durSapistart == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
-						_durSapistart = (decimal)i / 44100;
+					if (_sapiDelay == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
+						_sapiDelay = (decimal)i / 44100;
 				}
 				br.Close();
 			}
@@ -239,7 +255,7 @@ namespace lipsync_editor
 				&& result >= 0 && result < 1000)
 			{
 				_offsetPre = tb_offset.Text;
-				_durSapistart = result;
+				_sapiDelay = result;
 				pa_wave.Invalidate();
 			}
 			else
@@ -253,7 +269,7 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void leave_Syncdelay(object sender, EventArgs e)
 		{
-			tb_offset.Text = _durSapistart.ToString("F3");
+			tb_offset.Text = _sapiDelay.ToString("F3");
 		}
 
 		/// <summary>
@@ -263,8 +279,8 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Syncreset(object sender, EventArgs e)
 		{
-			_durSapistart = _durSapistart0;
-			tb_offset.Text = _durSapistart.ToString("F3");
+			_sapiDelay = _sapiDelay0;
+			tb_offset.Text = _sapiDelay.ToString("F3");
 		}
 		#endregion handlers sync-delay
 
@@ -359,7 +375,7 @@ namespace lipsync_editor
 			if (e.Button == MouseButtons.Left
 				&& _waveout.PlaybackState == PlaybackState.Stopped)
 			{
-				_posStart = e.X * _samples.Length / pa_wave.Width;
+				_posStart = e.X * _samples.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 
 				_dragCaret = true;
@@ -386,7 +402,7 @@ namespace lipsync_editor
 			if (_dragCaret
 				&& e.X > -1 && e.X < pa_wave.Width)
 			{
-				_posStart = e.X * _samples.Length / pa_wave.Width;
+				_posStart = e.X * _samples.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 			}
 		}
@@ -487,6 +503,16 @@ namespace lipsync_editor
 		#endregion handlers NAudio
 
 
+//		decimal pixelsPerSample()
+//		{
+//			return (decimal)pa_wave.Width / _samples.Length;
+//		}
+//		int samplesPerPixel()
+//		{
+//			return _samples.Length / pa_wave.Width + 1;
+//		}
+
+
 		#region handlers paint
 		/// <summary>
 		/// Paints the wave-panel.
@@ -508,7 +534,7 @@ namespace lipsync_editor
 
 			Pen pen;
 
-			// draw the wave
+// draw the wave
 			short hi, hitest;
 			int j, x,y, length = _samples.Length;
 			for (int i = 0; i < length; ++i)
@@ -539,7 +565,7 @@ namespace lipsync_editor
 			}
 
 
-			// draw the ortheme starts and phoneme stops
+// draw the ortheme starts and phoneme stops
 			decimal factorHori_dur = (decimal)pa_wave.Width / _dur;
 
 			for (int i = 0; i != _dt.Rows.Count; ++i)
@@ -547,7 +573,7 @@ namespace lipsync_editor
 				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori_dur); // start-marker
+					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _sapiDelay) * factorHori_dur); // start-marker
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -556,15 +582,17 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _durSapistart) * factorHori_dur); // stop-marker
+				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _sapiDelay) * factorHori_dur); // stop-marker
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 16,
 									x, pa_wave.Height - 16);
 			}
 
 
-			// draw the track-caret
+// draw the track-caret
 			int h_4 = pa_wave.Height / 4;
+			int top = h_4 - 1;
+			int bot = h_4 * 3 + 1;
 
 			//logfile.Log(_waveout.GetPosition().ToString());
 			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
@@ -575,14 +603,14 @@ namespace lipsync_editor
 																						// and it could be forcing stereo-channels and whatever else
 																						// it feels like.
 			e.Graphics.DrawLine(Pens.White,
-								x, h_4,
-								x, h_4 * 3);
+								x, top,
+								x, bot);
 
-			// draw the start-caret
+// draw the start-caret
 			x = (int)((decimal)_posStart * factorHori);
-			e.Graphics.DrawLine(Pens.Khaki,
-								x, h_4,
-								x, h_4 * 3);
+			e.Graphics.DrawLine(Pens.Wheat,
+								x, top,
+								x, bot);
 		}
 
 
@@ -593,13 +621,13 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void paint_BotPanel(object sender, PaintEventArgs e)
 		{
-			e.Graphics.DrawLine(Pens.Black, // bot-line
+			e.Graphics.DrawLine(Pens.DarkGray,						// bot-line
 								1,            pa_bot.Height - 1,
 								pa_bot.Width, pa_bot.Height - 1);
-			e.Graphics.DrawLine(Pens.Black, // left-line
+			e.Graphics.DrawLine(Pens.DarkGray,						// left-line
 								0, 0,
 								0, pa_bot.Height - 1);
-			e.Graphics.DrawLine(Pens.Black, // right-line
+			e.Graphics.DrawLine(Pens.DarkGray,						// right-line
 								pa_bot.Width - 1, 0,
 								pa_bot.Width - 1, pa_bot.Height - 1);
 		}
