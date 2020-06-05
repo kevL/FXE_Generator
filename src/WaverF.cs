@@ -584,6 +584,12 @@ namespace lipsync_editor
 			e.Graphics.DrawLine(Pens.Wheat,
 								x, top,
 								x, bot);
+			e.Graphics.DrawLine(Pens.Wheat,
+								x - 3, top,
+								x + 3, top);
+			e.Graphics.DrawLine(Pens.Wheat,
+								x - 3, bot,
+								x + 3, bot);
 		}
 
 
