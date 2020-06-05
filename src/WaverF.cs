@@ -5,7 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Windows.Forms;
 
-using NAudio.Wave;
+using kL_audio;
 
 
 namespace lipsync_editor
@@ -30,7 +30,7 @@ namespace lipsync_editor
 		readonly EditorPhonF _f;	// parent
 		readonly DataTable _dt;		// fxe-data to set phoneme markers in the wave-panel
 
-		short[] _samples;			// the samples of the current wave for drawing the waveform in the wave-panel
+		short[] _shorts;			// the samples of the current wave for drawing the waveform in the wave-panel
 
 		decimal _dur;				// total duration of the wavefile
 		decimal _sapiDelay;			// sync-delay starttime offset
@@ -38,11 +38,11 @@ namespace lipsync_editor
 
 		string _offsetPre;			// for reseting the offset on user-error
 
-		WaveOutEvent _waveout = new WaveOutEvent();	// pushes a wavestream to a soundcard-device
-		AudioFileReader _audioreader;				// the frontend for the 'WaveOutEvent'
+		WaveOutEvent _waveout;					// pushes a wavestream through WindowsAPI to a soundcard-device
+		readonly WaveFileReader _wavereader;	// the frontend for the 'WaveOutEvent'
 
-		Timer _t1 = new Timer();	// redraws the wave-panel every ~15 millisec
-		bool _closing;				// true to prevent an 'AudioFileReader' exception when this form closes
+		Timer _t1 = new Timer();	// redraws the wave-panel every ~15 millisec during playback
+		bool _close;				// true to prevent an 'AudioFileReader' exception when this form closes
 
 		int _posStart;				// position of the start-caret in samples
 		#endregion fields
@@ -77,9 +77,9 @@ namespace lipsync_editor
 			Conatiner(wavefile);
 			_sapiDelay0 = _sapiDelay;
 
-			if (ClientSize.Width > _samples.Length) // ensure min 1 sample/pixel
+			if (ClientSize.Width > _shorts.Length) // ensure min 1 sample/pixel
 			{
-				ClientSize = new Size(_samples.Length, ClientSize.Height);
+				ClientSize = new Size(_shorts.Length, ClientSize.Height);
 				// TODO: Should set the form's MaxSize restriction here.
 				// But what are the odds that user is going to try to deal with
 				// a wave that's less than ~20 millisecs ...
@@ -102,31 +102,9 @@ namespace lipsync_editor
 
 			pa_wave.Select();
 
-			_audioreader = new AudioFileReader(SapiLipsync.That.Wavefile);
-#if DEBUG
-			logfile.Log(". _audioreader.FileName= "     + _audioreader.FileName);
-			logfile.Log(". _audioreader.Volume= "       + _audioreader.Volume);
-			logfile.Log(". _audioreader.WaveFormat= "   + _audioreader.WaveFormat);
-			logfile.Log(". _audioreader.Length= "       + _audioreader.Length);
-			logfile.Log(". _audioreader.TotalTime= "    + _audioreader.TotalTime);
-			logfile.Log(". _audioreader.Position= "     + _audioreader.Position);
-			logfile.Log(". _audioreader.CurrentTime= "  + _audioreader.CurrentTime);
-			logfile.Log(". _audioreader.BlockAlign= "   + _audioreader.BlockAlign);
-//			logfile.Log(". _audioreader.ReadTimeout= "  + _audioreader.ReadTimeout);	// not supported.
-//			logfile.Log(". _audioreader.WriteTimeout= " + _audioreader.WriteTimeout);	// not supported.
-			logfile.Log(". _audioreader.CanTimeout= "   + _audioreader.CanTimeout);
-			logfile.Log(". _audioreader.CanRead= "      + _audioreader.CanRead);
-			logfile.Log(". _audioreader.CanWrite= "     + _audioreader.CanWrite);
-			logfile.Log(". _audioreader.CanSeek= "      + _audioreader.CanSeek);
-#endif
-			_waveout.Init(_audioreader);
-#if DEBUG
-			logfile.Log(". _waveout.OutputWaveFormat= " + _waveout.OutputWaveFormat);
-			logfile.Log(". _waveout.DesiredLatency= "   + _waveout.DesiredLatency);
-			logfile.Log(". _waveout.DeviceNumber= "     + _waveout.DeviceNumber);
-			logfile.Log(". _waveout.NumberOfBuffers= "  + _waveout.NumberOfBuffers);
-			logfile.Log(". _waveout.Volume= "           + _waveout.Volume);
-#endif
+			_wavereader = new WaveFileReader(SapiLipsync.That.Wavefile);
+			_waveout = new WaveOutEvent(_wavereader);
+
 			_waveout.PlaybackStopped += OnPlaybackStopped;
 
 			_t1.Tick += Track;
@@ -137,7 +115,8 @@ namespace lipsync_editor
 
 		#region methods
 		/// <summary>
-		/// Parses and pushes 16-bit samples to an array.
+		/// Parses and pushes 16-bit samples to a short-array that's used for
+		/// screen-display.
 		/// @note The wavefile shall be PCM 44.1kHz 16-bit Mono.
 		/// </summary>
 		/// <param name="wavefile"></param>
@@ -147,23 +126,23 @@ namespace lipsync_editor
 			{
 				var br = new BinaryReader(fs);
 
-				br.BaseStream.Seek(40, SeekOrigin.Begin);
-				uint size = br.ReadUInt32() / 2u;
-				_samples = new short[size];
+				fs.Seek(40, SeekOrigin.Begin);
+				uint datasize = br.ReadUInt32();
+				_shorts = new short[datasize / 2u];
 
 				int i = -1;
 				short val;
-				while (br.BaseStream.Position < br.BaseStream.Length)
+				while (fs.Position < fs.Length)
 				{
 					val = br.ReadInt16();
-					_samples[++i] = val;
+					_shorts[++i] = val;
 
 					if (_sapiDelay == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
 						_sapiDelay = (decimal)i / 44100;
 				}
 				br.Close();
 			}
-			_dur = (decimal)_samples.Length / 44100;
+			_dur = (decimal)_shorts.Length / 44100;
 		}
 		#endregion methods
 
@@ -176,10 +155,9 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
-			_closing = true;
+			_close = true;
 			_waveout.Dispose();
-			_audioreader.Dispose();
-
+			_t1.Dispose();
 			_f.Waver = null;
 
 			switch (e.CloseReason)
@@ -285,7 +263,7 @@ namespace lipsync_editor
 		#endregion handlers sync-delay
 
 
-		#region handlers NAudio
+		#region handlers kL_audio
 		/// <summary>
 		/// Plays or pauses the wave playback.
 		/// </summary>
@@ -296,7 +274,7 @@ namespace lipsync_editor
 			switch (_waveout.PlaybackState)
 			{
 				case PlaybackState.Stopped:
-					_audioreader.Position = (long)_posStart * 4L;
+					_wavereader.Position = (long)_posStart * 2L;
 					goto case PlaybackState.Paused;
 
 				case PlaybackState.Paused:
@@ -336,15 +314,14 @@ namespace lipsync_editor
 		/// <param name="args"></param>
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
-			if (!_closing)
+			if (!_close)
 			{
 				_waveout.Dispose(); // ... gr
 
-				_waveout = new WaveOutEvent();
-				_waveout.Init(_audioreader);
+				_waveout = new WaveOutEvent(_wavereader);
 				_waveout.PlaybackStopped += OnPlaybackStopped;
 
-				_audioreader.Position = 0L; // NOTE: That will throw on FormClosing if not bypassed.
+				_wavereader.Position = 0L;
 
 				bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
 				_t1.Stop();
@@ -375,7 +352,7 @@ namespace lipsync_editor
 			if (e.Button == MouseButtons.Left
 				&& _waveout.PlaybackState == PlaybackState.Stopped)
 			{
-				_posStart = e.X * _samples.Length / pa_wave.Width + 1;
+				_posStart = e.X * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 
 				_dragCaret = true;
@@ -402,7 +379,7 @@ namespace lipsync_editor
 			if (_dragCaret
 				&& e.X > -1 && e.X < pa_wave.Width)
 			{
-				_posStart = e.X * _samples.Length / pa_wave.Width + 1;
+				_posStart = e.X * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 			}
 		}
@@ -450,12 +427,11 @@ namespace lipsync_editor
 		{
 			if (_waveout.PlaybackState == PlaybackState.Stopped)
 			{
-				decimal factorHori = (decimal)pa_wave.Width / _samples.Length;
+				decimal factorHori = (decimal)pa_wave.Width / _shorts.Length;
 				int x = (int)((decimal)_posStart * factorHori);
 
 				var b = new Bitmap(pa_wave.Width, pa_wave.Height);
 				pa_wave.DrawToBitmap(b, new Rectangle(0,0, pa_wave.Width, pa_wave.Height));
-//				b.Save("wavepanel.png", System.Drawing.Imaging.ImageFormat.Png);
 
 				int j = pa_wave.Height / 2;
 
@@ -494,13 +470,13 @@ namespace lipsync_editor
 			Color color = b.GetPixel(i,j);
 			if (color.R == Byte.MaxValue)// || color.B == Byte.MaxValue)
 			{
-				_posStart = i * _samples.Length / pa_wave.Width + 1;
+				_posStart = i * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 				return true;
 			}
 			return false;
 		}
-		#endregion handlers NAudio
+		#endregion handlers kL_audio
 
 
 //		decimal pixelsPerSample()
@@ -527,22 +503,22 @@ namespace lipsync_editor
 								pa_wave.Left,  offsetVert,
 								pa_wave.Right, offsetVert);
 
-			decimal factorHori = (decimal)pa_wave.Width / _samples.Length;
+			decimal factorHori = (decimal)pa_wave.Width / _shorts.Length;
 			decimal factorVert = (decimal)pa_wave.Height * _scale / 65536;
 
-			int pixelGroupCount = _samples.Length / pa_wave.Width + 1;
+			int pixelGroupCount = _shorts.Length / pa_wave.Width + 1;
 
 			Pen pen;
 
 // draw the wave
 			short hi, hitest;
-			int j, x,y, length = _samples.Length;
+			int j, x,y, length = _shorts.Length;
 			for (int i = 0; i < length; ++i)
 			{
 				hi = (short)0; // draw only the highest/lowest amplitude in each pixel-group ->
 				for (j = 0; j != pixelGroupCount && i + j < length; ++j)
 				{
-					hitest = _samples[i + j];
+					hitest = _shorts[i + j];
 					if (Math.Abs(hitest) > Math.Abs(hi))
 						hi = hitest;
 				}
@@ -555,8 +531,8 @@ namespace lipsync_editor
 
 					x = (int)((decimal)i  * factorHori);
 					y = (int)((decimal)hi * factorVert);
-					if (y == 0) // always pip a non-zero amplitude ->
-						y = (int)hi / Math.Abs(hi); // pos/neg
+					if (y == 0)						// always pip a non-zero amplitude ->
+						y = (int)hi / Math.Abs(hi);	// pos/neg
 
 					e.Graphics.DrawLine(pen,
 										x, offsetVert,
@@ -595,13 +571,10 @@ namespace lipsync_editor
 			int bot = h_4 * 3 + 1;
 
 			//logfile.Log(_waveout.GetPosition().ToString());
-			// NOTE: Get position from '_waveout' NOT '_audioreader' because the
+			// NOTE: Get position from '_waveout' NOT '_wavereader' because the
 			// latter is very sluggish here - be aware that the streams are NOT
 			// the same however.
-			x = (int)(((decimal)_waveout.GetPosition() / 4 + _posStart) * factorHori);	// TODO: why 4, should be 2 - actually it's 4+ ARBITRARY.
-																						// It's because NAudio is converting 16-bit to 32-bit float
-																						// and it could be forcing stereo-channels and whatever else
-																						// it feels like.
+			x = (int)(((decimal)_waveout.GetPosition() / 2 + _posStart) * factorHori);
 			e.Graphics.DrawLine(Pens.White,
 								x, top,
 								x, bot);
@@ -647,28 +620,3 @@ namespace lipsync_editor
 		#endregion handlers paint
 	}
 }
-
-/*		void Track()
-		{
-			var thread = new Thread(new ThreadStart(track)); // track the Audio-Data on 'track' method
-			thread.Start();
-		}
-		void track()
-		{
-			while (_track) // create a pseudo-infinite loop
-			{
-				if (_waveout.PlaybackState == PlaybackState.Playing)
-				{
-					logfile.Log("bytes= " + _waveout.GetPosition());
-
-					double millisec = _waveout.GetPosition() * 1000.0
-						/ _waveout.OutputWaveFormat.BitsPerSample
-						/ _waveout.OutputWaveFormat.Channels * 8
-						/ _waveout.OutputWaveFormat.SampleRate;
-
-					logfile.Log(millisec.ToString("F3"));
-				}
-
-				Thread.Sleep(1000); // sleep for 1 sec
-			}
-		} */

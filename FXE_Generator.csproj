@@ -69,6 +69,17 @@
     <Compile Include="src\FxeReader.cs" />
     <Compile Include="src\FxeWriter.cs" />
     <Compile Include="src\InfoDialog.cs" />
+    <Compile Include="src\kL_Audio\MultimediaException.cs" />
+    <Compile Include="src\kL_Audio\MultimediaTime.cs" />
+    <Compile Include="src\kL_Audio\PlaybackState.cs" />
+    <Compile Include="src\kL_Audio\StoppedEventArgs.cs" />
+    <Compile Include="src\kL_Audio\WaveFileReader.cs" />
+    <Compile Include="src\kL_Audio\MultimediaResult.cs" />
+    <Compile Include="src\kL_Audio\WaveFormat.cs" />
+    <Compile Include="src\kL_Audio\WaveHeader.cs" />
+    <Compile Include="src\kL_Audio\WaveInterop.cs" />
+    <Compile Include="src\kL_Audio\WaveOutBuffer.cs" />
+    <Compile Include="src\kL_Audio\WaveOutEvent.cs" />
     <Compile Include="src\logger.cs" />
     <Compile Include="src\NAudio\AcmDriverAddFlags.cs" />
     <Compile Include="src\NAudio\AcmDriverDetails.cs" />
@@ -194,6 +205,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="src" />
+    <Folder Include="src\kL_Audio" />
     <Folder Include="src\NAudio" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
