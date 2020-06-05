@@ -8,7 +8,7 @@ namespace kL_audio
 	/// <summary>
 	/// Windows Multimedia errorcodes.
 	/// </summary>
-	public enum MultimediaResult
+	enum MultimediaResult
 	{
 		// Windows multimedia errorcodes - mmsystem.h
 

@@ -30,7 +30,7 @@ namespace kL_audio
 	/// } WAVEFORMATEX;
 	/// </summary>
 	[StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi, Pack=2)]
-	class WaveFormat
+	sealed class WaveFormat
 	{
 		public WaveFormatEncoding format;
 		public short channels;

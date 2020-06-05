@@ -5,7 +5,7 @@ namespace kL_audio
 {
 	// credit: Mark Heath et al. - the NAudio libraries
 
-	public enum PlaybackState
+	enum PlaybackState
 	{
 		Stopped,
 		Playing,

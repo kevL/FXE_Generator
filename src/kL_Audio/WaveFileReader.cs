@@ -7,7 +7,7 @@ namespace kL_audio
 {
 	// credit: Mark Heath et al. - the NAudio libraries
 
-	public class WaveFileReader
+	sealed class WaveFileReader
 	{
 		#region fields
 		readonly byte[] _bytes;
