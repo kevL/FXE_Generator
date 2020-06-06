@@ -11,6 +11,7 @@ namespace kL_audio
 	{
 		#region fields
 		readonly byte[] _bytes;
+		readonly long _length;
 
 		readonly object _lock = new object();
 		#endregion fields
@@ -20,32 +21,18 @@ namespace kL_audio
 		internal WaveFormat WaveFormat
 		{ get; private set; }
 
+		/// <summary>
+		/// Current position in the byte-array.
+		/// </summary>
 		internal long Position
 		{ private get; set; }
-
-		/// <summary>
-		/// Length of the byte-array.
-		/// </summary>
-		long Length
-		{ get; set; }
-
-//		public TimeSpan CurrentTime
-//		{
-//			get { return TimeSpan.FromSeconds((double)Position / WaveFormat.bytespersec); }
-//			set { Position = (long)(value.TotalSeconds * WaveFormat.bytespersec); }
-//		}
-//
-//		public TimeSpan TotalTime
-//		{
-//			get { return TimeSpan.FromSeconds((double)Length / WaveFormat.bytespersec); }
-//		}
 		#endregion properties
 
 
 		#region cTor
 		internal WaveFileReader(string pfe)
 		{
-			lipsync_editor.logfile.Log("WaveFileReader()");
+			//lipsync_editor.logfile.Log("WaveFileReader()");
 
 			WaveFormat = new WaveFormat();
 			WaveFormat.format        = WaveFormatEncoding.Pcm;
@@ -55,17 +42,16 @@ namespace kL_audio
 			WaveFormat.blockalign    = (short)2;
 			WaveFormat.bitspersample = (short)16;
 
-
 			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
 				var br = new BinaryReader(fs);
 
 				fs.Seek(40, SeekOrigin.Begin);
-				Length = br.ReadUInt32();
+				_length = br.ReadUInt32();
 
-				_bytes = new byte[Length];
+				_bytes = new byte[_length];
 
-				for (int i = 0; i != Length; ++i)
+				for (int i = 0; i != _length; ++i)
 				{
 					_bytes[i] = br.ReadByte();
 				}
@@ -86,9 +72,9 @@ namespace kL_audio
 		{
 			lock (_lock)
 			{
-				if (Position + count > Length)
+				if (Position + count > _length)
 				{
-					count = (int)(Length - Position);
+					count = (int)(_length - Position);
 				}
 
 				for (int i = 0; i != count; ++i)
@@ -99,16 +85,6 @@ namespace kL_audio
 				return count;
 			}
 		}
-
-//		/// <summary>
-//		/// Moves forward or backwards the specified seconds in the stream.
-//		/// </summary>
-//		/// <param name="seconds">count of seconds to move - can be negative</param>
-//		public void Skip(int seconds)
-//		{
-//			long pos = (long)WaveFormat.bytespersec * seconds + Position;
-//			Position = Math.Max(0L, Math.Min(pos, Length));
-//		}
 		#endregion methods
 	}
 }

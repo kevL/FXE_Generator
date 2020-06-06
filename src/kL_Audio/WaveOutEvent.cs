@@ -16,8 +16,10 @@ namespace kL_audio
 
 
 		#region fields (static)
-		const int BUFFERS        = 2;
-		const int DESIREDLATENCY = 300; // millisecs supposedly
+		const int BUFFERS = 2;
+		const int LATENCY = 100; // buffer duration in millisecs (ie. not latency per se)
+
+		static IntPtr DEVICEID = (IntPtr)(-1);
 		#endregion fields (static)
 
 
@@ -41,25 +43,13 @@ namespace kL_audio
 			get { return _playbackState; }
 			set { _playbackState = value; }
 		}
-
-		int _deviceNumber = -1;
-		/// <summary>
-		/// Gets or sets the device number. Should be set before a call to
-		/// Init(). This must be between -1 and <see>DeviceCount</see> - 1. -1
-		/// means stick to default device even if default device is changed.
-		/// </summary>
-		public int DeviceNumber
-		{
-			get { return _deviceNumber; }
-			set { _deviceNumber = value; }
-		}
 		#endregion properties
 
 
 		#region cTor
 		public WaveOutEvent(WaveFileReader waveProvider)
 		{
-			lipsync_editor.logfile.Log("WaveOutEvent()");
+			//lipsync_editor.logfile.Log("WaveOutEvent()");
 
 			_waveProvider = waveProvider;
 			//lipsync_editor.logfile.Log(". format= " + _waveProvider.WaveFormat);
@@ -71,8 +61,8 @@ namespace kL_audio
 				if (   label == "LegacyAspNetSynchronizationContext"
 					|| label == "AspNetSynchronizationContext")
 				{
-					lipsync_editor.logfile.Log(". syncContext= " + label);
-					lipsync_editor.logfile.Log(". set syncContext NULL");
+					//lipsync_editor.logfile.Log(". syncContext= " + label);
+					//lipsync_editor.logfile.Log(". set syncContext NULL");
 					_syncContext = null;
 				}
 			}
@@ -85,7 +75,7 @@ namespace kL_audio
 			lock (_waveOutLock)
 			{
 				result = WaveInterop.waveOutOpenWindow(out _hWaveOut,
-													   (IntPtr)DeviceNumber,
+													   DEVICEID,
 													   _waveProvider.WaveFormat,
 													   _callbackEvent.SafeWaitHandle.DangerousGetHandle(),
 													   IntPtr.Zero,
@@ -97,8 +87,8 @@ namespace kL_audio
 
 			_buffers = new WaveOutBuffer[BUFFERS];
 
-			int bufferSize = calcBytesPerLatency((DESIREDLATENCY * 2 + BUFFERS - 1) / BUFFERS); // round up.
-			lipsync_editor.logfile.Log(". bufferSize= " + bufferSize);
+			int bufferSize = calcBytesPerLatency((LATENCY * 2 + BUFFERS - 1) / BUFFERS); // round up.
+			//lipsync_editor.logfile.Log(". bufferSize= " + bufferSize);
 
 			for (var i = 0; i != BUFFERS; ++i)
 			{
@@ -107,7 +97,7 @@ namespace kL_audio
 		}
 
 		/// <summary>
-		/// Gets the size of a wave-buffer equivalent to the latency in
+		/// Gets the size of a wave-buffer equivalent to a specified latency in
 		/// milliseconds.
 		/// </summary>
 		/// <param name="millisecs">the milliseconds of latency</param>
@@ -182,7 +172,7 @@ namespace kL_audio
 					if (queued == 0)
 					{
 						PlaybackState = PlaybackState.Stopped;
-						_callbackEvent.Set();
+						_callbackEvent.Set(); // give the thread a kick
 					}
 				}
 			}
@@ -232,7 +222,7 @@ namespace kL_audio
 			if (PlaybackState != PlaybackState.Stopped)
 			{
 				// in the call to waveOutReset with function callbacks some drivers
-				// will block here until OnDone() is called for every buffer
+				// will block here until done() is called for every buffer
 				PlaybackState = PlaybackState.Stopped; // set this here to avoid a problem with some drivers
 
 				MultimediaResult result;
@@ -245,7 +235,7 @@ namespace kL_audio
 				{
 					throw new MultimediaException(result, "waveOutReset");
 				}
-				_callbackEvent.Set(); // give the thread a kick, make sure we exit
+				_callbackEvent.Set(); // give the thread a kick to force it to exit.
 			}
 		}
 
@@ -273,7 +263,11 @@ namespace kL_audio
 		}
 
 
-		internal long GetPosition()
+		/// <summary>
+		/// Gets the position of the waveout stream from the WindowsAPI.
+		/// </summary>
+		/// <returns></returns>
+		internal uint GetPosition()
 		{
 			lock (_waveOutLock)
 			{
@@ -285,11 +279,11 @@ namespace kL_audio
 																	   Marshal.SizeOf(multimediaTime)),
 										"waveOutGetPosition");
 
-				if (multimediaTime.wType != MultimediaTime.TIME_BYTES)
-					throw new Exception(string.Format("waveOutGetPosition: wType -> Expected {0}, Received {1}",
-													  MultimediaTime.TIME_BYTES, multimediaTime.wType));
+//				if (multimediaTime.wType != MultimediaTime.TIME_BYTES)
+//					throw new Exception(string.Format("waveOutGetPosition: wType -> Expected {0}, Received {1}",
+//													  MultimediaTime.TIME_BYTES, multimediaTime.wType));
 
-				return (long)multimediaTime.cb;
+				return multimediaTime.cb;
 			}
 		}
 		#endregion methods

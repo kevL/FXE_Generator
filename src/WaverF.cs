@@ -28,7 +28,7 @@ namespace lipsync_editor
 
 		#region fields
 		readonly EditorPhonF _f;	// parent
-		readonly DataTable _dt;		// fxe-data to set phoneme markers in the wave-panel
+		readonly DataTable _dt;		// fxe-data to set ortheme/phoneme markers in the wave-panel
 
 		short[] _shorts;			// the samples of the current wave for drawing the waveform in the wave-panel
 
@@ -54,13 +54,14 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="f">parent</param>
 		/// <param name="wavefile">fullpath of PCM-wave file</param>
-		/// <param name="dt">datatable</param>
+		/// <param name="dt">pointer to the 'FxeGeneratorF._dt1' PHONEMES
+		/// datatable</param>
 		internal WaverF(EditorPhonF f, string wavefile, DataTable dt)
 		{
-#if DEBUG
-			logfile.Log();
-			logfile.Log("WaverF.cTor");
-#endif
+//#if DEBUG
+//			logfile.Log();
+//			logfile.Log("WaverF.cTor");
+//#endif
 			InitializeComponent();
 			_f  = f;
 			_dt = dt;
@@ -304,11 +305,11 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// Handles the 'WaveOutEvent.PlaybackStopped'.
-		/// @note The wave-device's output buffer needs to be cleared
-		/// (re-initialized) or else the buffer will *usually* just grow larger
-		/// and larger; however 'WaverF' uses the buffer's current position to
-		/// draw the track-caret in the wave-panel so the output-buffer needs to
-		/// be reset whenever the 'PlaybackStopped' event fires.
+		/// @note The wave-device's output buffer needs to be cleared or else
+		/// the buffer will *usually* just grow larger and larger; however
+		/// 'WaverF' uses the buffer's current position to draw the track-caret
+		/// in the wave-panel so the output-buffer needs to be reset (recreated)
+		/// whenever the 'PlaybackStopped' event fires.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
@@ -320,8 +321,6 @@ namespace lipsync_editor
 
 				_waveout = new WaveOutEvent(_wavereader);
 				_waveout.PlaybackStopped += OnPlaybackStopped;
-
-				_wavereader.Position = 0L;
 
 				bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
 				_t1.Stop();
@@ -549,7 +548,7 @@ namespace lipsync_editor
 				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)(((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture)) + _sapiDelay) * factorHori_dur); // start-marker
+					x = (int)((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // ortheme start-marker
 					e.Graphics.DrawLine(Pens.Red,
 										x, 0,
 										x, pa_wave.Height);
@@ -558,7 +557,7 @@ namespace lipsync_editor
 					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
 				}
 
-				x = (int)(((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture)) + _sapiDelay) * factorHori_dur); // stop-marker
+				x = (int)((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // phoneme stop-marker
 				e.Graphics.DrawLine(Pens.Blue,
 									x, 16,
 									x, pa_wave.Height - 16);
@@ -579,7 +578,7 @@ namespace lipsync_editor
 								x, top,
 								x, bot);
 
-// draw the start-caret
+// draw the start-caret as an I-bar
 			x = (int)((decimal)_posStart * factorHori);
 			e.Graphics.DrawLine(Pens.Wheat,
 								x, top,
