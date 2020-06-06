@@ -275,6 +275,7 @@ namespace lipsync_editor
 			switch (_waveout.PlaybackState)
 			{
 				case PlaybackState.Stopped:
+					EnableButtons(false);
 					_wavereader.Position = (long)_posStart * 2L;
 					goto case PlaybackState.Paused;
 
@@ -291,6 +292,17 @@ namespace lipsync_editor
 					pa_wave.Invalidate();
 					break;
 			}
+		}
+
+		/// <summary>
+		/// Dis/enables a few buttons on play/stop.
+		/// </summary>
+		/// <param name="enable"></param>
+		void EnableButtons(bool enable = true)
+		{
+			bu_rewind.Enabled =
+			bu_back  .Enabled =
+			bu_next  .Enabled = enable;
 		}
 
 		/// <summary>
@@ -322,6 +334,7 @@ namespace lipsync_editor
 				_waveout = new WaveOutEvent(_wavereader);
 				_waveout.PlaybackStopped += OnPlaybackStopped;
 
+				EnableButtons();
 				bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
 				_t1.Stop();
 
