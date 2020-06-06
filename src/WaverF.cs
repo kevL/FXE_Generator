@@ -43,9 +43,21 @@ namespace lipsync_editor
 
 		Timer _t1 = new Timer();	// redraws the wave-panel every ~15 millisec during playback
 		bool _close;				// true to prevent an 'AudioFileReader' exception when this form closes
-
-		int _posStart;				// position of the start-caret in samples
 		#endregion fields
+
+
+		#region properties
+		int _posStart; // position of the start-caret in samples
+		int PosStart
+		{
+			get { return _posStart; }
+			set
+			{
+				_posStart = value;
+				tb_start.Text = ((decimal)_posStart / 44100 - _sapiDelay).ToString("F3");
+			}
+		}
+		#endregion properties
 
 
 		#region cTor
@@ -110,6 +122,8 @@ namespace lipsync_editor
 
 			_t1.Tick += Track;
 			_t1.Interval = 15;
+
+			PosStart = 0;
 		}
 		#endregion cTor
 
@@ -276,7 +290,7 @@ namespace lipsync_editor
 			{
 				case PlaybackState.Stopped:
 					EnableButtons(false);
-					_wavereader.Position = (long)_posStart * 2L;
+					_wavereader.Position = (long)PosStart * 2L;
 					goto case PlaybackState.Paused;
 
 				case PlaybackState.Paused:
@@ -364,7 +378,7 @@ namespace lipsync_editor
 			if (e.Button == MouseButtons.Left
 				&& _waveout.PlaybackState == PlaybackState.Stopped)
 			{
-				_posStart = e.X * _shorts.Length / pa_wave.Width + 1;
+				PosStart = e.X * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 
 				_dragCaret = true;
@@ -391,7 +405,7 @@ namespace lipsync_editor
 			if (_dragCaret
 				&& e.X > -1 && e.X < pa_wave.Width)
 			{
-				_posStart = e.X * _shorts.Length / pa_wave.Width + 1;
+				PosStart = e.X * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 			}
 		}
@@ -405,7 +419,7 @@ namespace lipsync_editor
 		{
 			if (_waveout.PlaybackState == PlaybackState.Stopped)
 			{
-				_posStart = 0;
+				PosStart = 0;
 				pa_wave.Invalidate();
 			}
 		}
@@ -440,7 +454,7 @@ namespace lipsync_editor
 			if (_waveout.PlaybackState == PlaybackState.Stopped)
 			{
 				decimal factorHori = (decimal)pa_wave.Width / _shorts.Length;
-				int x = (int)((decimal)_posStart * factorHori);
+				int x = (int)((decimal)PosStart * factorHori);
 
 				var b = new Bitmap(pa_wave.Width, pa_wave.Height);
 				pa_wave.DrawToBitmap(b, new Rectangle(0,0, pa_wave.Width, pa_wave.Height));
@@ -482,7 +496,7 @@ namespace lipsync_editor
 			Color color = b.GetPixel(i,j);
 			if (color.R == Byte.MaxValue)// || color.B == Byte.MaxValue)
 			{
-				_posStart = i * _shorts.Length / pa_wave.Width + 1;
+				PosStart = i * _shorts.Length / pa_wave.Width + 1;
 				pa_wave.Invalidate();
 				return true;
 			}
@@ -586,13 +600,13 @@ namespace lipsync_editor
 			// NOTE: Get position from '_waveout' NOT '_wavereader' because the
 			// latter is very sluggish here - be aware that the streams are NOT
 			// the same however.
-			x = (int)(((decimal)_waveout.GetPosition() / 2 + _posStart) * factorHori);
+			x = (int)(((decimal)_waveout.GetPosition() / 2 + PosStart) * factorHori);
 			e.Graphics.DrawLine(Pens.White,
 								x, top,
 								x, bot);
 
 // draw the start-caret as an I-bar
-			x = (int)((decimal)_posStart * factorHori);
+			x = (int)((decimal)PosStart * factorHori);
 			e.Graphics.DrawLine(Pens.Wheat,
 								x, top,
 								x, bot);

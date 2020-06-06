@@ -17,12 +17,16 @@ namespace lipsync_editor
 		Button bu_rewind;
 		Button bu_next;
 		Button bu_back;
+		Label la_start;
+		TextBox tb_start;
 
 
 		void InitializeComponent()
 		{
 			this.pa_wave = new lipsync_editor.BufferedPanel();
 			this.pa_bot = new System.Windows.Forms.Panel();
+			this.tb_start = new System.Windows.Forms.TextBox();
+			this.la_start = new System.Windows.Forms.Label();
 			this.bu_next = new System.Windows.Forms.Button();
 			this.bu_back = new System.Windows.Forms.Button();
 			this.bu_rewind = new System.Windows.Forms.Button();
@@ -51,6 +55,8 @@ namespace lipsync_editor
 			// 
 			// pa_bot
 			// 
+			this.pa_bot.Controls.Add(this.tb_start);
+			this.pa_bot.Controls.Add(this.la_start);
 			this.pa_bot.Controls.Add(this.bu_next);
 			this.pa_bot.Controls.Add(this.bu_back);
 			this.pa_bot.Controls.Add(this.bu_rewind);
@@ -68,10 +74,30 @@ namespace lipsync_editor
 			this.pa_bot.SizeChanged += new System.EventHandler(this.sizechanged_BotPanel);
 			this.pa_bot.Paint += new System.Windows.Forms.PaintEventHandler(this.paint_BotPanel);
 			// 
+			// tb_start
+			// 
+			this.tb_start.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tb_start.Location = new System.Drawing.Point(503, 2);
+			this.tb_start.Margin = new System.Windows.Forms.Padding(0);
+			this.tb_start.Name = "tb_start";
+			this.tb_start.Size = new System.Drawing.Size(51, 20);
+			this.tb_start.TabIndex = 9;
+			this.tb_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			// 
+			// la_start
+			// 
+			this.la_start.Location = new System.Drawing.Point(466, 4);
+			this.la_start.Margin = new System.Windows.Forms.Padding(0);
+			this.la_start.Name = "la_start";
+			this.la_start.Size = new System.Drawing.Size(35, 15);
+			this.la_start.TabIndex = 8;
+			this.la_start.Text = "Start";
+			this.la_start.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
 			// bu_next
 			// 
 			this.bu_next.Image = global::FXE_Generator.Properties.Resource.transport_next;
-			this.bu_next.Location = new System.Drawing.Point(428, 1);
+			this.bu_next.Location = new System.Drawing.Point(402, 1);
 			this.bu_next.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_next.Name = "bu_next";
 			this.bu_next.Size = new System.Drawing.Size(60, 22);
@@ -82,7 +108,7 @@ namespace lipsync_editor
 			// bu_back
 			// 
 			this.bu_back.Image = global::FXE_Generator.Properties.Resource.transport_back;
-			this.bu_back.Location = new System.Drawing.Point(369, 1);
+			this.bu_back.Location = new System.Drawing.Point(343, 1);
 			this.bu_back.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_back.Name = "bu_back";
 			this.bu_back.Size = new System.Drawing.Size(60, 22);
@@ -93,7 +119,7 @@ namespace lipsync_editor
 			// bu_rewind
 			// 
 			this.bu_rewind.Image = global::FXE_Generator.Properties.Resource.transport_rewind;
-			this.bu_rewind.Location = new System.Drawing.Point(189, 1);
+			this.bu_rewind.Location = new System.Drawing.Point(163, 1);
 			this.bu_rewind.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_rewind.Name = "bu_rewind";
 			this.bu_rewind.Size = new System.Drawing.Size(60, 22);
@@ -104,7 +130,7 @@ namespace lipsync_editor
 			// bu_stop
 			// 
 			this.bu_stop.Image = global::FXE_Generator.Properties.Resource.transport_stop;
-			this.bu_stop.Location = new System.Drawing.Point(307, 1);
+			this.bu_stop.Location = new System.Drawing.Point(281, 1);
 			this.bu_stop.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_stop.Name = "bu_stop";
 			this.bu_stop.Size = new System.Drawing.Size(60, 22);
@@ -115,7 +141,7 @@ namespace lipsync_editor
 			// bu_play
 			// 
 			this.bu_play.Image = global::FXE_Generator.Properties.Resource.transport_play;
-			this.bu_play.Location = new System.Drawing.Point(248, 1);
+			this.bu_play.Location = new System.Drawing.Point(222, 1);
 			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_play.Name = "bu_play";
 			this.bu_play.Size = new System.Drawing.Size(60, 22);
@@ -126,7 +152,7 @@ namespace lipsync_editor
 			// bu_reset
 			// 
 			this.bu_reset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.bu_reset.Location = new System.Drawing.Point(120, 1);
+			this.bu_reset.Location = new System.Drawing.Point(94, 1);
 			this.bu_reset.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_reset.Name = "bu_reset";
 			this.bu_reset.Size = new System.Drawing.Size(60, 22);
@@ -137,7 +163,7 @@ namespace lipsync_editor
 			// tb_offset
 			// 
 			this.tb_offset.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.tb_offset.Location = new System.Drawing.Point(68, 2);
+			this.tb_offset.Location = new System.Drawing.Point(42, 2);
 			this.tb_offset.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_offset.Name = "tb_offset";
 			this.tb_offset.Size = new System.Drawing.Size(51, 20);
@@ -151,9 +177,9 @@ namespace lipsync_editor
 			this.la_offset.Location = new System.Drawing.Point(5, 4);
 			this.la_offset.Margin = new System.Windows.Forms.Padding(0);
 			this.la_offset.Name = "la_offset";
-			this.la_offset.Size = new System.Drawing.Size(62, 15);
+			this.la_offset.Size = new System.Drawing.Size(36, 15);
 			this.la_offset.TabIndex = 0;
-			this.la_offset.Text = "sync Delay";
+			this.la_offset.Text = "Delay";
 			this.la_offset.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// WaverF
