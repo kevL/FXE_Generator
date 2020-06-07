@@ -32,6 +32,7 @@ namespace lipsync_editor
 		Button bu_generate;
 		Button bu_synth;
 		Button bu_createfxe;
+		Button bu_edit;
 
 		TextBox tb_wavefile;
 		Button bu_play;
@@ -116,6 +117,7 @@ namespace lipsync_editor
 			this.tssl_token = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tssl_langids_ = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tssl_langids = new System.Windows.Forms.ToolStripStatusLabel();
+			this.bu_edit = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).BeginInit();
 			this.ss_bot.SuspendLayout();
@@ -170,7 +172,7 @@ namespace lipsync_editor
 			// bu_generate
 			// 
 			this.bu_generate.Enabled = false;
-			this.bu_generate.Location = new System.Drawing.Point(115, 35);
+			this.bu_generate.Location = new System.Drawing.Point(115, 34);
 			this.bu_generate.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_generate.Name = "bu_generate";
 			this.bu_generate.Size = new System.Drawing.Size(66, 25);
@@ -362,14 +364,13 @@ namespace lipsync_editor
 			// la_phons
 			// 
 			this.la_phons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_phons.Location = new System.Drawing.Point(470, 40);
+			this.la_phons.Location = new System.Drawing.Point(570, 40);
 			this.la_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_phons.Name = "la_phons";
-			this.la_phons.Size = new System.Drawing.Size(486, 15);
+			this.la_phons.Size = new System.Drawing.Size(286, 15);
 			this.la_phons.TabIndex = 25;
 			this.la_phons.Text = "PHONEMES";
 			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			this.la_phons.Click += new System.EventHandler(this.click_PhonLabel);
 			// 
 			// grid_blocs
 			// 
@@ -391,7 +392,7 @@ namespace lipsync_editor
 			// bu_createfxe
 			// 
 			this.bu_createfxe.Enabled = false;
-			this.bu_createfxe.Location = new System.Drawing.Point(379, 35);
+			this.bu_createfxe.Location = new System.Drawing.Point(379, 34);
 			this.bu_createfxe.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_createfxe.Name = "bu_createfxe";
 			this.bu_createfxe.Size = new System.Drawing.Size(86, 25);
@@ -438,7 +439,7 @@ namespace lipsync_editor
 			"c_zombie",
 			"n_okku",
 			"N_SReaver"});
-			this.co_headtype.Location = new System.Drawing.Point(265, 36);
+			this.co_headtype.Location = new System.Drawing.Point(269, 35);
 			this.co_headtype.Margin = new System.Windows.Forms.Padding(0);
 			this.co_headtype.Name = "co_headtype";
 			this.co_headtype.Size = new System.Drawing.Size(106, 23);
@@ -446,7 +447,7 @@ namespace lipsync_editor
 			// 
 			// la_headtype
 			// 
-			this.la_headtype.Location = new System.Drawing.Point(191, 40);
+			this.la_headtype.Location = new System.Drawing.Point(195, 39);
 			this.la_headtype.Margin = new System.Windows.Forms.Padding(0);
 			this.la_headtype.Name = "la_headtype";
 			this.la_headtype.Size = new System.Drawing.Size(70, 15);
@@ -457,7 +458,7 @@ namespace lipsync_editor
 			// bu_play
 			// 
 			this.bu_play.Enabled = false;
-			this.bu_play.Location = new System.Drawing.Point(5, 35);
+			this.bu_play.Location = new System.Drawing.Point(5, 34);
 			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_play.Name = "bu_play";
 			this.bu_play.Size = new System.Drawing.Size(51, 25);
@@ -504,7 +505,7 @@ namespace lipsync_editor
 			// bu_synth
 			// 
 			this.bu_synth.Enabled = false;
-			this.bu_synth.Location = new System.Drawing.Point(60, 35);
+			this.bu_synth.Location = new System.Drawing.Point(60, 34);
 			this.bu_synth.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_synth.Name = "bu_synth";
 			this.bu_synth.Size = new System.Drawing.Size(51, 25);
@@ -584,11 +585,25 @@ namespace lipsync_editor
 			this.tssl_langids.Text = "tssl_langids";
 			this.tssl_langids.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
+			// bu_edit
+			// 
+			this.bu_edit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.bu_edit.Enabled = false;
+			this.bu_edit.Location = new System.Drawing.Point(468, 34);
+			this.bu_edit.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_edit.Name = "bu_edit";
+			this.bu_edit.Size = new System.Drawing.Size(86, 25);
+			this.bu_edit.TabIndex = 33;
+			this.bu_edit.Text = "Edit ...";
+			this.bu_edit.UseVisualStyleBackColor = true;
+			this.bu_edit.Click += new System.EventHandler(this.click_PhonLabel);
+			// 
 			// FxeGeneratorF
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1256, 506);
+			this.Controls.Add(this.bu_edit);
 			this.Controls.Add(this.ss_bot);
 			this.Controls.Add(this.rb_enh);
 			this.Controls.Add(this.rb_def);

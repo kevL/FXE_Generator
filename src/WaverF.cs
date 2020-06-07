@@ -47,7 +47,10 @@ namespace lipsync_editor
 
 
 		#region properties
-		int _posStart; // position of the start-caret in samples
+		int _posStart;
+		/// <summary>
+		/// The position of the start-caret in samples.
+		/// </summary>
 		int PosStart
 		{
 			get { return _posStart; }
@@ -108,6 +111,9 @@ namespace lipsync_editor
 
 			Text = TITLE + " - " + FxeGeneratorF.Filelabel + " - " + _dur.ToString("F3") + " sec";
 
+			PosStart = 0;
+
+			tb_start .BackColor =
 			tb_offset.BackColor = Color.MintCream;
 			tb_offset.Text = _sapiDelay.ToString("F3");
 
@@ -122,8 +128,6 @@ namespace lipsync_editor
 
 			_t1.Tick += Track;
 			_t1.Interval = 15;
-
-			PosStart = 0;
 		}
 		#endregion cTor
 

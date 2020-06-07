@@ -649,9 +649,6 @@ namespace lipsync_editor
 			{
 				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.Aquamarine;
 			}
-
-//			if (dg_phons.Rows[e.RowIndex].Cells[0].Value.ToString().EndsWith(".0", StringComparison.Ordinal))
-//				dg_phons.Rows[e.RowIndex].Cells[0].Style.BackColor = Color.Azure;
 		}
 
 
@@ -674,12 +671,9 @@ namespace lipsync_editor
 
 		void click_PhonLabel(object sender, EventArgs e)
 		{
-			if (_dt1 != null && _dt1.Rows.Count != 0)
+			using (var editor = new EditorPhonF(this, _dt1))
 			{
-				using (var editor = new EditorPhonF(this, _dt1))
-				{
-					editor.ShowDialog(this);
-				}
+				editor.ShowDialog(this);
 			}
 		}
 		#endregion control handlers
@@ -800,7 +794,10 @@ namespace lipsync_editor
 				Application.Exit();
 			}
 			else
+			{
+				bu_edit.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
 				Cursor = Cursors.Default;
+			}
 		}
 
 		/// <summary>
