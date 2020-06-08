@@ -126,6 +126,8 @@ namespace lipsync_editor
 				Waver = new WaverF(this, _f._sapi.Wavefile, _dt);
 				Waver.Show(_f);
 			}
+			else
+				Waver.Activate();
 		}
 		#endregion handlers
 
