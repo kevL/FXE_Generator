@@ -589,7 +589,7 @@ namespace lipsync_editor
 			// 
 			this.bu_edit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_edit.Enabled = false;
-			this.bu_edit.Location = new System.Drawing.Point(468, 34);
+			this.bu_edit.Location = new System.Drawing.Point(871, 34);
 			this.bu_edit.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_edit.Name = "bu_edit";
 			this.bu_edit.Size = new System.Drawing.Size(86, 25);
