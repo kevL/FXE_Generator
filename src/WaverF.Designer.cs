@@ -80,9 +80,13 @@ namespace lipsync_editor
 			this.tb_start.Location = new System.Drawing.Point(503, 2);
 			this.tb_start.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_start.Name = "tb_start";
+			this.tb_start.ReadOnly = true;
 			this.tb_start.Size = new System.Drawing.Size(51, 20);
 			this.tb_start.TabIndex = 9;
+			this.tb_start.TabStop = false;
 			this.tb_start.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+			this.tb_start.WordWrap = false;
+			this.tb_start.Enter += new System.EventHandler(this.enter_Startpos);
 			// 
 			// la_start
 			// 
@@ -103,7 +107,7 @@ namespace lipsync_editor
 			this.bu_next.Size = new System.Drawing.Size(60, 22);
 			this.bu_next.TabIndex = 7;
 			this.bu_next.UseVisualStyleBackColor = true;
-			this.bu_next.Click += new System.EventHandler(this.click_Next);
+			this.bu_next.Click += new System.EventHandler(this.click_StartPosition);
 			// 
 			// bu_back
 			// 
@@ -114,7 +118,7 @@ namespace lipsync_editor
 			this.bu_back.Size = new System.Drawing.Size(60, 22);
 			this.bu_back.TabIndex = 6;
 			this.bu_back.UseVisualStyleBackColor = true;
-			this.bu_back.Click += new System.EventHandler(this.click_Back);
+			this.bu_back.Click += new System.EventHandler(this.click_StartPosition);
 			// 
 			// bu_rewind
 			// 
@@ -158,7 +162,7 @@ namespace lipsync_editor
 			this.bu_reset.Size = new System.Drawing.Size(60, 22);
 			this.bu_reset.TabIndex = 2;
 			this.bu_reset.UseVisualStyleBackColor = true;
-			this.bu_reset.Click += new System.EventHandler(this.click_Syncreset);
+			this.bu_reset.Click += new System.EventHandler(this.click_Offsetreset);
 			// 
 			// tb_offset
 			// 
@@ -169,8 +173,9 @@ namespace lipsync_editor
 			this.tb_offset.Size = new System.Drawing.Size(51, 20);
 			this.tb_offset.TabIndex = 1;
 			this.tb_offset.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-			this.tb_offset.TextChanged += new System.EventHandler(this.textchanged_Syncdelay);
-			this.tb_offset.Leave += new System.EventHandler(this.leave_Syncdelay);
+			this.tb_offset.WordWrap = false;
+			this.tb_offset.TextChanged += new System.EventHandler(this.textchanged_Offset);
+			this.tb_offset.Leave += new System.EventHandler(this.leave_Offset);
 			// 
 			// la_offset
 			// 

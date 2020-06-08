@@ -32,11 +32,11 @@ namespace lipsync_editor
 
 		short[] _shorts;			// the samples of the current wave for drawing the waveform in the wave-panel
 
-		decimal _dur;				// total duration of the wavefile
-		decimal _sapiDelay;			// sync-delay starttime offset
+		decimal _dur;				// total duration of the wavefile in seconds
+		decimal _sapiDelay;			// sync-delay offset in seconds
 		decimal _sapiDelay0;		// for reseting the offset to its hardcoded estimation
 
-		string _offsetPre;			// for reseting the offset on user-error
+		string _offsetPre;			// for reseting the sync-offset on user-error
 
 		WaveOutEvent _waveout;					// pushes a wavestream through WindowsAPI to a soundcard-device
 		readonly WaveFileReader _wavereader;	// the frontend for the 'WaveOutEvent'
@@ -57,10 +57,24 @@ namespace lipsync_editor
 			set
 			{
 				_posStart = value;
-				tb_start.Text = ((decimal)_posStart / 44100 - _sapiDelay).ToString("F3");
+				tb_start.Text = (ShortsToSeconds(_posStart) - _sapiDelay).ToString("F3");
+				pa_wave.Invalidate();
 			}
 		}
 		#endregion properties
+
+
+		/// <summary>
+		/// Converts a count of shorts to seconds truncated at millisecond
+		/// precision.
+		/// </summary>
+		/// <param name="shorts"></param>
+		/// <returns></returns>
+		static decimal ShortsToSeconds(int shorts)
+		{
+			decimal secs = (decimal)shorts / 44100;
+			return Decimal.Truncate(secs * 1000) / 1000;
+		}
 
 
 		#region cTor
@@ -89,9 +103,7 @@ namespace lipsync_editor
 			else
 				Location = new Point(_f.Left + 20, _f.Top + 20);
 
-
-			Conatiner(wavefile);
-			_sapiDelay0 = _sapiDelay;
+			Conatiner(wavefile); // <-- Parse the wavefile into a short-array.
 
 			if (ClientSize.Width > _shorts.Length) // ensure min 1 sample/pixel
 			{
@@ -121,7 +133,7 @@ namespace lipsync_editor
 
 			pa_wave.Select();
 
-			_wavereader = new WaveFileReader(SapiLipsync.That.Wavefile);
+			_wavereader = new WaveFileReader(SapiLipsync.That.Wavefile); // <-- Parse the wavefile into a byte-array.
 			_waveout = new WaveOutEvent(_wavereader);
 
 			_waveout.PlaybackStopped += OnPlaybackStopped;
@@ -157,7 +169,10 @@ namespace lipsync_editor
 					_shorts[++i] = val;
 
 					if (_sapiDelay == 0 && Math.Abs(val) > THRESHOLD) // TODO: arbitrary. Fix this in the Sapi filestream. if possible ...
-						_sapiDelay = (decimal)i / 44100;
+					{
+						_sapiDelay0 =
+						_sapiDelay  = ShortsToSeconds(i);
+					}
 				}
 				br.Close();
 			}
@@ -222,14 +237,14 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// Handles key-events when the sync-delay textbox has focus. Switches
-		/// focus to the Reset-button on [Enter].
+		/// Handles key-events when a textbox has focus.
+		/// @note The event fires even if a dialog does NOT have focus.
 		/// </summary>
 		/// <param name="keyData"></param>
 		/// <returns></returns>
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
-			if (tb_offset.Focused && keyData == Keys.Enter)
+			if (keyData == Keys.Enter && tb_offset.Focused) // focus the Reset button
 			{
 				bu_reset.Select();
 				return true;
@@ -239,24 +254,36 @@ namespace lipsync_editor
 		#endregion handlers override
 
 
-		#region handlers sync-delay
+		#region handlers syncoffset
 		/// <summary>
 		/// Ensures a valid delay when the sync-delay text changes.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void textchanged_Syncdelay(object sender, EventArgs e)
+		void textchanged_Offset(object sender, EventArgs e)
 		{
 			decimal result;
-			if (Decimal.TryParse(tb_offset.Text, out result)
+			if (Decimal.TryParse(tb_offset.Text,
+								 NumberStyles.AllowDecimalPoint,
+								 NumberFormatInfo.CurrentInfo,
+								 out result)
 				&& result >= 0 && result < 1000)
 			{
-				_offsetPre = tb_offset.Text;
-				_sapiDelay = result;
-				pa_wave.Invalidate();
+				int pos = tb_offset.Text.IndexOf(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator,
+												 StringComparison.CurrentCulture);
+				if (pos != -1 && tb_offset.Text.Length > pos + 4)
+				{
+					tb_offset.Text = tb_offset.Text.Substring(0, pos + 4); // recurse
+				}
+				else
+				{
+					_offsetPre = tb_offset.Text;
+					_sapiDelay = result; // offset in seconds
+					pa_wave.Invalidate();
+				}
 			}
 			else
-				tb_offset.Text = _offsetPre;
+				tb_offset.Text = _offsetPre; // recurse
 		}
 
 		/// <summary>
@@ -264,7 +291,7 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void leave_Syncdelay(object sender, EventArgs e)
+		void leave_Offset(object sender, EventArgs e)
 		{
 			tb_offset.Text = _sapiDelay.ToString("F3");
 		}
@@ -274,12 +301,207 @@ namespace lipsync_editor
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
-		void click_Syncreset(object sender, EventArgs e)
+		void click_Offsetreset(object sender, EventArgs e)
 		{
 			_sapiDelay = _sapiDelay0;
 			tb_offset.Text = _sapiDelay.ToString("F3");
 		}
-		#endregion handlers sync-delay
+		#endregion handlers syncoffset
+
+
+		#region handlers startpos
+/*		string _startPre; // for reseting the start-pos on user-error
+		/// <summary>
+		/// Ensures a valid start-pos when the start-pos text changes.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void textchanged_Startpos(object sender, EventArgs e)
+		{
+			logfile.Log();
+			logfile.Log("textchanged_Startpos()");
+			logfile.Log("tb_start.Text= " + tb_start.Text);
+			decimal result;
+			result = Decimal.Parse(tb_start.Text);
+			logfile.Log("result= " + result);
+			logfile.Log("_sapiDelay= " + _sapiDelay);
+			logfile.Log("(result >= (-_sapiDelay))= " + (result >= (-_sapiDelay)));
+			logfile.Log("(result < 1000)= " + (result < 1000));
+
+			if (Decimal.TryParse(tb_start.Text,
+								 NumberStyles.AllowDecimalPoint | NumberStyles.AllowLeadingSign,
+								 NumberFormatInfo.CurrentInfo,
+								 out result)
+				&& result >= (-_sapiDelay) && result < 1000)
+			{
+				int pos = tb_start.Text.IndexOf(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator,
+												StringComparison.CurrentCulture);
+				if (pos != -1 && tb_start.Text.Length > pos + 4)
+				{
+					tb_start.Text = tb_start.Text.Substring(0, pos + 4); // recurse
+				}
+				else
+				{
+					_startPre = tb_start.Text;
+					_posStart = (int)((result + _sapiDelay) * 44100);
+					logfile.Log(". VALID _posStart= " + _posStart);
+					pa_wave.Invalidate();
+				}
+			}
+			else
+			{
+				logfile.Log(". tb_start.Text Invalid - reset & recurse");
+				tb_start.Text = _startPre;
+			}
+		} */
+
+/*		/// <summary>
+		/// Ensures that the start-pos text prints to 3 decimal places.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void leave_Startpos(object sender, EventArgs e)
+		{
+			tb_start.Text = ((decimal)_posStart / 44100).ToString("F3"); //- _sapiDelay
+		} */
+
+		/// <summary>
+		/// Focuses the wave-panel when the start-pos textbox takes focus.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void enter_Startpos(object sender, EventArgs e)
+		{
+			pa_wave.Select();
+		}
+
+
+		bool _dragCaret;
+		/// <summary>
+		/// Positions the start-caret when the wave-panel is clicked. Or focuses
+		/// the wave-panel.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mousedown_WavePanel(object sender, MouseEventArgs e)
+		{
+			if (e.Button == MouseButtons.Left)
+			{
+				if (_waveout.PlaybackState == PlaybackState.Stopped)
+				{
+					PosStart = PosToShort(e.X);
+					_dragCaret = true;
+				}
+			}
+			else
+				pa_wave.Select();
+		}
+
+		/// <summary>
+		/// Releases '_dragCaret' on MouseUp.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mouseup_WavePanel(object sender, MouseEventArgs e)
+		{
+			_dragCaret = false;
+		}
+
+		/// <summary>
+		/// Drags the start-caret on MouseMove.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void mousemove_WavePanel(object sender, MouseEventArgs e)
+		{
+			if (_dragCaret
+				&& e.X > -1 && e.X < pa_wave.Width)
+			{
+				PosStart = PosToShort(e.X);
+			}
+		}
+
+		/// <summary>
+		/// Sets the start-caret to the start of the wave.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		void click_Rewind(object sender, EventArgs args)
+		{
+			if (_waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				PosStart = 0;
+			}
+		}
+
+
+		/// <summary>
+		/// Positions the start-caret at the start of the previous/next word.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="args"></param>
+		void click_StartPosition(object sender, EventArgs args)
+		{
+			PositionStart(sender as Button == bu_next);
+		}
+
+		/// <summary>
+		/// Positions the start-caret at the start of the previous or next word.
+		/// </summary>
+		/// <param name="nextword">true for nextword; false for previousword</param>
+		void PositionStart(bool nextword)
+		{
+			if (_waveout.PlaybackState == PlaybackState.Stopped)
+			{
+				decimal factorHori = (decimal)pa_wave.Width / _shorts.Length;
+				int x = (int)((decimal)PosStart * factorHori);
+
+				var b = new Bitmap(pa_wave.Width, pa_wave.Height);
+				pa_wave.DrawToBitmap(b, new Rectangle(0,0, pa_wave.Width, pa_wave.Height));
+
+				int j = pa_wave.Height / 2;
+
+				if (nextword)
+				{
+					for (int i = x + 1; i != pa_wave.Width; ++i)
+					{
+						if (TryStartPosition(b,i,j))
+							break;
+					}
+				}
+				else
+				{
+					for (int i = x - 1; i != -1; --i)
+					{
+						if (TryStartPosition(b,i,j))
+							break;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// helper for PositionStartcaret(). Checks for a red pixel in a
+		/// specified bitmap-object.
+		/// @note Red-marker shall be used for ortheme-starts and Blue-marker shall
+		/// be used for phoneme-starts. NO OTHER MARKERS SHALL USE FULL RED-
+		/// COMPONENT OR FULL BLUE-COMPONENT.
+		/// </summary>
+		/// <param name="b">the bitmap</param>
+		/// <param name="i">x-position to check</param>
+		/// <param name="j">y-position to check</param>
+		/// <returns></returns>
+		bool TryStartPosition(Bitmap b, int i, int j)
+		{
+			Color color = b.GetPixel(i,j);
+			if (color.R == Byte.MaxValue)// || color.B == Byte.MaxValue)
+			{
+				PosStart = PosToShort(i);
+				return true;
+			}
+			return false;
+		}
+		#endregion handlers startpos
 
 
 		#region handlers kL_audio
@@ -294,7 +516,7 @@ namespace lipsync_editor
 			{
 				case PlaybackState.Stopped:
 					EnableButtons(false);
-					_wavereader.Position = (long)PosStart * 2L;
+					_wavereader.Position = (long)PosStart * 2L; // convert short-pos to byte-pos
 					goto case PlaybackState.Paused;
 
 				case PlaybackState.Paused:
@@ -369,146 +591,19 @@ namespace lipsync_editor
 		{
 			pa_wave.Invalidate();
 		}
-
-
-		bool _dragCaret;
-		/// <summary>
-		/// Positions the start-caret when the wave-panel is clicked.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void mousedown_WavePanel(object sender, MouseEventArgs e)
-		{
-			if (e.Button == MouseButtons.Left
-				&& _waveout.PlaybackState == PlaybackState.Stopped)
-			{
-				PosStart = e.X * _shorts.Length / pa_wave.Width + 1;
-				pa_wave.Invalidate();
-
-				_dragCaret = true;
-			}
-		}
-
-		/// <summary>
-		/// Releases '_dragCaret' on MouseUp.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void mouseup_WavePanel(object sender, MouseEventArgs e)
-		{
-			_dragCaret = false;
-		}
-
-		/// <summary>
-		/// Drags the start-caret on MouseMove.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void mousemove_WavePanel(object sender, MouseEventArgs e)
-		{
-			if (_dragCaret
-				&& e.X > -1 && e.X < pa_wave.Width)
-			{
-				PosStart = e.X * _shorts.Length / pa_wave.Width + 1;
-				pa_wave.Invalidate();
-			}
-		}
-
-		/// <summary>
-		/// Sets the start-caret to the start of the wave.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		void click_Rewind(object sender, EventArgs args)
-		{
-			if (_waveout.PlaybackState == PlaybackState.Stopped)
-			{
-				PosStart = 0;
-				pa_wave.Invalidate();
-			}
-		}
-
-
-		/// <summary>
-		/// Positions the start-caret at the start of the previous word.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		void click_Back(object sender, EventArgs args)
-		{
-			FindWordStartPosition(false);
-		}
-
-		/// <summary>
-		/// Positions the start-caret at the start of the next word.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="args"></param>
-		void click_Next(object sender, EventArgs args)
-		{
-			FindWordStartPosition(true);
-		}
-
-		/// <summary>
-		/// Positions the start-caret at the start of the previous or next word.
-		/// </summary>
-		/// <param name="next">true for nextword; false for previousword</param>
-		void FindWordStartPosition(bool next)
-		{
-			if (_waveout.PlaybackState == PlaybackState.Stopped)
-			{
-				decimal factorHori = (decimal)pa_wave.Width / _shorts.Length;
-				int x = (int)((decimal)PosStart * factorHori);
-
-				var b = new Bitmap(pa_wave.Width, pa_wave.Height);
-				pa_wave.DrawToBitmap(b, new Rectangle(0,0, pa_wave.Width, pa_wave.Height));
-
-				int j = pa_wave.Height / 2;
-
-				if (next)
-				{
-					for (int i = x + 1; i != pa_wave.Width; ++i)
-					{
-						if (PositionStartCaret(b,i,j))
-							break;
-					}
-				}
-				else // back
-				{
-					for (int i = x - 1; i != -1; --i)
-					{
-						if (PositionStartCaret(b,i,j))
-							break;
-					}
-				}
-			}
-		}
-
-		/// <summary>
-		/// helper for FindWordStartPosition(). Checks for a red pixel in a
-		/// specified bitmap-object.
-		/// @note Red-marker shall be used for ortheme-starts and Blue-marker shall
-		/// be used for phoneme-starts. NO OTHER MARKERS SHALL USE FULL RED-
-		/// COMPONENT OR FULL BLUE-COMPONENT.
-		/// </summary>
-		/// <param name="b">the bitmap</param>
-		/// <param name="i">x-position to check</param>
-		/// <param name="j">y-position to check</param>
-		/// <returns></returns>
-		bool PositionStartCaret(Bitmap b, int i, int j)
-		{
-			Color color = b.GetPixel(i,j);
-			if (color.R == Byte.MaxValue)// || color.B == Byte.MaxValue)
-			{
-				PosStart = i * _shorts.Length / pa_wave.Width + 1;
-				pa_wave.Invalidate();
-				return true;
-			}
-			return false;
-		}
 		#endregion handlers kL_audio
 
 
+		/// <summary>
+		/// Converts an x-position in the wave-panel to a position in the
+		/// short-array.
+		/// </summary>
+		/// <param name="pos"></param>
+		/// <returns></returns>
+		int PosToShort(int pos)
+		{
+			return pos * _shorts.Length / pa_wave.Width + 1;
+		}
 //		decimal pixelsPerSample()
 //		{
 //			return (decimal)pa_wave.Width / _samples.Length;
