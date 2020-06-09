@@ -182,6 +182,10 @@ namespace lipsync_editor
 				dc.ReadOnly = true;
 				_dt1.Columns.Add(dc);
 
+				foreach (DataColumn col in _dt1.Columns)
+					col.ReadOnly = false;
+
+
 				grid_phons.DataSource = _dt1;
 				grid_phons.Columns[0].Width = 50; // 50
 				grid_phons.Columns[1].Width = 76; // 76

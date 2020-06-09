@@ -41,6 +41,8 @@ namespace lipsync_editor
 			_f  = f;
 			_dt = dt;
 
+			grid.Table = _dt; // TODO: grid initialization to 'grid.Table.set' ->
+
 			int i = 0;
 			for (; i != _dt.Rows.Count; ++i)
 			{
