@@ -126,6 +126,7 @@ namespace lipsync_editor
 			if (Waver == null)
 			{
 				Waver = new WaverF(this, _f._sapi.Wavefile, _dt);
+				grid.Waver = Waver;
 				Waver.Show(_f);
 			}
 			else
@@ -136,7 +137,7 @@ namespace lipsync_editor
 
 
 		#region designer
-		EditorGrid grid;
+		internal EditorGrid grid;
 		Panel pa_bot;
 		Button bu_ok;
 		Button bu_cancel;

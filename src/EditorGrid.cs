@@ -12,6 +12,9 @@ namespace lipsync_editor
 		#region
 		internal DataTable Table
 		{ private get; set; }
+
+		internal WaverF Waver
+		{ private get; set; }
 		#endregion
 
 
@@ -39,6 +42,9 @@ namespace lipsync_editor
 
 			Table.Rows.InsertAt(dr, _r);
 			LogTable();
+
+			if (Waver != null) // NOTE: technically that's not necessary since cells are blank.
+				Waver.Invalidate();
 		}
 
 		void OnRowDelete(object sender, EventArgs e)
@@ -48,6 +54,9 @@ namespace lipsync_editor
 
 			Table.Rows.RemoveAt(_r);
 			LogTable();
+
+			if (Waver != null) // NOTE: is necessary only if there's a start or stop value.
+				Waver.Refresh(); // req'd
 		}
 		#endregion handlers context
 
@@ -147,6 +156,9 @@ namespace lipsync_editor
 			if (CurrentCell.Value.ToString() != _val)
 			{
 				SetValue(CurrentCell.Value);
+
+				if (Waver != null) // NOTE: is necessary only if start/stop was edited.
+					Waver.Refresh(); // req'd
 			}
 		}
 

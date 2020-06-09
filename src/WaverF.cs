@@ -27,8 +27,8 @@ namespace lipsync_editor
 
 
 		#region fields
-		readonly EditorPhonF _f;	// parent
-		readonly DataTable _dt;		// fxe-data to set ortheme/phoneme markers in the wave-panel
+		readonly EditorPhonF _editor;	// parent
+		readonly DataTable _dt;			// fxe-data to set ortheme/phoneme markers in the wave-panel
 
 		short[] _shorts;			// the samples of the current wave for drawing the waveform in the wave-panel
 
@@ -81,18 +81,18 @@ namespace lipsync_editor
 		/// <summary>
 		/// cTor. Instantiates a 'WaverF' object.
 		/// </summary>
-		/// <param name="f">parent</param>
+		/// <param name="editor">parent</param>
 		/// <param name="wavefile">fullpath of PCM-wave file</param>
 		/// <param name="dt">pointer to the 'FxeGeneratorF._dt1' PHONEMES
 		/// datatable</param>
-		internal WaverF(EditorPhonF f, string wavefile, DataTable dt)
+		internal WaverF(EditorPhonF editor, string wavefile, DataTable dt)
 		{
 //#if DEBUG
 //			logfile.Log();
 //			logfile.Log("WaverF.cTor");
 //#endif
 			InitializeComponent();
-			_f  = f;
+			_editor = editor;
 			_dt = dt;
 
 			if (_x != -1)
@@ -101,7 +101,7 @@ namespace lipsync_editor
 				ClientSize = new Size(_w, _h);
 			}
 			else
-				Location = new Point(_f.Left + 20, _f.Top + 20);
+				Location = new Point(_editor.Left + 20, _editor.Top + 20);
 
 			Conatiner(wavefile); // <-- Parse the wavefile into a short-array.
 
@@ -192,7 +192,8 @@ namespace lipsync_editor
 			_close = true;
 			_waveout.Dispose();
 			_t1.Dispose();
-			_f.Waver = null;
+			_editor.Waver = null;
+			_editor.grid.Waver = null;
 
 			switch (e.CloseReason)
 			{
@@ -671,22 +672,32 @@ namespace lipsync_editor
 
 			for (int i = 0; i != _dt.Rows.Count; ++i)
 			{
+				decimal result;
+
 				string pos = _dt.Rows[i][0].ToString();
 				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
 				{
-					x = (int)((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // ortheme start-marker
-					e.Graphics.DrawLine(Pens.Red,
-										x, 0,
-										x, pa_wave.Height);
+//					x = (int)((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // ortheme start-marker
+					if (Decimal.TryParse(_dt.Rows[i][2].ToString(), out result))
+					{
+						x = (int)((result + _sapiDelay) * factorHori_dur); // ortheme start-marker
+						e.Graphics.DrawLine(Pens.Red,
+											x, 0,
+											x, pa_wave.Height);
 
-					pos = pos.Substring(0, pos.Length - 2);
-					e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
+						pos = pos.Substring(0, pos.Length - 2);
+						e.Graphics.DrawString(pos, pa_wave.Font, Brushes.AliceBlue, (float)x + 1f, 1f);
+					}
 				}
 
-				x = (int)((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // phoneme stop-marker
-				e.Graphics.DrawLine(Pens.Blue,
-									x, 16,
-									x, pa_wave.Height - 16);
+//				x = (int)((Decimal.Parse(_dt.Rows[i][3].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // phoneme stop-marker
+				if (Decimal.TryParse(_dt.Rows[i][3].ToString(), out result))
+				{
+					x = (int)((result + _sapiDelay) * factorHori_dur); // phoneme stop-marker
+					e.Graphics.DrawLine(Pens.Blue,
+										x, 16,
+										x, pa_wave.Height - 16);
+				}
 			}
 
 
