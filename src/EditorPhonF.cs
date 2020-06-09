@@ -44,19 +44,19 @@ namespace lipsync_editor
 			int i = 0;
 			for (; i != _dt.Rows.Count; ++i)
 			{
-				eg_phons.Rows.Add();
-				eg_phons.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
-				eg_phons.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
-				eg_phons.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString(); // start
-				eg_phons.Rows[i].Cells[2]  .Value = _dt.Rows[i][3].ToString(); // stop
+				grid.Rows.Add();
+				grid.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
+				grid.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
+				grid.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString(); // start
+				grid.Rows[i].Cells[2]  .Value = _dt.Rows[i][3].ToString(); // stop
 			}
 
-			int w = eg_phons.RowHeadersWidth
-				  + eg_phons.Columns[0].Width
-				  + eg_phons.Columns[1].Width
-				  + eg_phons.Columns[2].Width;
-			int h = eg_phons.ColumnHeadersHeight
-				  + (eg_phons.RowTemplate.Height + 1) * (i + 2)
+			int w = grid.RowHeadersWidth
+				  + grid.Columns[0].Width
+				  + grid.Columns[1].Width
+				  + grid.Columns[2].Width;
+			int h = grid.ColumnHeadersHeight
+				  + (grid.RowTemplate.Height + 1) * (i + 2)
 				  + pa_bot.Height;
 
 			if (h > START_H) h = START_H;
@@ -134,7 +134,7 @@ namespace lipsync_editor
 
 
 		#region designer
-		EditorGrid eg_phons;
+		EditorGrid grid;
 		Panel pa_bot;
 		Button bu_ok;
 		Button bu_cancel;
@@ -148,7 +148,7 @@ namespace lipsync_editor
 
 		void InitializeComponent()
 		{
-			this.eg_phons = new lipsync_editor.EditorGrid();
+			this.grid = new lipsync_editor.EditorGrid();
 			this.phon = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.start = new System.Windows.Forms.DataGridViewTextBoxColumn();
 			this.stop = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -156,35 +156,35 @@ namespace lipsync_editor
 			this.bu_waver = new System.Windows.Forms.Button();
 			this.bu_ok = new System.Windows.Forms.Button();
 			this.bu_cancel = new System.Windows.Forms.Button();
-			((System.ComponentModel.ISupportInitialize)(this.eg_phons)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid)).BeginInit();
 			this.pa_bot.SuspendLayout();
 			this.SuspendLayout();
 			// 
-			// eg_phons
+			// grid
 			// 
-			this.eg_phons.AllowUserToResizeColumns = false;
-			this.eg_phons.AllowUserToResizeRows = false;
-			this.eg_phons.ColumnHeadersHeight = 25;
-			this.eg_phons.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-			this.eg_phons.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+			this.grid.AllowUserToResizeColumns = false;
+			this.grid.AllowUserToResizeRows = false;
+			this.grid.ColumnHeadersHeight = 25;
+			this.grid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+			this.grid.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
 			this.phon,
 			this.start,
 			this.stop});
-			this.eg_phons.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.eg_phons.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-			this.eg_phons.Location = new System.Drawing.Point(0, 0);
-			this.eg_phons.Margin = new System.Windows.Forms.Padding(0);
-			this.eg_phons.MultiSelect = false;
-			this.eg_phons.Name = "eg_phons";
-			this.eg_phons.RowHeadersWidth = 65;
-			this.eg_phons.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-			this.eg_phons.RowTemplate.Height = 20;
-			this.eg_phons.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
-			this.eg_phons.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-			this.eg_phons.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-			this.eg_phons.Size = new System.Drawing.Size(332, 542);
-			this.eg_phons.StandardTab = true;
-			this.eg_phons.TabIndex = 0;
+			this.grid.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.grid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+			this.grid.Location = new System.Drawing.Point(0, 0);
+			this.grid.Margin = new System.Windows.Forms.Padding(0);
+			this.grid.MultiSelect = false;
+			this.grid.Name = "grid";
+			this.grid.RowHeadersWidth = 65;
+			this.grid.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
+			this.grid.RowTemplate.Height = 20;
+			this.grid.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.False;
+			this.grid.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.grid.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+			this.grid.Size = new System.Drawing.Size(332, 542);
+			this.grid.StandardTab = true;
+			this.grid.TabIndex = 0;
 			// 
 			// phon
 			// 
@@ -272,7 +272,7 @@ namespace lipsync_editor
 			this.AcceptButton = this.bu_ok;
 			this.CancelButton = this.bu_cancel;
 			this.ClientSize = new System.Drawing.Size(332, 574);
-			this.Controls.Add(this.eg_phons);
+			this.Controls.Add(this.grid);
 			this.Controls.Add(this.pa_bot);
 			this.Font = new System.Drawing.Font("Consolas", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.MaximizeBox = false;
@@ -280,7 +280,7 @@ namespace lipsync_editor
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
 			this.Text = "Edit";
-			((System.ComponentModel.ISupportInitialize)(this.eg_phons)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this.grid)).EndInit();
 			this.pa_bot.ResumeLayout(false);
 			this.ResumeLayout(false);
 
