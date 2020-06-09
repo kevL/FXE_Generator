@@ -29,14 +29,25 @@ namespace lipsync_editor
 		void OnRowInsert(object sender, EventArgs e)
 		{
 			var row = (DataGridViewRow)RowTemplate.Clone();
-			row.CreateCells(this, "", "", "");
+			row.CreateCells(this, String.Empty, String.Empty, String.Empty);
 			Rows.Insert(_r, row);
+
+			DataRow dr = Table.NewRow();
+			int cols = Table.Columns.Count;
+			for (int i = 0; i != cols; ++i)
+				dr[i] = String.Empty;
+
+			Table.Rows.InsertAt(dr, _r);
+			LogTable();
 		}
 
 		void OnRowDelete(object sender, EventArgs e)
 		{
 			if (_r != Rows.Count - 1)
 				Rows.RemoveAt(_r);
+
+			Table.Rows.RemoveAt(_r);
+			LogTable();
 		}
 		#endregion handlers context
 
