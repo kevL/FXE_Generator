@@ -61,7 +61,7 @@ namespace lipsync_editor
 #if DEBUG
 							log += vis;
 #endif
-							visuals.Add(new KeyValuePair<string, decimal>(vis, Utility.millisecs(ar.phStops[i])));
+							visuals.Add(new KeyValuePair<string, decimal>(vis, Utility.SrTustoSecs(ar.phStops[i])));
 						}
 #if DEBUG
 						else log += "INVALID";

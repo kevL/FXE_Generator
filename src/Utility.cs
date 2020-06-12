@@ -5,10 +5,28 @@ namespace lipsync_editor
 {
 	static class Utility
 	{
-		internal static decimal millisecs(ulong nanoseconds_100)
+		const decimal SR_TU_FACTOR = 10000000;
+
+		/// <summary>
+		/// Converts SpeechRecognitionEngine time-units to seconds.
+		/// </summary>
+		/// <param name="nanoseconds_100"></param>
+		/// <returns></returns>
+		internal static decimal SrTustoSecs(ulong nanoseconds_100)
 		{
-			return ((decimal)nanoseconds_100 / 10000000);
+			return ((decimal)nanoseconds_100 / SR_TU_FACTOR);
 		}
+
+		/// <summary>
+		/// Converts seconds to SpeechRecognitionEngine time-units.
+		/// </summary>
+		/// <param name="secs"></param>
+		/// <returns></returns>
+		internal static ulong SecstoSrTus(string secs)
+		{
+			return (ulong)(Decimal.Parse(secs) * SR_TU_FACTOR);
+		}
+
 
 		internal static string GetFilelabel(string file)
 		{
@@ -21,6 +39,7 @@ namespace lipsync_editor
 
 			return file;
 		}
+
 
 		internal static bool isWordstart(string pos)
 		{

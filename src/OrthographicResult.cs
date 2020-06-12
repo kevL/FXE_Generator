@@ -31,11 +31,14 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// Starttime in milliseconds.
+		/// TODO: These are NOT millisecs. They're like hundredths of a
+		/// nanosecond. for god-forsaken reason.
 		/// </summary>
 		internal ulong Start;
 
 		/// <summary>
 		/// Stoptime in milliseconds.
+		/// TODO: These are NOT millisecs.
 		/// </summary>
 		internal ulong Stop;
 
@@ -43,6 +46,7 @@ namespace lipsync_editor
 		/// The stoptime of each phoneme in milliseconds. SAPI 5.4 does not
 		/// generate this information - instead SapiLipsync.AddStops() estimates
 		/// the stops.
+		/// TODO: These are NOT millisecs.
 		/// </summary>
 		internal List<ulong> phStops = new List<ulong>();
 	}

@@ -142,13 +142,19 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void click_Accept(object sender, EventArgs e)
 		{
+#if DEBUG
+			logfile.Log();
+			logfile.Log("click_Accept()");
+#endif
+			// TODO: if (isChanged) ...
+
 			var results = new List<OrthographicResult>();
 
 			OrthographicResult result = null;
 
 			for (int r = 0; r != _dt.Rows.Count; ++r)
 			{
-				string pos = _dt.Rows[r][0] as String;					// pos
+				string pos = _dt.Rows[r][0] as String;											// pos
 				if (Utility.isWordstart(pos))
 				{
 					result = new OrthographicResult();
@@ -156,12 +162,17 @@ namespace lipsync_editor
 					result.Confidence  = 0f;
 					result.Level       = String.Empty;
 
-					result.Phons       = new List<string>();
-					result.Phons.Add(_dt.Rows[r][1] as String);			// phon
+					result.Phons = new List<string>();
+#if DEBUG
+					logfile.Log(". _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
+					logfile.Log(". _dt.Rows[" + r + "][2]= " + _dt.Rows[r][2]);
+					logfile.Log(". _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+#endif
+					result.Phons.Add(_dt.Rows[r][1] as String);									// phon
 
-					result.Start       = (ulong)_dt.Rows[r][2];			// start
+					result.Start = Utility.SecstoSrTus(_dt.Rows[r][2].ToString());				// start
 
-					result.phStops.Add((ulong)_dt.Rows[r][3]);			// stop - 1st phon
+					result.phStops.Add(Utility.SecstoSrTus(_dt.Rows[r][3].ToString()));			// stop - 1st phon
 
 
 					if (r != _dt.Rows.Count - 1)
@@ -169,13 +180,35 @@ namespace lipsync_editor
 						pos = _dt.Rows[++r][0] as String;
 						while (!Utility.isWordstart(pos))
 						{
-							result.phStops.Add((ulong)_dt.Rows[r][3]);	// stop - 2+ phons
-							pos = _dt.Rows[++r][0] as String;
+#if DEBUG
+							logfile.Log(". . _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
+							logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+#endif
+							result.Phons.Add(_dt.Rows[r][1] as String);							// phon - 2+
+							result.phStops.Add(Utility.SecstoSrTus(_dt.Rows[r][3].ToString()));	// stop - 2+
+
+							if (r != _dt.Rows.Count - 1)
+							{
+								pos = _dt.Rows[++r][0] as String;
+							}
+							else
+								break;
 						}
 					}
-					result.Stop = (ulong)_dt.Rows[r][3];				// stop - word
+#if DEBUG
+					logfile.Log(". _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+#endif
+					result.Stop = Utility.SecstoSrTus(_dt.Rows[r][3].ToString());				// stop - word
 				}
 				results.Add(result);
+			}
+
+
+			if (results.Count != 0)
+			{
+				FxeGeneratorF.That.Fxedata.Clear();
+				FxeData.GenerateData(results, FxeGeneratorF.That.Fxedata);
+				FxeGeneratorF.That.PopulateDataGrid(FxeGeneratorF.That.Fxedata);
 			}
 		}
 //		grid.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
