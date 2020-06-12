@@ -173,6 +173,7 @@
     <Compile Include="src\StaticData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\TypedText.cs" />
+    <Compile Include="src\Utility.cs" />
     <Compile Include="src\VoiceSynthF.cs" />
     <Compile Include="src\WaverF.cs" />
     <Compile Include="src\WaverF.Designer.cs">

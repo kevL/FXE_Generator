@@ -675,7 +675,7 @@ namespace lipsync_editor
 				decimal result;
 
 				string pos = _dt.Rows[i][0].ToString();
-				if (pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase))
+				if (Utility.isWordstart(pos))
 				{
 //					x = (int)((Decimal.Parse(_dt.Rows[i][2].ToString(), CultureInfo.InvariantCulture) + _sapiDelay) * factorHori_dur); // ortheme start-marker
 					if (Decimal.TryParse(_dt.Rows[i][2].ToString(), out result))

@@ -404,7 +404,7 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". _pfe= " + _pfe);
 #endif
-					Filelabel = StaticData.GetFilelabel(_pfe);
+					Filelabel = Utility.GetFilelabel(_pfe);
 
 					tb_text.Text = LoadTypedTextFile();
 
@@ -673,7 +673,7 @@ namespace lipsync_editor
 		}
 
 
-		void click_PhonLabel(object sender, EventArgs e)
+		void click_Edit(object sender, EventArgs e)
 		{
 			using (var editor = new EditorPhonF(this, _dt1))
 			{
@@ -882,11 +882,6 @@ namespace lipsync_editor
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
 #endif
 			int col = -1, row = -1;
-//			if (grid_phons.SelectedCells.Count != 0)
-//			{
-//				col = grid_phons.SelectedCells[0].ColumnIndex;
-//				row = grid_phons.SelectedCells[0].RowIndex;
-//			}
 			if (grid_phons.CurrentCell != null)
 			{
 				col = grid_phons.CurrentCell.ColumnIndex;
@@ -901,7 +896,7 @@ namespace lipsync_editor
 			{
 				++j;
 
-				start = StaticData.millisecs(ar.Start).ToString("F3");
+				start = Utility.millisecs(ar.Start).ToString("F3");
 				truth = ar.Confidence.ToString("F3");
 				level = ar.Level;
 #if DEBUG
@@ -926,10 +921,10 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". . " + phon + " -> "+ vis);
 #endif
-					_dt1.Rows.Add(new object[] { j + "." + i,
+					_dt1.Rows.Add(new object[] { j + "." + i, // pos
 												 phon,
 												 start,
-												 StaticData.millisecs(ar.phStops[i]).ToString("F3"),
+												 Utility.millisecs(ar.phStops[i]).ToString("F3"),
 												 vis,
 												 truth,
 												 level });

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
@@ -13,7 +14,7 @@ namespace lipsync_editor
 		static int _x = -1;
 		static int _y = -1;
 
-		const int START_H = 600;
+		const int START_H = 575;
 		#endregion fields (static)
 
 
@@ -132,6 +133,55 @@ namespace lipsync_editor
 			else
 				Waver.Activate();
 		}
+
+
+		/// <summary>
+		/// Builds a list of OrthographicResults from the edited DataTable.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void click_Accept(object sender, EventArgs e)
+		{
+			var results = new List<OrthographicResult>();
+
+			OrthographicResult result = null;
+
+			for (int r = 0; r != _dt.Rows.Count; ++r)
+			{
+				string pos = _dt.Rows[r][0] as String;					// pos
+				if (Utility.isWordstart(pos))
+				{
+					result = new OrthographicResult();
+					result.Orthography = String.Empty;
+					result.Confidence  = 0f;
+					result.Level       = String.Empty;
+
+					result.Phons       = new List<string>();
+					result.Phons.Add(_dt.Rows[r][1] as String);			// phon
+
+					result.Start       = (ulong)_dt.Rows[r][2];			// start
+
+					result.phStops.Add((ulong)_dt.Rows[r][3]);			// stop - 1st phon
+
+
+					if (r != _dt.Rows.Count - 1)
+					{
+						pos = _dt.Rows[++r][0] as String;
+						while (!Utility.isWordstart(pos))
+						{
+							result.phStops.Add((ulong)_dt.Rows[r][3]);	// stop - 2+ phons
+							pos = _dt.Rows[++r][0] as String;
+						}
+					}
+					result.Stop = (ulong)_dt.Rows[r][3];				// stop - word
+				}
+				results.Add(result);
+			}
+		}
+//		grid.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
+//		grid.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
+//		grid.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString(); // start
+//		grid.Rows[i].Cells[2]  .Value = _dt.Rows[i][3].ToString(); // stop
 		#endregion handlers
 
 
@@ -148,6 +198,8 @@ namespace lipsync_editor
 
 		Button bu_waver;
 
+
+//			this.grid = new lipsync_editor.EditorGrid();
 
 		void InitializeComponent()
 		{
@@ -258,6 +310,7 @@ namespace lipsync_editor
 			this.bu_ok.TabIndex = 2;
 			this.bu_ok.Text = "ok";
 			this.bu_ok.UseVisualStyleBackColor = true;
+			this.bu_ok.Click += new System.EventHandler(this.click_Accept);
 			// 
 			// bu_cancel
 			// 

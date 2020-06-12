@@ -46,7 +46,7 @@ namespace lipsync_editor
 
 				_bw.Write(0);
 
-				WriteString(StaticData.GetFilelabel(pfe).ToLower());
+				WriteString(Utility.GetFilelabel(pfe).ToLower());
 
 				_bw.Write((short)3);
 

@@ -596,7 +596,7 @@ namespace lipsync_editor
 			this.bu_edit.TabIndex = 33;
 			this.bu_edit.Text = "Edit ...";
 			this.bu_edit.UseVisualStyleBackColor = true;
-			this.bu_edit.Click += new System.EventHandler(this.click_PhonLabel);
+			this.bu_edit.Click += new System.EventHandler(this.click_Edit);
 			// 
 			// FxeGeneratorF
 			// 
