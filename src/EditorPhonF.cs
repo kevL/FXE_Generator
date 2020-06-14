@@ -150,7 +150,7 @@ namespace lipsync_editor
 
 			_f._ars_alt = new List<OrthographicResult>();
 
-			OrthographicResult result = null;
+			OrthographicResult result;
 
 			for (int r = 0; r != _dt.Rows.Count; ++r)
 			{
@@ -199,15 +199,14 @@ namespace lipsync_editor
 					logfile.Log(". _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
 					result.Stop = Utility.SecstoSrTus(_dt.Rows[r][3].ToString());				// stop - word
+
+					_f._ars_alt.Add(result);
 				}
-				_f._ars_alt.Add(result);
 			}
 
 
 			if (_f._ars_alt.Count != 0)
-			{
 				_f.AlternateData();
-			}
 		}
 		#endregion handlers
 
