@@ -148,7 +148,7 @@ namespace lipsync_editor
 #endif
 			// TODO: if (isChanged) ...
 
-			var results = new List<OrthographicResult>();
+			_f._ars_alt = new List<OrthographicResult>();
 
 			OrthographicResult result = null;
 
@@ -200,21 +200,15 @@ namespace lipsync_editor
 #endif
 					result.Stop = Utility.SecstoSrTus(_dt.Rows[r][3].ToString());				// stop - word
 				}
-				results.Add(result);
+				_f._ars_alt.Add(result);
 			}
 
 
-			if (results.Count != 0)
+			if (_f._ars_alt.Count != 0)
 			{
-				FxeGeneratorF.That.Fxedata.Clear();
-				FxeData.GenerateData(results, FxeGeneratorF.That.Fxedata);
-				FxeGeneratorF.That.PopulateDataGrid(FxeGeneratorF.That.Fxedata);
+				_f.AlternateData();
 			}
 		}
-//		grid.Rows[i].HeaderCell.Value = _dt.Rows[i][0].ToString(); // pos
-//		grid.Rows[i].Cells[0]  .Value = _dt.Rows[i][1].ToString(); // phon
-//		grid.Rows[i].Cells[1]  .Value = _dt.Rows[i][2].ToString(); // start
-//		grid.Rows[i].Cells[2]  .Value = _dt.Rows[i][3].ToString(); // stop
 		#endregion handlers
 
 

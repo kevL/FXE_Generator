@@ -67,6 +67,7 @@ namespace lipsync_editor
 
 		RadioButton rb_def;
 		RadioButton rb_enh;
+		RadioButton rb_alt;
 
 		StatusStrip ss_bot;
 		ToolStripStatusLabel tssl_token;
@@ -118,6 +119,7 @@ namespace lipsync_editor
 			this.tssl_langids_ = new System.Windows.Forms.ToolStripStatusLabel();
 			this.tssl_langids = new System.Windows.Forms.ToolStripStatusLabel();
 			this.bu_edit = new System.Windows.Forms.Button();
+			this.rb_alt = new System.Windows.Forms.RadioButton();
 			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).BeginInit();
 			this.ss_bot.SuspendLayout();
@@ -470,10 +472,10 @@ namespace lipsync_editor
 			// la_blocks
 			// 
 			this.la_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_blocks.Location = new System.Drawing.Point(962, 40);
+			this.la_blocks.Location = new System.Drawing.Point(1007, 40);
 			this.la_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.la_blocks.Name = "la_blocks";
-			this.la_blocks.Size = new System.Drawing.Size(290, 15);
+			this.la_blocks.Size = new System.Drawing.Size(200, 15);
 			this.la_blocks.TabIndex = 27;
 			this.la_blocks.Text = "Data Blocks";
 			this.la_blocks.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -598,11 +600,26 @@ namespace lipsync_editor
 			this.bu_edit.UseVisualStyleBackColor = true;
 			this.bu_edit.Click += new System.EventHandler(this.click_Edit);
 			// 
+			// rb_alt
+			// 
+			this.rb_alt.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.rb_alt.Location = new System.Drawing.Point(964, 38);
+			this.rb_alt.Margin = new System.Windows.Forms.Padding(0);
+			this.rb_alt.Name = "rb_alt";
+			this.rb_alt.Size = new System.Drawing.Size(40, 20);
+			this.rb_alt.TabIndex = 34;
+			this.rb_alt.TabStop = true;
+			this.rb_alt.Text = "alt";
+			this.rb_alt.UseVisualStyleBackColor = true;
+			this.rb_alt.Visible = false;
+			this.rb_alt.CheckedChanged += new System.EventHandler(this.checkedchanged_Radio);
+			// 
 			// FxeGeneratorF
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1256, 506);
+			this.Controls.Add(this.rb_alt);
 			this.Controls.Add(this.bu_edit);
 			this.Controls.Add(this.ss_bot);
 			this.Controls.Add(this.rb_enh);
