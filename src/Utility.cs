@@ -28,6 +28,13 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Gets the filelabel w/out path or extension.
+		/// @note This is redundant w/ <see cref="System.IO.Path.GetFileNameWithoutExtension">
+		/// System.IO.Path.GetFileNameWithoutExtension</see>.
+		/// </summary>
+		/// <param name="file"></param>
+		/// <returns></returns>
 		internal static string GetFilelabel(string file)
 		{
 			int pos = file.LastIndexOf('\\') + 1;
@@ -41,6 +48,11 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Checks if the phoneme-position in a datatable is a wordstart.
+		/// </summary>
+		/// <param name="pos"></param>
+		/// <returns></returns>
 		internal static bool isWordstart(string pos)
 		{
 			return pos.EndsWith(".0", StringComparison.OrdinalIgnoreCase);

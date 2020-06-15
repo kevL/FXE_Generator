@@ -23,9 +23,6 @@ namespace lipsync_editor
 		{
 #if DEBUG
 			logfile.Log("FxeWriter.WriteFile()");
-#endif
-			pfe = pfe.Substring(0, pfe.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
-#if DEBUG
 			logfile.Log(". pfe= " + pfe);
 #endif
 			using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
@@ -46,7 +43,12 @@ namespace lipsync_editor
 
 				_bw.Write(0);
 
-				WriteString(Utility.GetFilelabel(pfe).ToLower());
+				// TODO: not sure if the label should be the label of the
+				// related wavefile or the label of the fxefile itself.
+//				WriteString(Utility.GetFilelabel(pfe).ToLower());	// <- label of this FXE-file
+				WriteString(FxeGeneratorF.Filelabel.ToLower());		// <- label of the parent/related wavefile
+				// It's probably not even used because either way this label can
+				// be seen as redundant.
 
 				_bw.Write((short)3);
 

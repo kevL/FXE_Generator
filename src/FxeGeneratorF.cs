@@ -266,6 +266,8 @@ namespace lipsync_editor
 				// TODO: Ensure that 'head Model/Skeleton type' is a recognized type.
 				// Eg. "P_HHM"
 
+				Filelabel = Utility.GetFilelabel(pfe); // NOTE: that will be written into the FXE-file output.
+
 				_sapi = new SapiLipsync(_pfe = pfe);
 				if (_sapi.Wavefile != String.Empty)
 				{
@@ -420,7 +422,7 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". _pfe= " + _pfe);
 #endif
-					Filelabel = Utility.GetFilelabel(_pfe);
+					Filelabel = Utility.GetFilelabel(_pfe); // NOTE: that will be written into the FXE-file output.
 
 					tb_text.Text = LoadTypedTextFile();
 
@@ -528,8 +530,11 @@ namespace lipsync_editor
 			_sapi.Start(tb_text.Text);
 		}
 
+
+		string _dir = String.Empty;
+
 		/// <summary>
-		/// Writes an FXE file.
+		/// Writes an FXE file to a user-chosen filepath.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
@@ -539,7 +544,31 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("click_CreateFxe()");
 #endif
-			FxeWriter.WriteFile(_pfe, co_headtype.Text, _fxedata);
+			using (var sfd = new SaveFileDialog())
+			{
+//				sfd.Title = "Save as ...";
+				sfd.Filter = "FXE files (*.fxe)|*.fxe|All files (*.*)|*.*";
+
+				if (Directory.Exists(_dir))
+				{
+					sfd.InitialDirectory = _dir;
+				}
+				else
+				{
+					string dir = Path.GetDirectoryName(_pfe);
+					if (Directory.Exists(dir))
+						sfd.InitialDirectory = dir;
+				}
+				// else let .NET handle it.
+
+				sfd.FileName = Utility.GetFilelabel(_pfe) + "." + EXT_FXE;
+
+				if (sfd.ShowDialog(this) == DialogResult.OK)
+				{
+					_dir = Path.GetDirectoryName(sfd.FileName);
+					FxeWriter.WriteFile(sfd.FileName, co_headtype.Text, _fxedata);
+				}
+			}
 		}
 
 		/// <summary>
@@ -820,7 +849,8 @@ namespace lipsync_editor
 
 			if (isConsole)
 			{
-				FxeWriter.WriteFile(_pfe, _headtype, _fxedata);
+				string pfe = _pfe.Substring(0, _pfe.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
+				FxeWriter.WriteFile(pfe, _headtype, _fxedata);
 				Application.Exit();
 			}
 			else

@@ -399,7 +399,7 @@ namespace lipsync_editor
 			this.bu_createfxe.Name = "bu_createfxe";
 			this.bu_createfxe.Size = new System.Drawing.Size(86, 25);
 			this.bu_createfxe.TabIndex = 8;
-			this.bu_createfxe.Text = "Create FXE";
+			this.bu_createfxe.Text = "Create FXE ...";
 			this.bu_createfxe.UseVisualStyleBackColor = true;
 			this.bu_createfxe.Click += new System.EventHandler(this.click_CreateFxe);
 			// 
