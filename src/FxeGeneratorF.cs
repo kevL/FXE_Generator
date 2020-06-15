@@ -160,6 +160,8 @@ namespace lipsync_editor
 				la_enh_word_pct.Text =
 				la_enh_phon_pct.Text = String.Empty;
 
+				tb_text.Text = String.Empty;
+
 				tb_text    .BackColor =
 				tb_expected.BackColor = Color.AntiqueWhite;
 
@@ -422,38 +424,14 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". _pfe= " + _pfe);
 #endif
-					Filelabel = Utility.GetFilelabel(_pfe); // NOTE: that will be written into the FXE-file output.
-
-					tb_text.Text = LoadTypedTextFile();
-
-					tb_expected    .Text =
-					tb_def_words   .Text =
-					la_def_word_pct.Text =
-					tb_def_phons   .Text =
-					la_def_phon_pct.Text =
-					tb_enh_words   .Text =
-					la_enh_word_pct.Text =
-					tb_enh_phons   .Text =
-					la_enh_phon_pct.Text = String.Empty;
+					Clear();
 
 					co_headtype .Enabled =
 					bu_createfxe.Enabled = false;
 
-					rb_def.Checked =
-					rb_enh.Checked =
-					rb_alt.Checked =
-					rb_def.Visible =
-					rb_enh.Visible =
-					rb_alt.Visible = false;
+					tb_text.Text = LoadTypedTextFile();
 
-
-					_dt1.Rows.Clear();
-					_dt2.Rows.Clear();
-
-					_fxedata    .Clear();
-					_fxedata_def.Clear();
-					_fxedata_enh.Clear();
-					_fxedata_alt.Clear();
+					Filelabel = Utility.GetFilelabel(_pfe); // NOTE: that will be written into the FXE-file output.
 
 					if (FxeReader.ReadFile(_pfe, _fxedata))
 						PopulateDataGrid();
@@ -477,7 +455,7 @@ namespace lipsync_editor
 			string file = _pfe.Substring(0, _pfe.Length - 3) + EXT_TXT;
 			if (File.Exists(file))
 			{
-				using (StreamReader sr = File.OpenText(file))
+				using (var sr = new StreamReader(file))
 				{
 					return TypedText.SanitizeTypedText(sr.ReadToEnd());
 				}
@@ -501,6 +479,16 @@ namespace lipsync_editor
 
 			tb_text.Text = TypedText.SanitizeTypedText(tb_text.Text);
 
+			Clear();
+
+			_sapi.Start(tb_text.Text);
+		}
+
+		/// <summary>
+		/// Clears the UI and data-caches.
+		/// </summary>
+		void Clear()
+		{
 			tb_expected    .Text =
 			tb_def_words   .Text =
 			la_def_word_pct.Text =
@@ -511,13 +499,11 @@ namespace lipsync_editor
 			tb_enh_phons   .Text =
 			la_enh_phon_pct.Text = String.Empty;
 
-			rb_def.Checked =
-			rb_enh.Checked =
-			rb_alt.Checked =
-			rb_def.Visible =
-			rb_enh.Visible =
-			rb_alt.Visible = false;
+			rb_def.Checked = rb_def.Visible =
+			rb_enh.Checked = rb_enh.Visible =
+			rb_alt.Checked = rb_alt.Visible = false;
 
+			bu_edit.Enabled = false;
 
 			_dt1.Rows.Clear();
 			_dt2.Rows.Clear();
@@ -526,8 +512,6 @@ namespace lipsync_editor
 			_fxedata_def.Clear();
 			_fxedata_enh.Clear();
 			_fxedata_alt.Clear();
-
-			_sapi.Start(tb_text.Text);
 		}
 
 
@@ -613,6 +597,16 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
+		/// Determines if the synth-button should be enabled.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void textchanged_Text(object sender, EventArgs e)
+		{
+			EnableSynth();
+		}
+
+		/// <summary>
 		/// Sets the typed-text when Ok is clicked in the VoiceSynthesizer
 		/// dialog.
 		/// </summary>
@@ -620,16 +614,6 @@ namespace lipsync_editor
 		internal void SetText(string text)
 		{
 			tb_text.Text = TypedText.SanitizeTypedText(text);
-		}
-
-		/// <summary>
-		/// Determines if the synth-button should be enabled.
-		/// </summary>
-		/// <param name="sender"></param>
-		/// <param name="e"></param>
-		void textchanged_Text(object sender, EventArgs e)
-		{
-			bu_synth.Enabled = !String.IsNullOrEmpty(tb_text.Text);
 		}
 
 
