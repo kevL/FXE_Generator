@@ -146,17 +146,23 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("click_Accept()");
 #endif
-			// TODO: if (isChanged) ...
+			// TODO: only if changed
 
 			_f._ars_alt = new List<OrthographicResult>();
 
 			OrthographicResult result;
+			bool decr;
 
 			for (int r = 0; r != _dt.Rows.Count; ++r)
 			{
 				string pos = _dt.Rows[r][0] as String;											// pos
+#if DEBUG
+				logfile.Log(". _dt.Rows[" + r + "][0]= " + _dt.Rows[r][0]);
+#endif
 				if (Utility.isWordstart(pos))
 				{
+					decr = false;
+
 					result = new OrthographicResult();
 					result.Orthography = String.Empty;
 					result.Confidence  = 0f;
@@ -164,9 +170,9 @@ namespace lipsync_editor
 
 					result.Phons = new List<string>();
 #if DEBUG
-					logfile.Log(". _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
-					logfile.Log(". _dt.Rows[" + r + "][2]= " + _dt.Rows[r][2]);
-					logfile.Log(". _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+					logfile.Log(". . _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
+					logfile.Log(". . _dt.Rows[" + r + "][2]= " + _dt.Rows[r][2]);
+					logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
 					result.Phons.Add(_dt.Rows[r][1] as String);									// phon
 
@@ -177,30 +183,32 @@ namespace lipsync_editor
 
 					if (r != _dt.Rows.Count - 1)
 					{
+						decr = true;
+
 						pos = _dt.Rows[++r][0] as String;
 						while (!Utility.isWordstart(pos))
 						{
 #if DEBUG
-							logfile.Log(". . _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
-							logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+							logfile.Log(". . . _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
+							logfile.Log(". . . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
 							result.Phons.Add(_dt.Rows[r][1] as String);							// phon - 2+
 							result.phStops.Add(Utility.SecstoSrTus(_dt.Rows[r][3].ToString()));	// stop - 2+
 
-							if (r != _dt.Rows.Count - 1)
-							{
-								pos = _dt.Rows[++r][0] as String;
-							}
-							else
+							if (r == _dt.Rows.Count - 1)
 								break;
+
+							pos = _dt.Rows[++r][0] as String;
 						}
 					}
 #if DEBUG
-					logfile.Log(". _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
+					logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
 					result.Stop = Utility.SecstoSrTus(_dt.Rows[r][3].ToString());				// stop - word
 
 					_f._ars_alt.Add(result);
+
+					if (decr) --r;
 				}
 			}
 
