@@ -405,6 +405,9 @@ namespace lipsync_editor
 			return co_recognizers.SelectedItem as Recognizer;
 		}
 
+
+		string _dirOpen = String.Empty;
+
 		/// <summary>
 		/// Opens an audio-file w/out processing it.
 		/// </summary>
@@ -419,13 +422,21 @@ namespace lipsync_editor
 			using (var ofd = new OpenFileDialog())
 			{
 				ofd.Title  = "Select a WAV or MP3 Audio file";
-				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|"
+				ofd.Filter = "Audio files (*.wav;*.mp3)|*.wav;*.mp3|" // TODO: handle BMU files
 						   + "Wave files (*.wav)|*.wav|"
 						   + "Mp3 files (*.mp3)|*.mp3|"
 						   + "All files (*.*)|*.*";
 
+				if (Directory.Exists(_dirOpen))
+				{
+					ofd.InitialDirectory = _dirOpen;
+				}
+				// else let .NET handle it.
+
 				if (ofd.ShowDialog() == DialogResult.OK)
 				{
+					_dirOpen = Path.GetDirectoryName(ofd.FileName);
+
 					tb_wavefile.Text = _pfe = ofd.FileName;
 #if DEBUG
 					logfile.Log(". _pfe= " + _pfe);
@@ -521,7 +532,7 @@ namespace lipsync_editor
 		}
 
 
-		string _dir = String.Empty;
+		string _dirCreate = String.Empty;
 
 		/// <summary>
 		/// Writes an FXE file to a user-chosen filepath.
@@ -539,9 +550,9 @@ namespace lipsync_editor
 //				sfd.Title = "Save as ...";
 				sfd.Filter = "FXE files (*.fxe)|*.fxe|All files (*.*)|*.*";
 
-				if (Directory.Exists(_dir))
+				if (Directory.Exists(_dirCreate))
 				{
-					sfd.InitialDirectory = _dir;
+					sfd.InitialDirectory = _dirCreate;
 				}
 				else
 				{
@@ -555,7 +566,7 @@ namespace lipsync_editor
 
 				if (sfd.ShowDialog(this) == DialogResult.OK)
 				{
-					_dir = Path.GetDirectoryName(sfd.FileName);
+					_dirCreate = Path.GetDirectoryName(sfd.FileName);
 					FxeWriter.WriteFile(sfd.FileName, co_headtype.Text, _fxedata);
 				}
 			}
