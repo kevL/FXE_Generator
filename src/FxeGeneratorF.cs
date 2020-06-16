@@ -1029,8 +1029,10 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// Switches stuff use to alternate/user-edited data. <see cref="EditorPhonF"/>
+		/// @note The data in the "PHONEMES" table changes as data is edited in
+		/// 'EditorPhonF' so if that is canceled the table needs to revert.
 		/// </summary>
-		/// <param name="revert"></param>
+		/// <param name="revert">true to revert to previous data</param>
 		internal void AlternateData(bool revert = false)
 		{
 			if (!revert)

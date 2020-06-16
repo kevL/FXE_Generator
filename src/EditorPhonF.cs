@@ -218,7 +218,8 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// 
+		/// Reverts the displayed data in 'FxeGeneratorF' per its selected
+		/// radio-button.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="e"></param>
