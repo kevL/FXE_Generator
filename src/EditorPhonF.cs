@@ -162,7 +162,7 @@ namespace lipsync_editor
 
 			for (int r = 0; r != _dt.Rows.Count; ++r)
 			{
-				string pos = _dt.Rows[r][0] as String;											// pos
+				string pos = _dt.Rows[r][0] as String;										// pos
 #if DEBUG
 				logfile.Log(". _dt.Rows[" + r + "][0]= " + _dt.Rows[r][0]);
 #endif
@@ -181,11 +181,11 @@ namespace lipsync_editor
 					logfile.Log(". . _dt.Rows[" + r + "][2]= " + _dt.Rows[r][2]);
 					logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
-					result.Phons.Add(_dt.Rows[r][1] as String);									// phon
+					result.Phons.Add(_dt.Rows[r][1] as String);								// phon
 
-					result.Start = Decimal.Parse(_dt.Rows[r][2].ToString());					// start
+					result.Start = Decimal.Parse(_dt.Rows[r][2].ToString());				// start
 
-					result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));				// stop - 1st phon
+					result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));			// stop - 1st phon
 
 
 					if (r != _dt.Rows.Count - 1)
@@ -199,8 +199,8 @@ namespace lipsync_editor
 							logfile.Log(". . . _dt.Rows[" + r + "][1]= " + _dt.Rows[r][1]);
 							logfile.Log(". . . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
-							result.Phons.Add(_dt.Rows[r][1] as String);							// phon - 2+
-							result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));		// stop - 2+
+							result.Phons.Add(_dt.Rows[r][1] as String);						// phon - 2+
+							result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));	// stop - 2+
 
 							if (r == _dt.Rows.Count - 1)
 								break;
@@ -211,7 +211,7 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
-					result.Stop = Decimal.Parse(_dt.Rows[r][3].ToString());						// stop - word
+					result.Stop = Decimal.Parse(_dt.Rows[r][3].ToString());					// stop - word
 
 					_f._ars_alt.Add(result);
 
