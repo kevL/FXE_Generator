@@ -42,6 +42,10 @@ namespace lipsync_editor
 			_f  = f;
 			_dt = dt;
 
+
+			foreach (DataColumn dc in _dt.Columns) // datatable editable
+				dc.ReadOnly = false;
+
 			grid.Table = _dt; // TODO: grid initialization to 'grid.Table.set' ->
 
 			int i = 0;
@@ -100,6 +104,9 @@ namespace lipsync_editor
 		#region handlers (override)
 		protected override void OnFormClosing(FormClosingEventArgs e)
 		{
+			foreach (DataColumn dc in _dt.Columns) // datatable NOT editable
+				dc.ReadOnly = true;
+
 			if (Waver != null)
 			{
 				// NOTE: Dispose() bypasses the OnFormClosing event that's

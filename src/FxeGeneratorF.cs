@@ -171,6 +171,7 @@ namespace lipsync_editor
 				tb_enh_phons.BackColor = Color.GhostWhite;
 
 
+// PHONEMES data/grid ->
 				DataColumn dc;
 				dc = new DataColumn(HEAD_PHONS_0, typeof(string)); // pos
 				dc.ReadOnly = true;
@@ -200,10 +201,6 @@ namespace lipsync_editor
 				dc.ReadOnly = true;
 				_dt1.Columns.Add(dc);
 
-				foreach (DataColumn col in _dt1.Columns)
-					col.ReadOnly = false;
-
-
 				grid_phons.DataSource = _dt1;
 				grid_phons.Columns[0].Width = 50; // 50
 				grid_phons.Columns[1].Width = 76; // 76
@@ -213,6 +210,11 @@ namespace lipsync_editor
 				grid_phons.Columns[5].Width = 57; // 57
 				grid_phons.Columns[6].Width = 61; // 56
 
+				for (int i = 0; i != grid_phons.Columns.Count; ++i)
+					grid_phons.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+
+
+// Data Blocks data/grid ->
 				dc = new DataColumn(HEAD_BLOCKS_0, typeof(string));
 				dc.ReadOnly = true;
 				_dt2.Columns.Add(dc);
@@ -229,6 +231,10 @@ namespace lipsync_editor
 				grid_blocs.Columns[0].Width =  80; //  68
 				grid_blocs.Columns[1].Width =  97; //  87
 				grid_blocs.Columns[2].Width = 110; // 100
+
+				for (int i = 0; i != grid_blocs.Columns.Count; ++i)
+					grid_blocs.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+
 
 				grid_phons.RowHeadersVisible =
 				grid_blocs.RowHeadersVisible = false;
@@ -921,12 +927,12 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("PopulatePhonGrid() ars.Count= " + ars.Count);
 #endif
-			int col = -1, row = -1;
-			if (grid_phons.CurrentCell != null)
-			{
-				col = grid_phons.CurrentCell.ColumnIndex;
-				row = grid_phons.CurrentCell.RowIndex;
-			}
+//			int col = -1, row = -1;
+//			if (grid_phons.CurrentCell != null)
+//			{
+//				col = grid_phons.CurrentCell.ColumnIndex;
+//				row = grid_phons.CurrentCell.RowIndex;
+//			}
 
 			_dt1.Rows.Clear();
 
@@ -976,12 +982,12 @@ namespace lipsync_editor
 			}
 //			grid_phons.Sort(dg_phons.Columns[1], ListSortDirection.Ascending);
 
-			if (row != -1 && grid_phons.Rows.Count > row)
-			{
-				grid_phons.CurrentCell = grid_phons[col,row];
-			}
-			else
-				grid_phons.ClearSelection();
+//			if (row != -1 && grid_phons.Rows.Count > row)
+//			{
+//				grid_phons.CurrentCell = grid_phons[col,row];
+//			}
+//			else
+//				grid_phons.ClearSelection();
 		}
 
 		/// <summary>
@@ -993,12 +999,12 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("PopulateDataGrid() _fxedata.Count= " + _fxedata.Count);
 #endif
-			int col = -1, row = -1;
-			if (grid_blocs.SelectedCells.Count != 0)
-			{
-				col = grid_blocs.SelectedCells[0].ColumnIndex;
-				row = grid_blocs.SelectedCells[0].RowIndex;
-			}
+//			int col = -1, row = -1;
+//			if (grid_blocs.SelectedCells.Count != 0)
+//			{
+//				col = grid_blocs.SelectedCells[0].ColumnIndex;
+//				row = grid_blocs.SelectedCells[0].RowIndex;
+//			}
 
 			var blocks = new List<FxeDataBlock>();
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxedata)
@@ -1017,12 +1023,12 @@ namespace lipsync_editor
 			}
 //			grid_blocs.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 
-			if (row != -1 && grid_blocs.Rows.Count > row)
-			{
-				grid_blocs.CurrentCell = grid_blocs[col,row];
-			}
-			else
-				grid_blocs.ClearSelection();
+//			if (row != -1 && grid_blocs.Rows.Count > row)
+//			{
+//				grid_blocs.CurrentCell = grid_blocs[col,row];
+//			}
+//			else
+//				grid_blocs.ClearSelection();
 		}
 		#endregion lipsync handlers
 
