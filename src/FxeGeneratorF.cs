@@ -942,7 +942,7 @@ namespace lipsync_editor
 			{
 				++j;
 
-				start = Utility.SrTustoSecs(ar.Start).ToString("F3");
+				start = ar.Start.ToString("F3");
 				truth = ar.Confidence.ToString("F3");
 				level = ar.Level;
 #if DEBUG
@@ -970,7 +970,7 @@ namespace lipsync_editor
 					_dt1.Rows.Add(new object[] { j + "." + i, // pos
 												 phon,
 												 start,
-												 Utility.SrTustoSecs(ar.phStops[i]).ToString("F3"),
+												 ar.phStops[i].ToString("F3"),
 												 vis,
 												 truth,
 												 level });

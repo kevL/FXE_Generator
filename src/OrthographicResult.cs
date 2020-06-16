@@ -30,24 +30,20 @@ namespace lipsync_editor
 		internal string Level;
 
 		/// <summary>
-		/// Starttime in milliseconds.
-		/// TODO: These are NOT millisecs. They're like hundredths of a
-		/// nanosecond. for god-forsaken reason.
+		/// t=Start in seconds.
 		/// </summary>
-		internal ulong Start;
+		internal decimal Start;
 
 		/// <summary>
-		/// Stoptime in milliseconds.
-		/// TODO: These are NOT millisecs.
+		/// t=Stop in seconds.
 		/// </summary>
-		internal ulong Stop;
+		internal decimal Stop;
 
 		/// <summary>
-		/// The stoptime of each phoneme in milliseconds. SAPI 5.4 does not
-		/// generate this information - instead SapiLipsync.AddStops() estimates
-		/// the stops.
-		/// TODO: These are NOT millisecs.
+		/// t=Stop of each phoneme of the word in seconds. SAPI does not
+		/// generate this information - instead SapiLipsync.EstimatePhonStops()
+		/// estimates the stops.
 		/// </summary>
-		internal List<ulong> phStops = new List<ulong>();
+		internal List<decimal> phStops = new List<decimal>();
 	}
 }

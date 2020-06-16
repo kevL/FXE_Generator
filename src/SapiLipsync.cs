@@ -55,7 +55,7 @@ namespace lipsync_editor
 		readonly List<OrthographicResult> _ars_def = new List<OrthographicResult>(); // default
 		readonly List<OrthographicResult> _ars_enh = new List<OrthographicResult>(); // enhanced w/ TypedText
 
-		ulong _offset;
+		decimal _offset;
 		#endregion fields
 
 
@@ -398,7 +398,7 @@ namespace lipsync_editor
 			logfile.Log();
 			logfile.Log("Generate() _generato= " + _generato);
 #endif
-			_offset = 0uL;
+			_offset = 0;
 			Confidence_def_count = 0;
 
 			// was "2" but MS doc says not needed on its end.
@@ -790,8 +790,8 @@ namespace lipsync_editor
 				ar.Phons      = new List<string>(phons.Split(' '));
 				ar.Confidence = word.EngineConfidence;
 				ar.Level      = word.ActualConfidence.ToString().Replace("SEC", String.Empty).Replace("Confidence", String.Empty);
-				ar.Start      = _offset + (ulong)(word.AudioTimeOffset);
-				ar.Stop       = _offset + (ulong)(word.AudioTimeOffset + word.AudioSizeTime);
+				ar.Start      = _offset + Utility.GarpstoSecs(word.AudioTimeOffset);
+				ar.Stop       = _offset + Utility.GarpstoSecs(word.AudioTimeOffset + word.AudioSizeTime);
 
 				ars.Add(ar);
 			}
@@ -800,7 +800,7 @@ namespace lipsync_editor
 			// completed, which means it's going to fire again but the AudioTimeOffsets
 			// will be completely borked obviously. So add this time-offset to any
 			// second or subsequent Recognition event that happens on this stream
-			_offset += (ulong)Result.PhraseInfo.AudioSizeTime; // TODO. is not accurate.
+			_offset += Utility.GarpstoSecs(Result.PhraseInfo.AudioSizeTime); // TODO. is not accurate.
 
 			if (_text == String.Empty)
 			{
@@ -898,7 +898,7 @@ namespace lipsync_editor
 			}
 
 			OrthographicResult ar;
-			ulong stop = 0uL;
+			decimal stop = 0;
 
 			for (int i = 0; i != ars.Count; ++i)
 			{
@@ -912,7 +912,7 @@ namespace lipsync_editor
 					silence.Orthography = String.Empty;
 
 					silence.Phons = new List<string>();
-					silence.Phons.Add("x");
+					silence.Phons.Add("x"); // TODO: "[x]"
 
 					silence.Confidence = 1f;
 					silence.Level = String.Empty;
@@ -938,51 +938,53 @@ namespace lipsync_editor
 				logfile.Log(". ar.Phons= " + phons);
 #endif
 
-				CalculatePhonStops(ar);
+				EstimatePhonStops(ar);
 
 				stop = ar.Stop;
 			}
 		}
 
-		static void CalculatePhonStops(OrthographicResult ar)
+		static void EstimatePhonStops(OrthographicResult ar)
 		{
-			//logfile.Log("AddStops()");
+			//logfile.Log("EstimatePhonStops()");
 
 			var stops = new List<decimal>();
 
-			decimal stop = 0;
+			decimal tally = 0;
 			foreach (var phon in ar.Phons)
 			{
 				switch (phon)
 				{
 					// curious where 0100010 got these - intuition perhaps.
 
+					// TODO: French etc.
+
 					case "aa": case "ae": case "ah": case "ax": case "ay":
 					case  "b": case "eh": case  "l": case  "r": case  "w":
-						stops.Add(stop += 50);
+						stops.Add(tally += 5);
 						break;
 
 					case "ao": case "aw": case "er": case "ey": case "ow":
 					case "oy": case "uh": case "uw":
-						stops.Add(stop += 60);
+						stops.Add(tally += 6);
 						break;
 
 					default:
-						stops.Add(stop += 30);
+						stops.Add(tally += 3);
 						break;
-
-					// TODO: French etc.
 				}
 			}
 
-			if (stop != 0)
+			if (stops.Count != 0)
 			{
-				decimal factor = (decimal)(ar.Stop - ar.Start) / stop;
+				decimal factor = (ar.Stop - ar.Start) / tally;
 
-				for (int i = 0; i != stops.Count; ++i)
+				int i = 0;
+				for (; i != stops.Count - 1; ++i)
 				{
-					ar.phStops.Add(ar.Start + (ulong)(stops[i] * factor));
+					ar.phStops.Add(stops[i] * factor + ar.Start);
 				}
+				ar.phStops.Add(ar.Stop); // ensure the final phoneme-stop IS the word-stop.
 			}
 		}
 

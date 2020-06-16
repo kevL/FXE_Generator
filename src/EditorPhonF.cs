@@ -183,9 +183,9 @@ namespace lipsync_editor
 #endif
 					result.Phons.Add(_dt.Rows[r][1] as String);									// phon
 
-					result.Start = Utility.SecstoSrTus(_dt.Rows[r][2].ToString());				// start
+					result.Start = Decimal.Parse(_dt.Rows[r][2].ToString());					// start
 
-					result.phStops.Add(Utility.SecstoSrTus(_dt.Rows[r][3].ToString()));			// stop - 1st phon
+					result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));				// stop - 1st phon
 
 
 					if (r != _dt.Rows.Count - 1)
@@ -200,7 +200,7 @@ namespace lipsync_editor
 							logfile.Log(". . . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
 							result.Phons.Add(_dt.Rows[r][1] as String);							// phon - 2+
-							result.phStops.Add(Utility.SecstoSrTus(_dt.Rows[r][3].ToString()));	// stop - 2+
+							result.phStops.Add(Decimal.Parse(_dt.Rows[r][3].ToString()));		// stop - 2+
 
 							if (r == _dt.Rows.Count - 1)
 								break;
@@ -211,7 +211,7 @@ namespace lipsync_editor
 #if DEBUG
 					logfile.Log(". . _dt.Rows[" + r + "][3]= " + _dt.Rows[r][3]);
 #endif
-					result.Stop = Utility.SecstoSrTus(_dt.Rows[r][3].ToString());				// stop - word
+					result.Stop = Decimal.Parse(_dt.Rows[r][3].ToString());						// stop - word
 
 					_f._ars_alt.Add(result);
 
@@ -250,8 +250,6 @@ namespace lipsync_editor
 
 		Button bu_waver;
 
-
-//			this.grid = new lipsync_editor.EditorGrid();
 
 		void InitializeComponent()
 		{

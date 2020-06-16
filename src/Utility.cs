@@ -11,21 +11,21 @@ namespace lipsync_editor
 		/// Converts SpeechRecognitionEngine time-units to seconds.
 		/// </summary>
 		/// <param name="nanoseconds_100"></param>
-		/// <returns></returns>
-		internal static decimal SrTustoSecs(ulong nanoseconds_100)
+		/// <returns>seconds</returns>
+		internal static decimal GarpstoSecs(int nanoseconds_100)
 		{
-			return ((decimal)nanoseconds_100 / SR_TU_FACTOR);
+			return nanoseconds_100 / SR_TU_FACTOR;
 		}
 
-		/// <summary>
-		/// Converts seconds to SpeechRecognitionEngine time-units.
-		/// </summary>
-		/// <param name="secs"></param>
-		/// <returns></returns>
-		internal static ulong SecstoSrTus(string secs)
-		{
-			return (ulong)(Decimal.Parse(secs) * SR_TU_FACTOR);
-		}
+//		/// <summary>
+//		/// Converts seconds to SpeechRecognitionEngine time-units.
+//		/// </summary>
+//		/// <param name="secs"></param>
+//		/// <returns></returns>
+//		internal static ulong SecstoSrTus(string secs)
+//		{
+//			return (ulong)(Decimal.Parse(secs) * SR_TU_FACTOR);
+//		}
 
 
 		/// <summary>
