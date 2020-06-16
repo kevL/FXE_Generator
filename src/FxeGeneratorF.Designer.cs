@@ -237,6 +237,7 @@ namespace lipsync_editor
 			this.grid_phons.Size = new System.Drawing.Size(486, 420);
 			this.grid_phons.TabIndex = 28;
 			this.grid_phons.RowPrePaint += new System.Windows.Forms.DataGridViewRowPrePaintEventHandler(this.dgphons_RowPrePaint);
+			this.grid_phons.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keydown_Datagrid);
 			// 
 			// la_text
 			// 
@@ -390,6 +391,7 @@ namespace lipsync_editor
 			this.grid_blocs.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
 			this.grid_blocs.Size = new System.Drawing.Size(290, 420);
 			this.grid_blocs.TabIndex = 30;
+			this.grid_blocs.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keydown_Datagrid);
 			// 
 			// bu_createfxe
 			// 

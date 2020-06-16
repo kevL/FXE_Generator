@@ -701,6 +701,12 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Handler for the KeyDown event of the typed-text textbox. [Enter]
+		/// invokes generation of fxe-data.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void keydown_TypedText(object sender, KeyEventArgs e)
 		{
 			switch (e.KeyData)
@@ -712,17 +718,48 @@ namespace lipsync_editor
 
 				case Keys.Enter | Keys.Shift:
 				case Keys.Enter | Keys.Control:
+				case Keys.Enter | Keys.Alt:
 					e.Handled = e.SuppressKeyPress = true;
 					break;
 			}
 		}
 
 
+		/// <summary>
+		/// Handler for the Click event of the Edit button. Opens the editor.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Edit(object sender, EventArgs e)
 		{
 			using (var editor = new EditorPhonF(this, _dt1))
 			{
 				editor.ShowDialog(this);
+			}
+		}
+
+
+		/// <summary>
+		/// Handler for the KeyDown event on the datagrids. [Tab] and
+		/// [Shift+Tab] cycles to the next control and [Enter] does nada.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void keydown_Datagrid(object sender, KeyEventArgs e)
+		{
+			switch (e.KeyData)
+			{
+				case Keys.Tab:
+					SelectNextControl(sender as Control, true, true, false, true);
+					goto case Keys.Enter;
+
+				case Keys.Tab | Keys.Shift:
+					SelectNextControl(sender as Control, false, true, false, true);
+					goto case Keys.Enter;
+
+				case Keys.Enter:
+					e.Handled = e.SuppressKeyPress = true;
+					break;
 			}
 		}
 		#endregion control handlers
