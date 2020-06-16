@@ -1030,16 +1030,29 @@ namespace lipsync_editor
 		/// <summary>
 		/// Switches stuff use to alternate/user-edited data. <see cref="EditorPhonF"/>
 		/// </summary>
-		internal void AlternateData()
+		/// <param name="revert"></param>
+		internal void AlternateData(bool revert = false)
 		{
-			_fxedata_alt.Clear();
+			if (!revert)
+			{
+				_fxedata_alt.Clear();
+	
+				FxeData.GenerateData(_ars_alt, _fxedata_alt);
+	
+				rb_alt.Checked =
+				rb_alt.Visible = true; // fire rb_CheckChanged
+	
+				rb_def.Visible = true; // else default-button won't be visible if there's no typed-text.
+			}
+			else
+			{
+				object rb;
+				if      (rb_def.Checked) rb = rb_def;
+				else if (rb_enh.Checked) rb = rb_enh;
+				else                     rb = rb_alt;
 
-			FxeData.GenerateData(_ars_alt, _fxedata_alt);
-
-			rb_alt.Checked =
-			rb_alt.Visible = true; // fire rb_CheckChanged
-
-			rb_def.Visible = true; // else default-button won't be visible if there's no typed-text.
+				checkedchanged_Radio(rb, EventArgs.Empty);
+			}
 		}
 	}
 }

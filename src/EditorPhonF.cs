@@ -216,6 +216,16 @@ namespace lipsync_editor
 			if (_f._ars_alt.Count != 0)
 				_f.AlternateData();
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void click_Cancel(object sender, EventArgs e)
+		{
+			_f.AlternateData(true);
+		}
 		#endregion handlers
 
 
@@ -356,6 +366,7 @@ namespace lipsync_editor
 			this.bu_cancel.TabIndex = 0;
 			this.bu_cancel.Text = "no";
 			this.bu_cancel.UseVisualStyleBackColor = true;
+			this.bu_cancel.Click += new System.EventHandler(this.click_Cancel);
 			// 
 			// EditorPhonF
 			// 
