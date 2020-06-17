@@ -991,7 +991,7 @@ namespace lipsync_editor
 				++j;
 
 				start = ar.Start.ToString("F3");
-				truth = ar.Confidence.ToString("F3");
+				truth = ar.Confi.ToString("F3");
 				level = ar.Level;
 #if DEBUG
 				logfile.Log(". word= " + ar.Orthography);

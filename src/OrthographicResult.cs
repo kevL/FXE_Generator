@@ -22,7 +22,7 @@ namespace lipsync_editor
 		/// <summary>
 		/// The engine-confidence (0.001..0.999).
 		/// </summary>
-		internal float Confidence;
+		internal float Confi;
 
 		/// <summary>
 		/// The confidence-level (Low, Normal, High).

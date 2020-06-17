@@ -787,11 +787,11 @@ namespace lipsync_editor
 
 				string phons = _phoneConverter.IdToPhone(word.Pronunciation); // NOTE: object is a ushort or ushort[]
 
-				ar.Phons      = new List<string>(phons.Split(' '));
-				ar.Confidence = word.EngineConfidence;
-				ar.Level      = word.ActualConfidence.ToString().Replace("SEC", String.Empty).Replace("Confidence", String.Empty);
-				ar.Start      = _offset + Utility.GarpstoSecs(word.AudioTimeOffset);
-				ar.Stop       = _offset + Utility.GarpstoSecs(word.AudioTimeOffset + word.AudioSizeTime);
+				ar.Phons = new List<string>(phons.Split(' '));
+				ar.Confi = word.EngineConfidence;
+				ar.Level = word.ActualConfidence.ToString().Replace("SEC", String.Empty).Replace("Confidence", String.Empty);
+				ar.Start = _offset + Utility.GarpstoSecs(word.AudioTimeOffset);
+				ar.Stop  = _offset + Utility.GarpstoSecs(word.AudioTimeOffset + word.AudioSizeTime);
 
 				ars.Add(ar);
 			}
@@ -914,7 +914,7 @@ namespace lipsync_editor
 					silence.Phons = new List<string>();
 					silence.Phons.Add("x"); // TODO: "[x]"
 
-					silence.Confidence = 1f;
+					silence.Confi = 1f;
 					silence.Level = String.Empty;
 
 					silence.Start = stop;

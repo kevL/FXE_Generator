@@ -172,7 +172,7 @@ namespace lipsync_editor
 
 					result = new OrthographicResult();
 					result.Orthography = String.Empty;
-					result.Confidence  = 0f;
+					result.Confi       = 0f;
 					result.Level       = String.Empty;
 
 					result.Phons = new List<string>();
