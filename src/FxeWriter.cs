@@ -16,7 +16,7 @@ namespace lipsync_editor
 		/// <summary>
 		/// Writes FXE-data to a file.
 		/// </summary>
-		/// <param name="pfe">fullpath of a (audio) file</param>
+		/// <param name="pfe">fullpath for the FXE-file output</param>
 		/// <param name="head">skeleton head type</param>
 		/// <param name="fxedata">pointer to the data</param>
 		internal static void WriteFile(string pfe, string head, Dictionary<string, List<FxeDataBlock>> fxedata)
@@ -65,26 +65,7 @@ namespace lipsync_editor
 				_bw.Close();
 			}
 
-
-			if (!FxeGeneratorF.isConsole)
-			{
-				string titl, info;
-				if (FxeReader.TestFile(pfe))
-				{
-					titl = "Write SUCCESS";
-					info = pfe;
-				}
-				else
-				{
-					titl = "Write FAILED";
-					info = "Borked file" + Environment.NewLine + pfe;
-				}
-
-				using (var d = new InfoDialog(titl, info))
-				{
-					d.ShowDialog(FxeGeneratorF.That);
-				}
-			}
+			TestOutputFile(pfe);
 		}
 
 		static void WriteHeader()
@@ -153,6 +134,34 @@ namespace lipsync_editor
 
 			if (str.Length > 0)
 				_bw.Write(str.ToCharArray());
+		}
+
+
+		/// <summary>
+		/// Tests an FXE-file by reading it w/ <see cref="FxeReader.TestFile"/>.
+		/// </summary>
+		/// <param name="pfe">FXE-file to test</param>
+		static void TestOutputFile(string pfe)
+		{
+			if (!FxeGeneratorF.isConsole)
+			{
+				string titl, info;
+				if (FxeReader.TestFile(pfe))
+				{
+					titl = "Write SUCCESS";
+					info = pfe;
+				}
+				else
+				{
+					titl = "Write FAILED";
+					info = "Borked file" + Environment.NewLine + pfe;
+				}
+
+				using (var d = new InfoDialog(titl, info))
+				{
+					d.ShowDialog(FxeGeneratorF.That);
+				}
+			}
 		}
 		#endregion write methods (static)
 	}
