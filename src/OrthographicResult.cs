@@ -15,7 +15,7 @@ namespace lipsync_editor
 		internal string Orthography;
 
 		/// <summary>
-		/// The list of phonemes. These are pulled by SAPI.
+		/// The list of phonemes in this word-result. These are pulled by SAPI.
 		/// </summary>
 		internal List<string> Phons;
 
@@ -41,8 +41,8 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// t=Stop of each phoneme of the word in seconds. SAPI does not
-		/// generate this information - instead SapiLipsync.EstimatePhonStops()
-		/// estimates the stops.
+		/// generate this information - instead SapiLipsync.phStops() estimates
+		/// the stops.
 		/// </summary>
 		internal List<decimal> phStops = new List<decimal>();
 	}

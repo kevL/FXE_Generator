@@ -884,6 +884,10 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Inserts any required silences in the phrase and estimates the
+		/// phoneme-stops in each word.
+		/// </summary>
 		void Orthography()
 		{
 #if DEBUG
@@ -902,27 +906,16 @@ namespace lipsync_editor
 
 			for (int i = 0; i != ars.Count; ++i)
 			{
-				if ((ar = ars[i]).Start > stop)
+				if ((ar = ars[i]).Start > stop) // TODO: use a tolerance Eg. 10..15 millisec
 				{
 #if DEBUG
 					logfile.Log(". . insert silence");
 #endif
-					var silence = new OrthographicResult();
+					OrthographicResult sil = CreateSilence();
+					sil.Start = stop;
+					sil.phStops.Add(sil.Stop = ar.Start);
 
-					silence.Orthography = String.Empty;
-
-					silence.Phons = new List<string>();
-					silence.Phons.Add("x"); // TODO: "[x]"
-
-					silence.Confi = 1f;
-					silence.Level = String.Empty;
-
-					silence.Start = stop;
-					silence.Stop  = ar.Start;
-
-					silence.phStops.Add(silence.Stop);
-
-					ars.Insert(i, silence);
+					ars.Insert(i, sil);
 
 					++i;
 				}
@@ -938,15 +931,37 @@ namespace lipsync_editor
 				logfile.Log(". ar.Phons= " + phons);
 #endif
 
-				EstimatePhonStops(ar);
+				phStops(ar);
 
 				stop = ar.Stop;
 			}
 		}
 
-		static void EstimatePhonStops(OrthographicResult ar)
+		/// <summary>
+		/// Inserts
+		/// </summary>
+		static OrthographicResult CreateSilence()
 		{
-			//logfile.Log("EstimatePhonStops()");
+			var sil = new OrthographicResult();
+
+			sil.Orthography = String.Empty;
+
+			sil.Phons = new List<string>();
+			sil.Phons.Add("x"); // TODO: "[x]"
+
+			sil.Confi = 1f;
+			sil.Level = String.Empty;
+
+			return sil;
+		}
+
+		/// <summary>
+		/// Estimates the phoneme-stops in a specified word.
+		/// </summary>
+		/// <param name="ar"></param>
+		static void phStops(OrthographicResult ar)
+		{
+			//logfile.Log("phStops()");
 
 			var stops = new List<decimal>();
 
