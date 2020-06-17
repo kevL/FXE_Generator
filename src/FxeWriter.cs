@@ -5,6 +5,11 @@ using System.IO;
 
 namespace lipsync_editor
 {
+	/// <summary>
+	/// Writer of FXE-files.
+	/// @note I have no idea where 0100010 got this format info - perhaps by
+	/// reverse engineering stock FXE-files.
+	/// </summary>
 	static class FxeWriter
 	{
 		#region fields (static)
@@ -53,8 +58,8 @@ namespace lipsync_editor
 				_bw.Write((short)3);
 
 				long position = _bw.BaseStream.Position;
+				_bw.Write(0); // <- those 4 bytes will be filled w/ '_bw.BaseStream.Length'
 
-				_bw.Write(0);
 				_bw.Write((short)0);
 				_bw.Write((short)25);
 				_bw.Write(0L);
@@ -65,9 +70,13 @@ namespace lipsync_editor
 				_bw.Close();
 			}
 
-			TestOutputFile(pfe);
+			if (!FxeGeneratorF.isConsole)
+				TestOutputFile(pfe);
 		}
 
+		/// <summary>
+		/// Writes the header block.
+		/// </summary>
 		static void WriteHeader()
 		{
 			_bw.Write("FACE".ToCharArray());
@@ -84,6 +93,10 @@ namespace lipsync_editor
 			_bw.Write(0);
 		}
 
+		/// <summary>
+		/// Writes the data block.
+		/// </summary>
+		/// <param name="fxedata"></param>
 		static void WriteData(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
@@ -110,9 +123,13 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Writes the footer block.
+		/// </summary>
+		/// <param name="position"></param>
 		static void WriteFooter(long position)
 		{
-			_bw.Write(4494952716784883466L);
+			_bw.Write(4494952716784883466L); // 4,494,952,716,784,883,466 - aka 4.5 quintillion - 3E61 47AE 3E23 D70A Qua
 			_bw.Write((short)0);
 			_bw.Write(0);
 
@@ -126,6 +143,10 @@ namespace lipsync_editor
 			_bw.Write((int)_bw.BaseStream.Length);
 		}
 
+		/// <summary>
+		/// Writes a string.
+		/// </summary>
+		/// <param name="str"></param>
 		static void WriteString(string str)
 		{
 			_bw.Write((short)1);
@@ -135,34 +156,33 @@ namespace lipsync_editor
 			if (str.Length > 0)
 				_bw.Write(str.ToCharArray());
 		}
+		#endregion write methods (static)
 
 
+		#region read methods (static)
 		/// <summary>
 		/// Tests an FXE-file by reading it w/ <see cref="FxeReader.TestFile"/>.
 		/// </summary>
-		/// <param name="pfe">FXE-file to test</param>
+		/// <param name="pfe">fullpath of FXE-file to test</param>
 		static void TestOutputFile(string pfe)
 		{
-			if (!FxeGeneratorF.isConsole)
+			string titl, info;
+			if (FxeReader.TestFile(pfe))
 			{
-				string titl, info;
-				if (FxeReader.TestFile(pfe))
-				{
-					titl = "Write SUCCESS";
-					info = pfe;
-				}
-				else
-				{
-					titl = "Write FAILED";
-					info = "Borked file" + Environment.NewLine + pfe;
-				}
+				titl = "Write SUCCESS";
+				info = pfe;
+			}
+			else
+			{
+				titl = "Write FAILED";
+				info = "Borked file" + Environment.NewLine + pfe;
+			}
 
-				using (var d = new InfoDialog(titl, info))
-				{
-					d.ShowDialog(FxeGeneratorF.That);
-				}
+			using (var d = new InfoDialog(titl, info))
+			{
+				d.ShowDialog(FxeGeneratorF.That);
 			}
 		}
-		#endregion write methods (static)
+		#endregion read methods (static)
 	}
 }
