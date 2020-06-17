@@ -4,8 +4,15 @@ using System.Collections.Generic;
 
 namespace lipsync_editor
 {
+	/// <summary>
+	/// 
+	/// </summary>
 	static class Smoother
 	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pair"></param>
 		internal static void Apply(KeyValuePair<string, List<FxeDataBlock>> pair)
 		{
 			string vis                    = pair.Key;
@@ -124,6 +131,14 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="datablocks"></param>
+		/// <param name="id"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		static int GetNextPoint(IList<FxeDataBlock> datablocks, int id, out float x, out float y)
 		{
 			if (datablocks[id].Type != FxeDataType.Stop)
@@ -149,6 +164,20 @@ namespace lipsync_editor
 			return -1;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="Ax"></param>
+		/// <param name="Ay"></param>
+		/// <param name="Bx"></param>
+		/// <param name="By"></param>
+		/// <param name="Cx"></param>
+		/// <param name="Cy"></param>
+		/// <param name="Dx"></param>
+		/// <param name="Dy"></param>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		static bool GetLineIntersection(float Ax, float Ay,
 										float Bx, float By,
 										float Cx, float Cy,
@@ -218,6 +247,12 @@ namespace lipsync_editor
 			return true;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="datablocks"></param>
+		/// <param name="datablock"></param>
+		/// <param name="id"></param>
 		static void InsertIntersectionPoint(IList<FxeDataBlock> datablocks, FxeDataBlock datablock, int id)
 		{
 			while (datablock.Val1 > datablocks[id].Val1 && id < datablocks.Count)
@@ -230,6 +265,12 @@ namespace lipsync_editor
 		}
 
 
+		/// <summary>
+		/// Generic function that checks if two floats are equal.
+		/// </summary>
+		/// <param name="f1">1st float</param>
+		/// <param name="f2">2nd float</param>
+		/// <returns>true if equal</returns>
 		static bool floatsequal(float f1, float f2)
 		{
 			return Math.Abs(f2 - f1) < StaticData.EPSILON;

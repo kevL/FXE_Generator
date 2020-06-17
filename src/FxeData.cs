@@ -78,27 +78,27 @@ namespace lipsync_editor
 			var datablocks = new List<FxeDataBlock>(); // viseme start, mid, end points
 
 			Trival trival;
-			string vice2 = "S";
-			string vice1 = "S";
+			string vis2 = "S";
+			string vis1 = "S";
 			int id = 0;
 
 			foreach (KeyValuePair<string, decimal> visual in visuals)
 			{
-				string vice0 = visual.Key;
+				string vis0 = visual.Key;
 
 				float stop = (float)visual.Value;
 
-				trival = GetTrival(vice2, vice1, vice0);
+				trival = GetTrival(vis2, vis1, vis0);
 				float strt = stop - trival.length;
 				float midl = strt + trival.length / 2f;
 
-				datablocks.Add(new FxeDataBlock(vice0, strt,         0f, FxeDataType.Strt, id));
-				datablocks.Add(new FxeDataBlock(vice0, midl, trival.val, FxeDataType.Midl, id));
-				datablocks.Add(new FxeDataBlock(vice0, stop,         0f, FxeDataType.Stop, id));
+				datablocks.Add(new FxeDataBlock(vis0, strt,         0f, FxeDataType.Strt, id));
+				datablocks.Add(new FxeDataBlock(vis0, midl, trival.val, FxeDataType.Midl, id));
+				datablocks.Add(new FxeDataBlock(vis0, stop,         0f, FxeDataType.Stop, id));
 				++id;
 
-				vice2 = vice1;
-				vice1 = vice0;
+				vis2 = vis1;
+				vis1 = vis0;
 			}
 			datablocks.Sort();
 
@@ -106,18 +106,18 @@ namespace lipsync_editor
 			SmoothTransitions(fxedata);
 		}
 
-		static Trival GetTrival(string vice2, string vice1, string vice0)
+		static Trival GetTrival(string vis2, string vis1, string vis0)
 		{
 #if DEBUG
-			logfile.Log("FxeData.GetTrival() vice2= " + vice2 + " vice1= " + vice1 + " vice0= " + vice0);
+			logfile.Log("FxeData.GetTrival() vis2= " + vis2 + " vis1= " + vis1 + " vis0= " + vis0);
 #endif
-			Trival trival = TriGramTable[vice2][vice1][vice0];
+			Trival trival = TriGramTable[vis2][vis1][vis0];
 			if (Math.Abs(trival.length) < StaticData.EPSILON)
 			{
 				Trival trival0;
 				foreach (KeyValuePair<string, Dictionary<string, Dictionary<string, Trival>>> pair in TriGramTable)
 				{
-					trival0 = pair.Value[vice1][vice0];
+					trival0 = pair.Value[vis1][vis0];
 					if (trival0.count > trival.count)
 						trival = trival0;
 				}
@@ -146,14 +146,14 @@ namespace lipsync_editor
 						if (i + 1 < datablocks.Count)
 						{
 							datablock.Val1 += Math.Min(StaticData.STOP_INCR,
-													  (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
+													   (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
 						}
 						else
 							datablock.Val1 += StaticData.STOP_INCR;
 					}
 				}
 
-				fxedata[datablock.Vis].Add(datablock);
+				fxedata[datablock.Label].Add(datablock);
 				datablock0 = datablock;
 			}
 		}

@@ -12,11 +12,17 @@ namespace lipsync_editor
 	}
 
 
+	/// <summary>
+	/// Data for a vis.
+	/// </summary>
 	sealed class FxeDataBlock
 		: IComparable
 	{
 		#region properties
-		internal string Vis
+		/// <summary>
+		/// The codeword.
+		/// </summary>
+		internal string Label
 		{ get; private set; }
 
 		internal float Val1
@@ -37,16 +43,16 @@ namespace lipsync_editor
 		/// <summary>
 		/// cTor. 
 		/// </summary>
-		/// <param name="vis"></param>
+		/// <param name="label"></param>
 		/// <param name="val1"></param>
 		/// <param name="val2"></param>
 		/// <param name="type">start, middle, or stop</param>
 		/// <param name="id"></param>
-		internal FxeDataBlock(string vis, float val1, float val2, FxeDataType type, int id)
+		internal FxeDataBlock(string label, float val1, float val2, FxeDataType type, int id)
 		{
-			Vis  = vis;
-			Val1 = val1;
-			Val2 = val2;
+			Label = label;
+			Val1  = val1;
+			Val2  = val2;
 
 			Type = type;
 			Id   = id;

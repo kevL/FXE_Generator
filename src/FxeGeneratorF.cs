@@ -1055,20 +1055,20 @@ namespace lipsync_editor
 //				row = grid_blocs.SelectedCells[0].RowIndex;
 //			}
 
-			var blocks = new List<FxeDataBlock>();
+			var blocs = new List<FxeDataBlock>();
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxedata)
 			{
-				blocks.AddRange(pair.Value);
+				blocs.AddRange(pair.Value);
 			}
 
 			_dt2.Rows.Clear();
 
 			int j = -1;
-			foreach (FxeDataBlock block in blocks)
+			foreach (FxeDataBlock bloc in blocs)
 			{
-				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Vis,
-																block.Val1,
-																block.Val2 });
+				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + bloc.Label,
+																bloc.Val1,
+																bloc.Val2 });
 			}
 //			grid_blocs.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
 

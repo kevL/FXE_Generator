@@ -957,9 +957,10 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// Estimates the phoneme-stops in a specified word.
+		/// Estimates the phoneme-stops in a specified word. Each phoneme gets
+		/// a weight that will be interpreted as its duration within the word.
 		/// </summary>
-		/// <param name="ar"></param>
+		/// <param name="ar"><see cref="OrthographicResult"/></param>
 		static void phStops(OrthographicResult ar)
 		{
 			//logfile.Log("phStops()");
