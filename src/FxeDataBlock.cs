@@ -20,7 +20,7 @@ namespace lipsync_editor
 	{
 		#region properties
 		/// <summary>
-		/// The codeword.
+		/// The viscode.
 		/// </summary>
 		internal string Label
 		{ get; private set; }

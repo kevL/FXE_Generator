@@ -242,26 +242,26 @@ namespace lipsync_editor
 
 		internal static List<string> GetStandardViscodes()
 		{
-			var codewords = new List<string>();
+			var viscodes = new List<string>();
 
-			codewords.Add("S");
-			codewords.Add("Eat");
-			codewords.Add("If");
-			codewords.Add("Ox");
-			codewords.Add("Oat");
-			codewords.Add("Earth");
-			codewords.Add("Size");
-			codewords.Add("Church");
-			codewords.Add("Though");
-			codewords.Add("Bump");
-			codewords.Add("New");
-			codewords.Add("Told");
-			codewords.Add("Roar");
-			codewords.Add("Cage");
-			codewords.Add("Wet");
-			codewords.Add("Fave");
+			viscodes.Add("S");
+			viscodes.Add("Eat");
+			viscodes.Add("If");
+			viscodes.Add("Ox");
+			viscodes.Add("Oat");
+			viscodes.Add("Earth");
+			viscodes.Add("Size");
+			viscodes.Add("Church");
+			viscodes.Add("Though");
+			viscodes.Add("Bump");
+			viscodes.Add("New");
+			viscodes.Add("Told");
+			viscodes.Add("Roar");
+			viscodes.Add("Cage");
+			viscodes.Add("Wet");
+			viscodes.Add("Fave");
 
-			return codewords;
+			return viscodes;
 		}
 
 		internal static void MapFxeViscodes(IDictionary<string, List<FxeDataBlock>> fxedata)
