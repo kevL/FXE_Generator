@@ -156,7 +156,7 @@ namespace lipsync_editor
 			this.tb_wavefile.Margin = new System.Windows.Forms.Padding(0);
 			this.tb_wavefile.Name = "tb_wavefile";
 			this.tb_wavefile.ReadOnly = true;
-			this.tb_wavefile.Size = new System.Drawing.Size(665, 22);
+			this.tb_wavefile.Size = new System.Drawing.Size(751, 22);
 			this.tb_wavefile.TabIndex = 1;
 			this.tb_wavefile.WordWrap = false;
 			// 
@@ -499,7 +499,7 @@ namespace lipsync_editor
 			this.co_recognizers.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.co_recognizers.DropDownWidth = 340;
 			this.co_recognizers.FormattingEnabled = true;
-			this.co_recognizers.Location = new System.Drawing.Point(731, 7);
+			this.co_recognizers.Location = new System.Drawing.Point(817, 7);
 			this.co_recognizers.Margin = new System.Windows.Forms.Padding(0);
 			this.co_recognizers.Name = "co_recognizers";
 			this.co_recognizers.Size = new System.Drawing.Size(435, 23);
