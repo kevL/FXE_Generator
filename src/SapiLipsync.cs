@@ -938,8 +938,9 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// Inserts
+		/// Creates a silence.
 		/// </summary>
+		/// <returns>an <see cref="OrthographicResult"/> w/ blank Orthography</returns>
 		static OrthographicResult CreateSilence()
 		{
 			var sil = new OrthographicResult();
@@ -947,7 +948,7 @@ namespace lipsync_editor
 			sil.Orthography = String.Empty;
 
 			sil.Phons = new List<string>();
-			sil.Phons.Add("x"); // TODO: "[x]"
+			sil.Phons.Add(StaticData.SIL);
 
 			sil.Confi = 1f;
 			sil.Level = String.Empty;

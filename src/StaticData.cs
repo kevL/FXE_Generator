@@ -7,6 +7,8 @@ namespace lipsync_editor
 	static class StaticData
 	{
 		#region fields (static)
+		internal const string SIL = "[x]"; // the silence marker
+
 		internal const float EPSILON   = 0.000005f;
 		internal const float STOP_INCR = 0.0000001f;
 		#endregion fields (static)
@@ -39,7 +41,7 @@ namespace lipsync_editor
 #endif
 			Vices.Clear();
 
-			Vices.Add( "x", String.Empty); // silence
+			Vices.Add(StaticData.SIL, String.Empty);
 
 			switch (langid)
 			{

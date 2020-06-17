@@ -693,7 +693,7 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void dgphons_RowPrePaint(object sender, DataGridViewRowPrePaintEventArgs e)
 		{
-			if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_PHON].Value.ToString() == "[x]")
+			if (grid_phons.Rows[e.RowIndex].Cells[GRID_COL_PHON].Value.ToString() == StaticData.SIL)
 			{
 				grid_phons.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightSkyBlue;
 			}
@@ -1000,16 +1000,17 @@ namespace lipsync_editor
 				{
 					phon = ar.Phons[i];
 
-					if (StaticData.Vices.ContainsKey(phon)) // fudge ->
+					if (phon == StaticData.SIL)
+					{
+						vis = truth = String.Empty;
+					}
+					else if (StaticData.Vices.ContainsKey(phon))
 					{
 						vis = StaticData.Vices[phon];
 					}
 					else
-						vis = "INVALID";
-
-					if (phon == "x") // silence
 					{
-						phon = "[x]";
+						vis = "INVALID";
 						truth = String.Empty;
 					}
 #if DEBUG

@@ -148,7 +148,7 @@ namespace lipsync_editor
 				_sil = false;
 
 				Rows[_r].Cells[0].Value =
-				Table.Rows[_r][1] = "[x]";
+				Table.Rows[_r][1] = StaticData.SIL;
 			}
 
 
