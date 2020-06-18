@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -232,9 +233,11 @@ namespace lipsync_editor
 				grid_blocs.Columns[1].Width =  97; //  87
 				grid_blocs.Columns[2].Width = 110; // 100
 
-				for (int i = 0; i != grid_blocs.Columns.Count; ++i)
-					grid_blocs.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
-
+//				for (int i = 0; i != grid_blocs.Columns.Count; ++i)
+//					grid_blocs.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+				grid_blocs.Columns[0].SortMode = DataGridViewColumnSortMode.NotSortable;
+				grid_blocs.Columns[2].SortMode = DataGridViewColumnSortMode.NotSortable;
+				grid_blocs.ColumnHeaderMouseClick += dgblocs_ColumnHeaderMouseClick;
 
 				grid_phons.RowHeadersVisible =
 				grid_blocs.RowHeadersVisible = false;
@@ -294,7 +297,6 @@ namespace lipsync_editor
 			if (fatality)
 				Environment.Exit(0);
 		}
-
 
 //#if DEBUG
 //		static void LogSpeechRecognitionEngines()
@@ -774,6 +776,11 @@ namespace lipsync_editor
 					break;
 			}
 		}
+
+		void dgblocs_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+		{
+			if (e.ColumnIndex == 0) _dt2.DefaultView.Sort = String.Empty;
+		}
 		#endregion control handlers
 
 
@@ -1056,22 +1063,22 @@ namespace lipsync_editor
 //				row = grid_blocs.SelectedCells[0].RowIndex;
 //			}
 
-			var blocs = new List<FxeDataBlock>();
+			var datablocks = new List<FxeDataBlock>();
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in _fxedata)
 			{
-				blocs.AddRange(pair.Value);
+				datablocks.AddRange(pair.Value);
 			}
 
 			_dt2.Rows.Clear();
 
 			int j = -1;
-			foreach (FxeDataBlock bloc in blocs)
+			foreach (FxeDataBlock block in datablocks)
 			{
-				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + bloc.Label,
-																bloc.Val1,
-																bloc.Val2 });
+				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Label,
+																block.Val1,
+																block.Val2 });
 			}
-//			grid_blocs.Sort(dg_blocks.Columns[1], ListSortDirection.Ascending);
+			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending);
 
 //			if (row != -1 && grid_blocs.Rows.Count > row)
 //			{
