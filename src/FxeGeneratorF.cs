@@ -785,7 +785,8 @@ namespace lipsync_editor
 		/// <param name="e"></param>
 		void dgblocs_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
-			if (e.ColumnIndex == 0) _dt2.DefaultView.Sort = String.Empty;
+			if (e.Button == MouseButtons.Left &&  e.ColumnIndex == 0)
+				_dt2.DefaultView.Sort = String.Empty;
 		}
 		#endregion control handlers
 
