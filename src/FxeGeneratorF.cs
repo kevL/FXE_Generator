@@ -1077,12 +1077,18 @@ namespace lipsync_editor
 
 			_dt2.Rows.Clear();
 
-			int j = -1;
-			foreach (FxeDataBlock block in datablocks)
+
+			int digits = datablocks.Count.ToString().Length;
+
+			FxeDataBlock block;
+			string j;
+			for (int i = 0; i != datablocks.Count; ++i)
 			{
-				_dt2.Rows.Add(new object[] { "[" + ++j + "] " + block.Label,
-																block.Val1,
-																block.Val2 });
+				j = "[" + i.ToString().PadLeft(digits, ' ') + "] ";
+				block = datablocks[i];
+				_dt2.Rows.Add(new object[] { j + block.Label,
+												 block.Val1,
+												 block.Val2 });
 			}
 			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending); // sort by vis-stops
 
