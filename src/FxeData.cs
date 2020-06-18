@@ -75,7 +75,7 @@ namespace lipsync_editor
 			logfile.Log();
 #endif
 
-			var datablocks = new List<FxeDataBlock>(); // viseme start, mid, end points
+			var datablocks = new List<FxeDataBlock>();
 
 			Trival trival;
 			string vis2 = "S";
@@ -146,7 +146,7 @@ namespace lipsync_editor
 						if (i + 1 < datablocks.Count)
 						{
 							datablock.Val1 += Math.Min(StaticData.STOP_INCR,
-													   (datablocks[i + 1].Val1 - datablock.Val2) / 2f);
+													   (datablocks[i + 1].Val1 - datablock.Val2) / 2f); // TODO: wtf.
 						}
 						else
 							datablock.Val1 += StaticData.STOP_INCR;
