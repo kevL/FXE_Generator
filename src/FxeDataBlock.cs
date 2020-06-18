@@ -31,9 +31,16 @@ namespace lipsync_editor
 		internal float Val2
 		{ get; private set; }
 
+		/// <summary>
+		/// Type is not written to file and seems to be used only for sorting in
+		/// the rare case that two FxeDataBlocks have the same value of Val1.
+		/// </summary>
 		internal FxeDataType Type
 		{ get; private set; }
 
+		/// <summary>
+		/// Id is not written to file and seems to be used only by the Smoother.
+		/// </summary>
 		internal int Id
 		{ get; private set; }
 		#endregion properties
@@ -61,6 +68,11 @@ namespace lipsync_editor
  
 
 		#region methods (interface)
+		/// <summary>
+		/// Used by FxeWriter.WriteData() to sort lists of datablocks.
+		/// </summary>
+		/// <param name="o"></param>
+		/// <returns></returns>
 		public int CompareTo(object o)
 		{
 			var other = o as FxeDataBlock;
@@ -76,5 +88,21 @@ namespace lipsync_editor
 			return Type.CompareTo(other.Type);
 		}
 		#endregion methods (interface)
+
+
+		#region methods (override)
+		/// <summary>
+		/// Overrides object.ToString() - is used only for log.
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString()
+		{
+			return "Label= "  + Label + Environment.NewLine
+				 + ". Val1= " + Val1  + Environment.NewLine
+				 + ". Val2= " + Val2  + Environment.NewLine
+				 + ". Type= " + Type  + Environment.NewLine
+				 + ". Id= "   + Id;
+		}
+		#endregion methods (override)
 	}
 }
