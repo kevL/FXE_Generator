@@ -35,7 +35,7 @@ namespace lipsync_editor
 #endif
 			if (File.Exists(pfe))
 			{
-				StaticData.MapFxeViscodes(fxedata);
+				StaticData.CreateViscodeLists(fxedata);
 
 				using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 				{
@@ -68,6 +68,7 @@ namespace lipsync_editor
 					// But they are not necessarily in the order you'd expect
 					// ... the OC uses all 25 viscodes but SoZ uses the last 10
 					// viscodes only.
+					// TODO: bypass facial gestures - blocks #15..#24
 //					for (int i = 0; i != 15; ++i)
 					for (int i = 0; i != viscodecount; ++i)
 					{

@@ -240,6 +240,10 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Gets a list of recognized viscodes.
+		/// </summary>
+		/// <returns>a list of viscodes</returns>
 		internal static List<string> GetStandardViscodes()
 		{
 			var viscodes = new List<string>();
@@ -264,7 +268,11 @@ namespace lipsync_editor
 			return viscodes;
 		}
 
-		internal static void MapFxeViscodes(IDictionary<string, List<FxeDataBlock>> fxedata)
+		/// <summary>
+		/// Creates blank lists of FxeDataBlocks for the viscodes.
+		/// </summary>
+		/// <param name="fxedata">pointer to a viscode-dictionary</param>
+		internal static void CreateViscodeLists(IDictionary<string, List<FxeDataBlock>> fxedata)
 		{
 			fxedata.Clear();
 

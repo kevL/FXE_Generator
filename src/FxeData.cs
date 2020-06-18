@@ -130,31 +130,25 @@ namespace lipsync_editor
 #if DEBUG
 			logfile.Log("FxeData.AddDatablocks()");
 #endif
-			StaticData.MapFxeViscodes(fxedata);
-
-			FxeDataBlock datablock0 = null;
+			StaticData.CreateViscodeLists(fxedata);
 
 			for (int i = 0; i != datablocks.Count; ++i)
 			{
 				FxeDataBlock datablock = datablocks[i];
 
-				if (datablock0 != null)
+				if (i != 0 && Math.Abs(datablock.Val1 - datablocks[i - 1].Val1) < StaticData.EPSILON)
 				{
-					if (Math.Abs(datablock.Val1 - datablock0.Val1) < StaticData.EPSILON)
-					{
-						// force the x-values (stop values) to never be equal
-						if (i + 1 < datablocks.Count)
-						{
-							datablock.Val1 += Math.Min(StaticData.STOP_INCR,
-													   (datablocks[i + 1].Val1 - datablock.Val2) / 2f); // TODO: wtf.
-						}
-						else
-							datablock.Val1 += StaticData.STOP_INCR;
-					}
+					// force the x-values (stop values) to never be equal
+//					if (i + 1 < datablocks.Count)
+//					{
+//						datablock.Val1 += Math.Min(StaticData.STOP_INCR,
+//												   (datablocks[i + 1].Val1 - datablock.Val2) / 2f); // TODO: wtf.
+//					}
+//					else
+					datablock.Val1 += StaticData.STOP_INCR;
 				}
 
 				fxedata[datablock.Label].Add(datablock);
-				datablock0 = datablock;
 			}
 		}
 
