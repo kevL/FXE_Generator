@@ -6,7 +6,7 @@ using System.IO;
 namespace lipsync_editor
 {
 	/// <summary>
-	/// Static class that reads data from an FXE file into a list of
+	/// Static class that reads data from an FXE-file into a list of
 	/// FxeDataBlocks.
 	/// </summary>
 	static class FxeReader
@@ -23,17 +23,14 @@ namespace lipsync_editor
 		/// <summary>
 		/// Reads an FXE-file and stores its data in a dictionary.
 		/// </summary>
-		/// <param name="pfe">fullpath of a (audio) file</param>
-		/// <param name="fxedata">pointer to store the result</param>
+		/// <param name="pfe">fullpath of the FXE-file input</param>
+		/// <param name="fxedata">pointer to store the data</param>
 		/// <returns>true if the FXE-file exists</returns>
 		internal static bool ReadFile(string pfe, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
-			_d = false;
+			_d = true;
 			logfile.Log("FxeReader.ReadFile()");
-#endif
-			pfe = pfe.Substring(0, pfe.Length - 3) + FxeGeneratorF.EXT_FXE;
-#if DEBUG
 			logfile.Log(". pfe= " + pfe);
 #endif
 			if (File.Exists(pfe))
@@ -47,28 +44,39 @@ namespace lipsync_editor
 					if (_d) logfile.Log(". _br.length= " + _br.BaseStream.Length);
 #endif
 					fs.Seek(85, SeekOrigin.Begin);
-					string headtype = GetString();
-					if (headtype == null) return false;
+					string head = GetString();
+					if (head == null) return false;
 #if DEBUG
-					logfile.Log(". headtype= " + headtype);
+					logfile.Log(". head= " + head);
 #endif
 					fs.Seek(34, SeekOrigin.Current);
-					string wavelabel = GetString();
-					if (wavelabel == null) return false;
+					string label = GetString();
+					if (label == null) return false;
 #if DEBUG
-					logfile.Log(". wavelabel= " + wavelabel);
+					logfile.Log(". label= " + label);
 #endif
 					fs.Seek(8, SeekOrigin.Current);
-					short blockcount = _br.ReadInt16();
+					short viscodecount = _br.ReadInt16();
 #if DEBUG
-					logfile.Log(". blockcount= " + blockcount);
+					logfile.Log(". viscodecount= " + viscodecount);
 #endif
 					fs.Seek(8, SeekOrigin.Current);
 
-					for (int i = 0; i != 15; ++i)
+					// Each block is identified by a viscode.
+					// NOTE: there are 25 blocks but the last 10 are facial
+					// gestures that are not used.
+					// But they are not necessarily in the order you'd expect
+					// ... the OC uses all 25 viscodes but SoZ uses the last 10
+					// viscodes only.
+//					for (int i = 0; i != 15; ++i)
+					for (int i = 0; i != viscodecount; ++i)
 					{
 #if DEBUG
-						if (_d) logfile.Log(". . i= " + i);
+						if (_d)
+						{
+							logfile.Log();
+							logfile.Log(". . i= " + i);
+						}
 #endif
 						string viscode = GetString();
 						if (viscode == null) return false;
@@ -76,13 +84,13 @@ namespace lipsync_editor
 						if (_d) logfile.Log(". . viscode= " + viscode);
 #endif
 						fs.Seek(8, SeekOrigin.Current);				// 8 bytes of zeroes
-						short datablockcount = _br.ReadInt16();
+						short blockcount = _br.ReadInt16();
 #if DEBUG
-						if (_d) logfile.Log(". . datablockcount= " + datablockcount);
+						if (_d) logfile.Log(". . blockcount= " + blockcount);
 #endif
 						fs.Seek(4, SeekOrigin.Current);				// 4 bytes of zeroes
 
-						for (short j = 0; j != datablockcount; ++j)
+						for (short j = 0; j != blockcount; ++j)
 						{
 #if DEBUG
 							if (_d) logfile.Log(". . . j= " + j);
@@ -117,24 +125,25 @@ namespace lipsync_editor
 #if DEBUG
 			if (_d) logfile.Log(". pos of length  = " + _br.BaseStream.Position);
 #endif
-			int len = _br.ReadInt32();
+			int length = _br.ReadInt32();
 
 #if DEBUG
 			if (_d) logfile.Log(". pos of Chars   = " + _br.BaseStream.Position);
-			if (_d) logfile.Log(". length of Chars= " + len);
+			if (_d) logfile.Log(". length of Chars= " + length);
 #endif
-			if (_br.BaseStream.Position + len > _br.BaseStream.Length)
+			if (_br.BaseStream.Position + length > _br.BaseStream.Length)
 			{
+				// TODO: issue an error w/ InfoDialog
 #if DEBUG
 				logfile.Log(". . _br.ReadChars() will overflow. ABORT ReadFxe");
 #endif
 				return null;
 			}
 
-			string str = new string(_br.ReadChars(len));
-#if DEBUG
-			if (_d) logfile.Log(); //". str= " + str
-#endif
+			string str = new string(_br.ReadChars(length));
+//#if DEBUG
+//			if (_d) logfile.Log(); //". str= " + str
+//#endif
 			return str;
 		}
 		#endregion write methods (static)
@@ -162,10 +171,10 @@ namespace lipsync_editor
 					if (_d) logfile.Log(". _br.length= " + _br.BaseStream.Length);
 #endif
 					fs.Seek(85, SeekOrigin.Begin);
-					string headtype = GetString();
-					if (headtype == null) return false;
+					string head = GetString();
+					if (head == null) return false;
 #if DEBUG
-					logfile.Log(". headtype= " + headtype);
+					logfile.Log(". head= " + head);
 #endif
 					fs.Seek(34, SeekOrigin.Current);
 					string wavelabel = GetString();

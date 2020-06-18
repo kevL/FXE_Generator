@@ -450,7 +450,8 @@ namespace lipsync_editor
 
 					Filelabel = Utility.GetFilelabel(_pfe); // NOTE: that will be written into the FXE-file output.
 
-					if (FxeReader.ReadFile(_pfe, _fxedata))
+					string pfe = _pfe.Substring(0, _pfe.Length - 3) + FxeGeneratorF.EXT_FXE;
+					if (FxeReader.ReadFile(pfe, _fxedata))
 						PopulateDataGrid();
 
 					_sapi.Wavefile = AudioConverter.deterwave(_pfe);
