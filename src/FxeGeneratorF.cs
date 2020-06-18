@@ -777,6 +777,12 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Clears sort-order of the DataBlocks grid when its viseme-header is
+		/// clicked.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void dgblocs_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
 		{
 			if (e.ColumnIndex == 0) _dt2.DefaultView.Sort = String.Empty;
@@ -1078,7 +1084,7 @@ namespace lipsync_editor
 																block.Val1,
 																block.Val2 });
 			}
-			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending);
+			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending); // sort by vis-stops
 
 //			if (row != -1 && grid_blocs.Rows.Count > row)
 //			{
