@@ -101,19 +101,37 @@ namespace lipsync_editor
 		{
 			foreach (KeyValuePair<string, List<FxeDataBlock>> pair in fxedata)
 			{
-				WriteString(pair.Key); // viscode
+				string viscode = pair.Key;
+#if DEBUG
+				logfile.Log();
+				logfile.Log(". viscode= " + viscode);
+#endif
+				WriteString(viscode);
 
 				_bw.Write(0L);
 
 				List<FxeDataBlock> data = pair.Value;
+//#if DEBUG
+//				if (data.Count != 0)
+//				{
+//					logfile.Log();
+//					logfile.Log("- presort");
+//					foreach (FxeDataBlock datablock in data)
+//						logfile.Log(datablock.ToString());
+//				}
+//#endif
+				data.Sort(); // NOTE: Sorting does not appear to be needed.
+
 				_bw.Write((short)data.Count);
-
 				_bw.Write(0);
-
-				data.Sort();
 
 				foreach (FxeDataBlock datablock in data)
 				{
+#if DEBUG
+					logfile.Log();
+					logfile.Log("- postsort");
+					logfile.Log(datablock.ToString());
+#endif
 					_bw.Write(datablock.Val1);
 					_bw.Write(datablock.Val2);
 					_bw.Write((short)0);
