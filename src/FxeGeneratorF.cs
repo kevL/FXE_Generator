@@ -873,8 +873,6 @@ namespace lipsync_editor
 #if DEBUG
 				logfile.Log(". select DEFault");
 #endif
-				_fxedata = _fxedata_def;
-
 				if (!isConsole)
 				{
 #if DEBUG
@@ -882,14 +880,14 @@ namespace lipsync_editor
 #endif
 					rb_def.Checked = true; // fire rb_CheckChanged
 				}
+				else
+					_fxedata = _fxedata_def;
 			}
 			else
 			{
 #if DEBUG
 				logfile.Log(". select ENHanced");
 #endif
-				_fxedata = _fxedata_enh;
-
 				if (!isConsole)
 				{
 #if DEBUG
@@ -897,19 +895,21 @@ namespace lipsync_editor
 #endif
 					rb_enh.Checked = true; // fire rb_CheckChanged
 				}
+				else
+					_fxedata = _fxedata_enh;
 			}
 
 
-			if (isConsole)
+			if (!isConsole)
+			{
+				bu_edit.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
+				Cursor = Cursors.Default;
+			}
+			else
 			{
 				string pfe = _pfe.Substring(0, _pfe.Length - 3).ToLower() + FxeGeneratorF.EXT_FXE;
 				FxeWriter.WriteFile(pfe, _headtype, _fxedata);
 				Application.Exit();
-			}
-			else
-			{
-				bu_edit.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
-				Cursor = Cursors.Default;
 			}
 		}
 
