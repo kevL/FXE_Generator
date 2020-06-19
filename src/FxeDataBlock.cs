@@ -25,11 +25,33 @@ namespace lipsync_editor
 		internal string Label
 		{ get; private set; }
 
+		float _val1;
+		/// <summary>
+		/// The stop.
+		/// </summary>
 		internal float Val1
-		{ get; set; }
+		{
+			get { return _val1; }
+			set
+			{
+				int val = (int)(value * 1000);
+				_val1 = (float)val / 1000f;
+			}
+		}
 
+		float _val2;
+		/// <summary>
+		/// The morph-weight.
+		/// </summary>
 		internal float Val2
-		{ get; private set; }
+		{
+			get { return _val2; }
+			private set
+			{
+				int val = (int)(value * 100);
+				_val2 = (float)val / 100f;
+			}
+		}
 
 		/// <summary>
 		/// Type is not written to file and seems to be used only for sorting in
@@ -39,7 +61,8 @@ namespace lipsync_editor
 		{ get; private set; }
 
 		/// <summary>
-		/// Id is not written to file and seems to be used only by the Smoother.
+		/// Id is not written to file and seems to be used only by the
+		/// <see cref="Smoother"/>.
 		/// </summary>
 		internal int Id
 		{ get; private set; }

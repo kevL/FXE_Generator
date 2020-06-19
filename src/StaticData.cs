@@ -9,8 +9,8 @@ namespace lipsync_editor
 		#region fields (static)
 		internal const string SIL = "[x]"; // the silence marker
 
-		internal const float EPSILON   = 0.000005f;
-		internal const float STOP_INCR = 0.0000001f;
+		internal const float EPSILON   = 0.001f; //0.000005f
+		internal const float STOP_INCR = 0.001f; //0.0000001f
 		#endregion fields (static)
 
 
