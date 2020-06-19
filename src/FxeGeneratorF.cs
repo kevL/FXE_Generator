@@ -1128,6 +1128,11 @@ namespace lipsync_editor
 		{
 			if (!revert)
 			{
+				rb_alt.Checked = false; // force false to allow the radio-button to refire.
+
+				_dt1.Rows.Clear();
+				_dt2.Rows.Clear();
+
 				_fxedata_alt.Clear();
 	
 				FxeData.GenerateData(_ars_alt, _fxedata_alt);
