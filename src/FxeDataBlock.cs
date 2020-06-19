@@ -25,37 +25,37 @@ namespace lipsync_editor
 		internal string Label
 		{ get; private set; }
 
-		float _val1;
+		float _dur;
 		/// <summary>
-		/// The stop.
+		/// The duration in seconds truncated to millisecond precision.
 		/// </summary>
-		internal float Val1
+		internal float Duration
 		{
-			get { return _val1; }
+			get { return _dur; }
 			set
 			{
 				int val = (int)(value * 1000);
-				_val1 = (float)val / 1000f;
+				_dur = (float)val / 1000f;
 			}
 		}
 
-		float _val2;
+		float _weight;
 		/// <summary>
-		/// The morph-weight.
+		/// The morph-weight truncated to hundredths precision.
 		/// </summary>
-		internal float Val2
+		internal float Weight
 		{
-			get { return _val2; }
+			get { return _weight; }
 			private set
 			{
 				int val = (int)(value * 100);
-				_val2 = (float)val / 100f;
+				_weight = (float)val / 100f;
 			}
 		}
 
 		/// <summary>
 		/// Type is not written to file and seems to be used only for sorting in
-		/// the rare case that two FxeDataBlocks have the same value of Val1.
+		/// the rare case that two FxeDataBlocks have the same value of Duration.
 		/// </summary>
 		internal FxeDataType Type
 		{ get; private set; }
@@ -73,16 +73,16 @@ namespace lipsync_editor
 		/// <summary>
 		/// cTor. 
 		/// </summary>
-		/// <param name="label"></param>
-		/// <param name="val1"></param>
-		/// <param name="val2"></param>
+		/// <param name="label">viscode</param>
+		/// <param name="duration">duration in seconds</param>
+		/// <param name="weight">morph-weight</param>
 		/// <param name="type">start, middle, or stop</param>
-		/// <param name="id"></param>
-		internal FxeDataBlock(string label, float val1, float val2, FxeDataType type, int id)
+		/// <param name="id">group identifier</param>
+		internal FxeDataBlock(string label, float duration, float weight, FxeDataType type, int id)
 		{
-			Label = label;
-			Val1  = val1;
-			Val2  = val2;
+			Label    = label;
+			Duration = duration;
+			Weight   = weight;
 
 			Type = type;
 			Id   = id;
@@ -104,7 +104,7 @@ namespace lipsync_editor
 				throw new ArgumentException();
 
 
-			int result = Val1.CompareTo(other.Val1);
+			int result = Duration.CompareTo(other.Duration);
 			if (result != 0)
 				return result;
 
@@ -120,12 +120,24 @@ namespace lipsync_editor
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return "Label= "  + Label + Environment.NewLine
-				 + ". Val1= " + Val1  + Environment.NewLine
-				 + ". Val2= " + Val2  + Environment.NewLine
-				 + ". Type= " + Type  + Environment.NewLine
-				 + ". Id= "   + Id;
+			return "Label= "      + Label    + Environment.NewLine
+				 + ". Duration= " + Duration + Environment.NewLine
+				 + ". Weight= "   + Weight   + Environment.NewLine
+				 + ". Type= "     + Type     + Environment.NewLine
+				 + ". Id= "       + Id;
 		}
 		#endregion methods (override)
+
+
+		internal string GetTypeString()
+		{
+			switch (Type)
+			{
+				case FxeDataType.Strt: return "a";
+				case FxeDataType.Midl: return "b";
+				case FxeDataType.Stop: return "c";
+			}
+			return "-"; // error.
+		}
 	}
 }

@@ -1100,11 +1100,12 @@ namespace lipsync_editor
 
 //				j = "[" + i.ToString().PadLeft(digits, ' ') + "] ";
 				j = "[" +  i.ToString().PadLeft(digits0, ' ') + "]["
-				  + block.Id.ToString().PadLeft(digits1, ' ') + "] ";
+				  + block.Id.ToString().PadLeft(digits1, ' ')
+				  + block.GetTypeString() + "] ";
 
 				_dt2.Rows.Add(new object[] { j + block.Label,
-												 block.Val1,
-												 block.Val2 });
+												 block.Duration,
+												 block.Weight });
 			}
 			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending); // sort by vis-stops
 

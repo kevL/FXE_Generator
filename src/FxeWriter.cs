@@ -132,8 +132,8 @@ namespace lipsync_editor
 					logfile.Log("- postsort");
 					logfile.Log(datablock.ToString());
 #endif
-					_bw.Write(datablock.Val1);
-					_bw.Write(datablock.Val2);
+					_bw.Write(datablock.Duration);
+					_bw.Write(datablock.Weight);
 					_bw.Write((short)0);
 					_bw.Write(0L);
 				}

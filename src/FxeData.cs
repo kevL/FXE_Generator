@@ -12,8 +12,8 @@ namespace lipsync_editor
 	/// </summary>
 	struct Trival
 	{
-		internal float length;
-		internal float val;
+		internal float duration;
+		internal float weight;
 		internal short count;
 	}
 	#endregion structs (global)
@@ -89,12 +89,12 @@ namespace lipsync_editor
 				float stop = (float)visual.Value;
 
 				trival = TriGramTable[vis2][vis1][vis0]; //GetTrival(vis2, vis1, vis0)
-				float strt = stop - trival.length;
-				float midl = strt + trival.length / 2f;
+				float strt = stop - trival.duration;
+				float midl = strt + trival.duration / 2f;
 
-				datablocks.Add(new FxeDataBlock(vis0, strt,         0f, FxeDataType.Strt, id));
-				datablocks.Add(new FxeDataBlock(vis0, midl, trival.val, FxeDataType.Midl, id));
-				datablocks.Add(new FxeDataBlock(vis0, stop,         0f, FxeDataType.Stop, id));
+				datablocks.Add(new FxeDataBlock(vis0, strt,            0f, FxeDataType.Strt, id));
+				datablocks.Add(new FxeDataBlock(vis0, midl, trival.weight, FxeDataType.Midl, id));
+				datablocks.Add(new FxeDataBlock(vis0, stop,            0f, FxeDataType.Stop, id));
 				++id;
 
 				vis2 = vis1;
@@ -144,16 +144,16 @@ namespace lipsync_editor
 			{
 				FxeDataBlock datablock = datablocks[i];
 
-				if (i != 0 && Math.Abs(datablock.Val1 - datablocks[i - 1].Val1) < StaticData.EPSILON)
+				if (i != 0 && Math.Abs(datablock.Duration - datablocks[i - 1].Duration) < StaticData.EPSILON)
 				{
 					// force the x-values (stop values) to never be equal
 //					if (i + 1 < datablocks.Count)
 //					{
-//						datablock.Val1 += Math.Min(StaticData.STOP_INCR,
-//												   (datablocks[i + 1].Val1 - datablock.Val2) / 2f); // TODO: wtf.
+//						datablock.Duration += Math.Min(StaticData.STOP_INCR,
+//													   (datablocks[i + 1].Duration - datablock.Weight) / 2f); // TODO: wtf.
 //					}
 //					else
-					datablock.Val1 += StaticData.STOP_INCR;
+					datablock.Duration += StaticData.STOP_INCR;
 				}
 
 				fxedata[datablock.Label].Add(datablock);
@@ -176,6 +176,9 @@ namespace lipsync_editor
 		#region methods (trigram table)
 		internal static void LoadTrigrams()
 		{
+			logfile.Log();
+			logfile.Log("LoadTrigrams()");
+
 			InitTrigrams();
 
 			string pfe = Path.Combine(Application.StartupPath, TRIGRAMTABLE);
@@ -184,14 +187,20 @@ namespace lipsync_editor
 				var br = new BinaryReader(fs);
 				while (br.BaseStream.Position < br.BaseStream.Length)
 				{
-					string[] vices = br.ReadString().Split(',');
+					string vices = br.ReadString();
+					string[] a = vices.Split(',');
 
 					var trival = new Trival();
-					trival.length = br.ReadSingle();
-					trival.val    = br.ReadSingle();
+					trival.duration = br.ReadSingle();
+					trival.weight    = br.ReadSingle();
 					trival.count  = br.ReadInt16();
-
-					TriGramTable[vices[0]][vices[1]][vices[2]] = trival;
+#if DEBUG
+					logfile.Log(". vices= " + vices);
+					logfile.Log(". . length= " + trival.duration);
+					logfile.Log(". . val   = " + trival.weight);
+					logfile.Log(". . count = " + trival.count);
+#endif
+					TriGramTable[a[0]][a[1]][a[2]] = trival;
 				}
 				br.Close();
 			}
