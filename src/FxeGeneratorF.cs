@@ -38,8 +38,8 @@ namespace lipsync_editor
 		const string HEAD_PHONS_6 = "level";
 
 		const string HEAD_BLOCKS_0 = "viseme"; // headers for the DataBlocks table ->
-		const string HEAD_BLOCKS_1 = "frame stop";
-		const string HEAD_BLOCKS_2 = "morph weight";
+		const string HEAD_BLOCKS_1 = "stop";
+		const string HEAD_BLOCKS_2 = "weight";
 
 		internal static bool isConsole;
 
