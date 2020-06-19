@@ -203,13 +203,13 @@ namespace lipsync_editor
 				_dt1.Columns.Add(dc);
 
 				grid_phons.DataSource = _dt1;
-				grid_phons.Columns[0].Width = 50; // 50
-				grid_phons.Columns[1].Width = 76; // 76
-				grid_phons.Columns[2].Width = 86; // 86
-				grid_phons.Columns[3].Width = 86; // 86
-				grid_phons.Columns[4].Width = 67; // 67
-				grid_phons.Columns[5].Width = 57; // 57
-				grid_phons.Columns[6].Width = 61; // 56
+				grid_phons.Columns[0].Width = 50; // 50 "pos"
+				grid_phons.Columns[1].Width = 76; // 76 "phoneme"
+				grid_phons.Columns[2].Width = 86; // 86 "start"
+				grid_phons.Columns[3].Width = 86; // 86 "stop"
+				grid_phons.Columns[4].Width = 67; // 67 "viseme"
+				grid_phons.Columns[5].Width = 57; // 57 "truth"
+				grid_phons.Columns[6].Width = 61; // 56 "level"
 
 				for (int i = 0; i != grid_phons.Columns.Count; ++i)
 					grid_phons.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -229,9 +229,12 @@ namespace lipsync_editor
 				_dt2.Columns.Add(dc);
 
 				grid_blocs.DataSource = _dt2;
-				grid_blocs.Columns[0].Width =  80; //  68
-				grid_blocs.Columns[1].Width =  97; //  87
-				grid_blocs.Columns[2].Width = 110; // 100
+//				grid_blocs.Columns[0].Width =  80; //  68 "viseme"
+//				grid_blocs.Columns[1].Width =  97; //  87 "frame stop"
+//				grid_blocs.Columns[2].Width = 110; // 100 "morph weight"
+				grid_blocs.Columns[0].Width = 140; //  68 "viseme"
+				grid_blocs.Columns[1].Width =  67; //     "stop"
+				grid_blocs.Columns[2].Width =  80; //     "weight"
 
 //				for (int i = 0; i != grid_blocs.Columns.Count; ++i)
 //					grid_blocs.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
@@ -1079,14 +1082,26 @@ namespace lipsync_editor
 			_dt2.Rows.Clear();
 
 
-			int digits = datablocks.Count.ToString().Length;
+			int digits0 = datablocks.Count.ToString().Length;
+
+			int digits1 = 0;
+			foreach (FxeDataBlock b in datablocks)
+			{
+				if (b.Id > digits1)
+					digits1 = b.Id;
+			}
+			digits1 = digits1.ToString().Length;
 
 			FxeDataBlock block;
 			string j;
 			for (int i = 0; i != datablocks.Count; ++i)
 			{
-				j = "[" + i.ToString().PadLeft(digits, ' ') + "] ";
 				block = datablocks[i];
+
+//				j = "[" + i.ToString().PadLeft(digits, ' ') + "] ";
+				j = "[" +  i.ToString().PadLeft(digits0, ' ') + "]["
+				  + block.Id.ToString().PadLeft(digits1, ' ') + "] ";
+
 				_dt2.Rows.Add(new object[] { j + block.Label,
 												 block.Val1,
 												 block.Val2 });
