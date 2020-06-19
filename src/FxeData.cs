@@ -88,7 +88,7 @@ namespace lipsync_editor
 
 				float stop = (float)visual.Value;
 
-				trival = GetTrival(vis2, vis1, vis0);
+				trival = TriGramTable[vis2][vis1][vis0]; //GetTrival(vis2, vis1, vis0)
 				float strt = stop - trival.length;
 				float midl = strt + trival.length / 2f;
 
@@ -106,10 +106,13 @@ namespace lipsync_editor
 			SmoothTransitions(fxedata);
 		}
 
-		static Trival GetTrival(string vis2, string vis1, string vis0)
+		// The trivals are hardcoded in TrigramTable.dat and none of them check
+		// true for the condition specified in this function.
+/*		static Trival GetTrival(string vis2, string vis1, string vis0)
 		{
 #if DEBUG
 			logfile.Log("FxeData.GetTrival() vis2= " + vis2 + " vis1= " + vis1 + " vis0= " + vis0);
+			return TriGramTable[vis2][vis1][vis0];
 #endif
 			Trival trival = TriGramTable[vis2][vis1][vis0];
 			if (Math.Abs(trival.length) < StaticData.EPSILON)
@@ -119,11 +122,16 @@ namespace lipsync_editor
 				{
 					trival0 = pair.Value[vis1][vis0];
 					if (trival0.count > trival.count)
+					{
+#if DEBUG
+						logfile.Log(". Remap TRIVAL");
+#endif
 						trival = trival0;
+					}
 				}
 			}
 			return trival;
-		}
+		} */
 
 		static void AddDatablocks(IList<FxeDataBlock> datablocks, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
