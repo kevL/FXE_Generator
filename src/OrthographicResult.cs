@@ -29,15 +29,25 @@ namespace lipsync_editor
 		/// </summary>
 		internal string Level;
 
+		decimal _start;
 		/// <summary>
-		/// t=Start in seconds.
+		/// t=Start in seconds truncated to millisecond precision.
 		/// </summary>
-		internal decimal Start;
+		internal decimal Start
+		{
+			get { return _start; }
+			set { _start = Truncate(value); }
+		}
 
+		decimal _stop;
 		/// <summary>
-		/// t=Stop in seconds.
+		/// t=Stop in seconds truncated to millisecond precision.
 		/// </summary>
-		internal decimal Stop;
+		internal decimal Stop
+		{
+			get { return _stop; }
+			set { _stop = Truncate(value); }
+		}
 
 		/// <summary>
 		/// t=Stop of each phoneme of the word in seconds. SAPI does not
@@ -45,5 +55,17 @@ namespace lipsync_editor
 		/// the stops.
 		/// </summary>
 		internal List<decimal> phStops = new List<decimal>();
+
+
+		/// <summary>
+		/// Truncates seconds in decimal to millisecond precision.
+		/// </summary>
+		/// <param name="dec"></param>
+		/// <returns></returns>
+		internal static decimal Truncate(decimal dec)
+		{
+			int val = (int)(dec * 1000);
+			return (decimal)val / 1000;
+		}
 	}
 }

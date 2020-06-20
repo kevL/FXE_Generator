@@ -436,6 +436,9 @@ namespace lipsync_editor
 				{
 					ofd.InitialDirectory = _dirOpen;
 				}
+				else
+					ofd.InitialDirectory = Application.StartupPath;
+
 				// else let .NET handle it.
 
 				if (ofd.ShowDialog() == DialogResult.OK)
@@ -1104,7 +1107,7 @@ namespace lipsync_editor
 				  + block.GetTypeString() + "] ";
 
 				_dt2.Rows.Add(new object[] { j + block.Label,
-												 block.Duration,
+												 block.Point,
 												 block.Weight });
 			}
 			grid_blocs.Sort(grid_blocs.Columns[1], ListSortDirection.Ascending); // sort by vis-stops

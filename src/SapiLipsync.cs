@@ -999,7 +999,7 @@ namespace lipsync_editor
 				int i = 0;
 				for (; i != stops.Count - 1; ++i)
 				{
-					ar.phStops.Add(stops[i] * factor + ar.Start);
+					ar.phStops.Add(OrthographicResult.Truncate(stops[i] * factor) + ar.Start);
 				}
 				ar.phStops.Add(ar.Stop); // ensure the final phoneme-stop IS the word-stop.
 			}

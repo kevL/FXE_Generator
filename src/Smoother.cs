@@ -21,7 +21,7 @@ namespace lipsync_editor
 			FxeDataBlock datablock;
 
 			int   id = datablocks[0].Id;
-			float Ax = datablocks[0].Duration;
+			float Ax = datablocks[0].Point;
 			float Ay = datablocks[0].Weight;
 
 			for (int i = 1; i < datablocks.Count - 1; ++i)
@@ -39,13 +39,13 @@ namespace lipsync_editor
 					if (Bindex == -1)
 					{
 						id = datablock.Id;
-						Ax = datablock.Duration;
+						Ax = datablock.Point;
 						Ay = datablock.Weight;
 
 						continue;
 					}
 
-					float Cx = datablock.Duration;
+					float Cx = datablock.Point;
 					float Cy = datablock.Weight;
 
 					float Dx,Dy;
@@ -125,7 +125,7 @@ namespace lipsync_editor
 				else // IDs equal
 				{
 					id = datablock.Id;
-					Ax = datablock.Duration;
+					Ax = datablock.Point;
 					Ay = datablock.Weight;
 				}
 			}
@@ -151,7 +151,7 @@ namespace lipsync_editor
 					FxeDataBlock datablock = datablocks[id];
 					if (datablock.Id == blockid)
 					{
-						x = datablock.Duration;
+						x = datablock.Point;
 						y = datablock.Weight;
 
 						return id;
@@ -255,7 +255,7 @@ namespace lipsync_editor
 		/// <param name="id"></param>
 		static void InsertIntersectionPoint(IList<FxeDataBlock> datablocks, FxeDataBlock datablock, int id)
 		{
-			while (datablock.Duration > datablocks[id].Duration && id < datablocks.Count)
+			while (datablock.Point > datablocks[id].Point && id < datablocks.Count)
 				++id;
 
 			if (id < datablocks.Count)

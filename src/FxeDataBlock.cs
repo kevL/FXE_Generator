@@ -25,17 +25,18 @@ namespace lipsync_editor
 		internal string Label
 		{ get; private set; }
 
-		float _dur;
+		float _point;
 		/// <summary>
-		/// The duration in seconds truncated to millisecond precision.
+		/// The point in seconds truncated to millisecond precision that this
+		/// visual hits its 'Weight'.
 		/// </summary>
-		internal float Duration
+		internal float Point
 		{
-			get { return _dur; }
+			get { return _point; }
 			set
 			{
 				int val = (int)(value * 1000);
-				_dur = (float)val / 1000f;
+				_point = (float)val / 1000f;
 			}
 		}
 
@@ -74,15 +75,15 @@ namespace lipsync_editor
 		/// cTor. 
 		/// </summary>
 		/// <param name="label">viscode</param>
-		/// <param name="duration">duration in seconds</param>
+		/// <param name="point">point of 'weight' in seconds</param>
 		/// <param name="weight">morph-weight</param>
 		/// <param name="type">start, middle, or stop</param>
 		/// <param name="id">group identifier</param>
-		internal FxeDataBlock(string label, float duration, float weight, FxeDataType type, int id)
+		internal FxeDataBlock(string label, float point, float weight, FxeDataType type, int id)
 		{
-			Label    = label;
-			Duration = duration;
-			Weight   = weight;
+			Label  = label;
+			Point  = point;
+			Weight = weight;
 
 			Type = type;
 			Id   = id;
@@ -104,7 +105,7 @@ namespace lipsync_editor
 				throw new ArgumentException();
 
 
-			int result = Duration.CompareTo(other.Duration);
+			int result = Point.CompareTo(other.Point);
 			if (result != 0)
 				return result;
 
@@ -120,11 +121,11 @@ namespace lipsync_editor
 		/// <returns></returns>
 		public override string ToString()
 		{
-			return "Label= "      + Label    + Environment.NewLine
-				 + ". Duration= " + Duration + Environment.NewLine
-				 + ". Weight= "   + Weight   + Environment.NewLine
-				 + ". Type= "     + Type     + Environment.NewLine
-				 + ". Id= "       + Id;
+			return "Label= "    + Label  + Environment.NewLine
+				 + ". Point= "  + Point  + Environment.NewLine
+				 + ". Weight= " + Weight + Environment.NewLine
+				 + ". Type= "   + Type   + Environment.NewLine
+				 + ". Id= "     + Id;
 		}
 		#endregion methods (override)
 

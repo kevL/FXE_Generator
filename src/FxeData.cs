@@ -59,7 +59,7 @@ namespace lipsync_editor
 						{
 							string vis = StaticData.Vices[phon];
 #if DEBUG
-							log += vis;
+							log += vis + " " + ar.phStops[i];
 #endif
 							visuals.Add(new KeyValuePair<string, decimal>(vis, ar.phStops[i]));
 						}
@@ -84,17 +84,28 @@ namespace lipsync_editor
 
 			foreach (KeyValuePair<string, decimal> visual in visuals)
 			{
-				string vis0 = visual.Key;
-
-				float stop = (float)visual.Value;
+				string vis0 =        visual.Key;	// viscode
+				float stop  = (float)visual.Value;	// phStop
 
 				trival = TriGramTable[vis2][vis1][vis0]; //GetTrival(vis2, vis1, vis0)
-				float strt = stop - trival.duration;
-				float midl = strt + trival.duration / 2f;
+				float strt = Math.Max(0f, stop - trival.duration);
+				float midl = Math.Max(0f, stop - trival.duration / 2f); // TODO: this could be t=0 -> should be deleted.
 
-				datablocks.Add(new FxeDataBlock(vis0, strt,            0f, FxeDataType.Strt, id));
-				datablocks.Add(new FxeDataBlock(vis0, midl, trival.weight, FxeDataType.Midl, id));
-				datablocks.Add(new FxeDataBlock(vis0, stop,            0f, FxeDataType.Stop, id));
+				var blocka = new FxeDataBlock(vis0, strt,            0f, FxeDataType.Strt, id);
+				var blockb = new FxeDataBlock(vis0, midl, trival.weight, FxeDataType.Midl, id);
+				var blockc = new FxeDataBlock(vis0, stop,            0f, FxeDataType.Stop, id);
+#if DEBUG
+				logfile.Log("viscode= [" + vis2 + "][" + vis1 + "][" + vis0 + "] trival.duration= " + trival.duration);
+				logfile.Log("BLOCK A");
+				logfile.Log(blocka.ToString());
+				logfile.Log("BLOCK B");
+				logfile.Log(blockb.ToString());
+				logfile.Log("BLOCK C");
+				logfile.Log(blockc.ToString());
+#endif
+				datablocks.Add(blocka);
+				datablocks.Add(blockb);
+				datablocks.Add(blockc);
 				++id;
 
 				vis2 = vis1;
@@ -103,7 +114,7 @@ namespace lipsync_editor
 			datablocks.Sort();
 
 			AddDatablocks(datablocks, fxedata);
-			SmoothTransitions(fxedata);
+			SmoothTransitions(fxedata); // TODO - test
 		}
 
 		// The trivals are hardcoded in TrigramTable.dat and none of them check
@@ -144,16 +155,16 @@ namespace lipsync_editor
 			{
 				FxeDataBlock datablock = datablocks[i];
 
-				if (i != 0 && Math.Abs(datablock.Duration - datablocks[i - 1].Duration) < StaticData.EPSILON)
+				if (i != 0 && Math.Abs(datablock.Point - datablocks[i - 1].Point) < StaticData.EPSILON)
 				{
 					// force the x-values (stop values) to never be equal
 //					if (i + 1 < datablocks.Count)
 //					{
-//						datablock.Duration += Math.Min(StaticData.STOP_INCR,
-//													   (datablocks[i + 1].Duration - datablock.Weight) / 2f); // TODO: wtf.
+//						datablock.Point += Math.Min(StaticData.STOP_INCR,
+//													(datablocks[i + 1].Point - datablock.Weight) / 2f); // TODO: wtf.
 //					}
 //					else
-					datablock.Duration += StaticData.STOP_INCR;
+					datablock.Point += StaticData.STOP_INCR;
 				}
 
 				fxedata[datablock.Label].Add(datablock);
@@ -176,9 +187,10 @@ namespace lipsync_editor
 		#region methods (trigram table)
 		internal static void LoadTrigrams()
 		{
+#if DEBUG
 			logfile.Log();
 			logfile.Log("LoadTrigrams()");
-
+#endif
 			InitTrigrams();
 
 			string pfe = Path.Combine(Application.StartupPath, TRIGRAMTABLE);
@@ -192,8 +204,8 @@ namespace lipsync_editor
 
 					var trival = new Trival();
 					trival.duration = br.ReadSingle();
-					trival.weight    = br.ReadSingle();
-					trival.count  = br.ReadInt16();
+					trival.weight   = br.ReadSingle();
+					trival.count    = br.ReadInt16(); // TODO: <- is suspect.
 #if DEBUG
 					logfile.Log(". vices= " + vices);
 					logfile.Log(". . length= " + trival.duration);
