@@ -248,7 +248,8 @@ namespace lipsync_editor
 		{
 			var viscodes = new List<string>();
 
-			viscodes.Add("S");
+			viscodes.Add("S"); // silent or more accurately blank/empty aka None.
+
 			viscodes.Add("Eat");
 			viscodes.Add("If");
 			viscodes.Add("Ox");
@@ -291,6 +292,8 @@ namespace lipsync_editor
 			fxedata.Add("Roar",                   new List<FxeDataBlock>());
 			fxedata.Add("Wet",                    new List<FxeDataBlock>());
 			fxedata.Add("Cage",                   new List<FxeDataBlock>());
+
+// not used by the LipSyncer -> but can be found in stock FXE-files
 			fxedata.Add("Orientation Head Pitch", new List<FxeDataBlock>());
 			fxedata.Add("Orientation Head Roll",  new List<FxeDataBlock>());
 			fxedata.Add("Orientation Head Yaw",   new List<FxeDataBlock>());

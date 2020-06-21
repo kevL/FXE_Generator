@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+//using System.Linq;
 using System.Windows.Forms;
 
 
@@ -185,40 +186,63 @@ namespace lipsync_editor
 
 
 		#region methods (trigram table)
+		/// <summary>
+		/// Loads 'TriGramTable.dat'.
+		/// </summary>
 		internal static void LoadTrigrams()
 		{
 #if DEBUG
 			logfile.Log();
 			logfile.Log("LoadTrigrams()");
 #endif
-			InitTrigrams();
-
-			string pfe = Path.Combine(Application.StartupPath, TRIGRAMTABLE);
-			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
-			{
-				var br = new BinaryReader(fs);
-				while (br.BaseStream.Position < br.BaseStream.Length)
-				{
-					string vices = br.ReadString();
-					string[] a = vices.Split(',');
-
-					var trival = new Trival();
-					trival.duration = br.ReadSingle();
-					trival.weight   = br.ReadSingle();
-					trival.count    = br.ReadInt16(); // TODO: <- is suspect.
-#if DEBUG
-					logfile.Log(". vices= " + vices);
-					logfile.Log(". . length= " + trival.duration);
-					logfile.Log(". . val   = " + trival.weight);
-					logfile.Log(". . count = " + trival.count);
-#endif
-					TriGramTable[a[0]][a[1]][a[2]] = trival;
-				}
-				br.Close();
-			}
+			BuildTable();
+			FillValues();
+//#if DEBUG
+//			LogTrigramTable(); // log.
+//#endif
 		}
 
-		static void InitTrigrams()
+//#if DEBUG
+//		/// <summary>
+//		/// log funct.
+//		/// @note Holy batshit what circle of hell did this table spawn ...
+//		/// </summary>
+//		static void LogTrigramTable()
+//		{
+//			Trival trival;
+//			                                      Dictionary<string, Trival>   level0;
+//			                   Dictionary<string, Dictionary<string, Trival>>  level1;
+//			Dictionary<string, Dictionary<string, Dictionary<string, Trival>>> level2;
+//
+//			level2 = TriGramTable;
+//			for (int i = 0; i != level2.Count; ++i)
+//			{
+//				logfile.Log(". level2 vis[" + i + "]= " + level2.Keys.ElementAt(i));
+//
+//				level1 = level2.Values.ElementAt(i);
+//				for (int j = 0; j != level1.Count; ++j)
+//				{
+//					logfile.Log(". . level1 vis[" + j + "]= " + level1.Keys.ElementAt(j));
+//
+//					level0 = level1.Values.ElementAt(j);
+//					for (int k = 0; k != level0.Count; ++k)
+//					{
+//						logfile.Log(". . . level0 vis[" + k + "]= " + level0.Keys.ElementAt(k));
+//
+//						trival = level0.Values.ElementAt(k);
+//						logfile.Log(". . . . duration= " + trival.duration);
+//						logfile.Log(". . . . weight  = " + trival.weight);
+//						logfile.Log(". . . . count   = " + trival.count);
+//					}
+//				}
+//			}
+//		}
+//#endif
+
+		/// <summary>
+		/// Builds the trigram-table.
+		/// </summary>
+		static void BuildTable()
 		{
 			List<string> vices = StaticData.GetStandardViscodes();
 			foreach (string vis2 in vices)
@@ -239,6 +263,36 @@ namespace lipsync_editor
 						}
 					}
 				}
+			}
+		}
+
+		/// <summary>
+		/// Fills the trigram-table with Trivals.
+		/// </summary>
+		static void FillValues()
+		{
+			string pfe = Path.Combine(Application.StartupPath, TRIGRAMTABLE);
+			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				var br = new BinaryReader(fs);
+				while (br.BaseStream.Position < br.BaseStream.Length)
+				{
+					string vices = br.ReadString();
+					string[] a = vices.Split(',');
+
+					var trival = new Trival();
+					trival.duration = br.ReadSingle();
+					trival.weight   = br.ReadSingle();
+					trival.count    = br.ReadInt16(); // TODO: <- is suspect.
+//#if DEBUG
+//					logfile.Log(". vices= " + vices);
+//					logfile.Log(". . length= " + trival.duration);
+//					logfile.Log(". . val   = " + trival.weight);
+//					logfile.Log(". . count = " + trival.count);
+//#endif
+					TriGramTable[a[0]][a[1]][a[2]] = trival;
+				}
+				br.Close();
 			}
 		}
 		#endregion methods (trigram table)
