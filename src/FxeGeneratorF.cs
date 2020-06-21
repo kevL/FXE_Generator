@@ -25,6 +25,7 @@ namespace lipsync_editor
 
 		internal const string EXT_FXE = "fxe";
 				 const string EXT_TXT = "txt";
+				 const string EXT_PHO = "pho";
 
 		const int GRID_COL_PHON  = 1;
 		const int GRID_COL_LEVEL = 6;
@@ -530,6 +531,7 @@ namespace lipsync_editor
 			rb_alt.Checked = rb_alt.Visible = false;
 
 			bu_edit.Enabled = false;
+			bu_save.Enabled = false;
 
 			_dt1.Rows.Clear();
 			_dt2.Rows.Clear();
@@ -794,6 +796,62 @@ namespace lipsync_editor
 			if (e.Button == MouseButtons.Left &&  e.ColumnIndex == 0)
 				_dt2.DefaultView.Sort = String.Empty;
 		}
+
+
+		string _dirPho = String.Empty;
+
+		/// <summary>
+		/// Saves the currently displayed PHONEMES table to file.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void click_Save(object sender, EventArgs e)
+		{
+			using (var sfd = new SaveFileDialog())
+			{
+//				sfd.Title = "Save as ...";
+				sfd.Filter = "PHO files (*.pho)|*.pho|All files (*.*)|*.*";
+
+				if (Directory.Exists(_dirPho))
+				{
+					sfd.InitialDirectory = _dirPho;
+				}
+				else
+				{
+					string dir = Path.GetDirectoryName(_pfe);
+					if (Directory.Exists(dir))
+						sfd.InitialDirectory = dir;
+				}
+				// else let .NET handle it.
+
+				sfd.FileName = Utility.GetFilelabel(_pfe) + "." + EXT_PHO;
+
+				if (sfd.ShowDialog(this) == DialogResult.OK)
+				{
+					_dirPho = Path.GetDirectoryName(sfd.FileName);
+					WriteTable(sfd.FileName);
+				}
+			}
+		}
+
+		const string DELI = ";";
+
+		void WriteTable(string pfe)
+		{
+			using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
+			{
+				var sw = new StreamWriter(fs, System.Text.Encoding.ASCII);
+
+				DataRow r;
+				for (int i = 0; i != _dt1.Rows.Count; ++i)
+				{
+					r = _dt1.Rows[i];
+					sw.Write(r[0] + DELI + r[1] + DELI + r[2] + DELI + r[3]);
+					sw.WriteLine();
+				}
+				sw.Close();
+			}
+		}
 		#endregion control handlers
 
 
@@ -908,7 +966,9 @@ namespace lipsync_editor
 
 			if (!isConsole)
 			{
-				bu_edit.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
+				bu_edit.Enabled =
+				bu_save.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
+
 				Cursor = Cursors.Default;
 			}
 			else

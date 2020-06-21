@@ -33,6 +33,7 @@ namespace lipsync_editor
 		Button bu_synth;
 		Button bu_createfxe;
 		Button bu_edit;
+		Button bu_save;
 
 		TextBox tb_wavefile;
 		Button bu_play;
@@ -120,6 +121,7 @@ namespace lipsync_editor
 			this.tssl_langids = new System.Windows.Forms.ToolStripStatusLabel();
 			this.bu_edit = new System.Windows.Forms.Button();
 			this.rb_alt = new System.Windows.Forms.RadioButton();
+			this.bu_save = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).BeginInit();
 			this.ss_bot.SuspendLayout();
@@ -616,11 +618,25 @@ namespace lipsync_editor
 			this.rb_alt.Visible = false;
 			this.rb_alt.CheckedChanged += new System.EventHandler(this.checkedchanged_Radio);
 			// 
+			// bu_save
+			// 
+			this.bu_save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.bu_save.Enabled = false;
+			this.bu_save.Location = new System.Drawing.Point(470, 34);
+			this.bu_save.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_save.Name = "bu_save";
+			this.bu_save.Size = new System.Drawing.Size(86, 25);
+			this.bu_save.TabIndex = 35;
+			this.bu_save.Text = "Save ...";
+			this.bu_save.UseVisualStyleBackColor = true;
+			this.bu_save.Click += new System.EventHandler(this.click_Save);
+			// 
 			// FxeGeneratorF
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1256, 506);
+			this.Controls.Add(this.bu_save);
 			this.Controls.Add(this.rb_alt);
 			this.Controls.Add(this.bu_edit);
 			this.Controls.Add(this.ss_bot);
