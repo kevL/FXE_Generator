@@ -5,7 +5,9 @@ using System.Collections.Generic;
 namespace lipsync_editor
 {
 	/// <summary>
-	/// 
+	/// A static class that smooths transitions from one viseme to the next.
+	/// @note FXE-data can be thought of as a 2d graph with time increasing
+	/// on its x-axis and morph-weight on its y-axis.
 	/// </summary>
 	static class Smoother
 	{
@@ -63,7 +65,7 @@ namespace lipsync_editor
 					float x = 0f;
 					float y = 0f;
 
-					if (GetLineIntersection(Ax,Ay, Bx,By, Cx,Cy, Dx,Dy, ref x, ref y))
+					if (CheckLineIntersection(Ax,Ay, Bx,By, Cx,Cy, Dx,Dy, ref x, ref y))
 					{
 						InsertIntersectionPoint(datablocks,
 												new FxeDataBlock(vis, x, y, FxeDataType.Midl, id),
@@ -145,10 +147,12 @@ namespace lipsync_editor
 			{
 				int blockid = datablocks[id].Id;
 
+				FxeDataBlock datablock;
+
 				++id;
 				while (id < datablocks.Count)
 				{
-					FxeDataBlock datablock = datablocks[id];
+					datablock = datablocks[id];
 					if (datablock.Id == blockid)
 					{
 						x = datablock.Point;
@@ -178,11 +182,11 @@ namespace lipsync_editor
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		static bool GetLineIntersection(float Ax, float Ay,
-										float Bx, float By,
-										float Cx, float Cy,
-										float Dx, float Dy,
-										ref float x, ref float y)
+		static bool CheckLineIntersection(float Ax, float Ay,
+										  float Bx, float By,
+										  float Cx, float Cy,
+										  float Dx, float Dy,
+										  ref float x, ref float y)
 		{
 			// Fail if either line segment is zero-length.
 			if (   (floatsequal(Ax, Bx) && floatsequal(Ay, By))
