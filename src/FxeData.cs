@@ -34,6 +34,12 @@ namespace lipsync_editor
 
 
 		#region methods (static)
+		/// <summary>
+		/// Generates FXE-data.
+		/// </summary>
+		/// <param name="ars">a list of <see cref="OrthographicResult"/></param>
+		/// <param name="fxedata">a dictionary of lists of <see cref="FxeDataBlock"/>'s
+		/// mapped to viscodes</param>
 		internal static void GenerateData(List<OrthographicResult> ars, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
@@ -145,6 +151,11 @@ namespace lipsync_editor
 			return trival;
 		} */
 
+		/// <summary>
+		/// Adds lists of datablocks to an FXE-data dictionary.
+		/// </summary>
+		/// <param name="datablocks"></param>
+		/// <param name="fxedata"></param>
 		static void AddDatablocks(IList<FxeDataBlock> datablocks, Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
@@ -172,6 +183,10 @@ namespace lipsync_editor
 			}
 		}
 
+		/// <summary>
+		/// Smooths viseme-transitions in a given FXE-data dictionary.
+		/// </summary>
+		/// <param name="fxedata"></param>
 		static void SmoothTransitions(Dictionary<string, List<FxeDataBlock>> fxedata)
 		{
 #if DEBUG
