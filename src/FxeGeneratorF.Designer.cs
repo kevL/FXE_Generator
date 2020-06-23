@@ -169,7 +169,7 @@ namespace lipsync_editor
 			this.bu_open.Location = new System.Drawing.Point(5, 5);
 			this.bu_open.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_open.Name = "bu_open";
-			this.bu_open.Size = new System.Drawing.Size(51, 26);
+			this.bu_open.Size = new System.Drawing.Size(52, 26);
 			this.bu_open.TabIndex = 0;
 			this.bu_open.Text = "open";
 			this.bu_open.UseVisualStyleBackColor = true;
@@ -400,7 +400,7 @@ namespace lipsync_editor
 			// bu_createfxe
 			// 
 			this.bu_createfxe.Enabled = false;
-			this.bu_createfxe.Location = new System.Drawing.Point(379, 34);
+			this.bu_createfxe.Location = new System.Drawing.Point(380, 34);
 			this.bu_createfxe.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_createfxe.Name = "bu_createfxe";
 			this.bu_createfxe.Size = new System.Drawing.Size(86, 25);
@@ -447,7 +447,7 @@ namespace lipsync_editor
 			"c_zombie",
 			"n_okku",
 			"N_SReaver"});
-			this.co_headtype.Location = new System.Drawing.Point(269, 35);
+			this.co_headtype.Location = new System.Drawing.Point(270, 35);
 			this.co_headtype.Margin = new System.Windows.Forms.Padding(0);
 			this.co_headtype.Name = "co_headtype";
 			this.co_headtype.Size = new System.Drawing.Size(106, 23);
@@ -455,10 +455,10 @@ namespace lipsync_editor
 			// 
 			// la_headtype
 			// 
-			this.la_headtype.Location = new System.Drawing.Point(195, 39);
+			this.la_headtype.Location = new System.Drawing.Point(206, 39);
 			this.la_headtype.Margin = new System.Windows.Forms.Padding(0);
 			this.la_headtype.Name = "la_headtype";
-			this.la_headtype.Size = new System.Drawing.Size(70, 15);
+			this.la_headtype.Size = new System.Drawing.Size(62, 15);
 			this.la_headtype.TabIndex = 6;
 			this.la_headtype.Text = "Head Type";
 			this.la_headtype.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
@@ -469,7 +469,7 @@ namespace lipsync_editor
 			this.bu_play.Location = new System.Drawing.Point(5, 34);
 			this.bu_play.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_play.Name = "bu_play";
-			this.bu_play.Size = new System.Drawing.Size(51, 25);
+			this.bu_play.Size = new System.Drawing.Size(52, 25);
 			this.bu_play.TabIndex = 3;
 			this.bu_play.Text = "play";
 			this.bu_play.UseVisualStyleBackColor = true;
@@ -478,10 +478,10 @@ namespace lipsync_editor
 			// la_blocks
 			// 
 			this.la_blocks.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_blocks.Location = new System.Drawing.Point(1007, 40);
+			this.la_blocks.Location = new System.Drawing.Point(1064, 40);
 			this.la_blocks.Margin = new System.Windows.Forms.Padding(0);
 			this.la_blocks.Name = "la_blocks";
-			this.la_blocks.Size = new System.Drawing.Size(200, 15);
+			this.la_blocks.Size = new System.Drawing.Size(86, 15);
 			this.la_blocks.TabIndex = 29;
 			this.la_blocks.Text = "Data Blocks";
 			this.la_blocks.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -516,7 +516,7 @@ namespace lipsync_editor
 			this.bu_synth.Location = new System.Drawing.Point(60, 34);
 			this.bu_synth.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_synth.Name = "bu_synth";
-			this.bu_synth.Size = new System.Drawing.Size(51, 25);
+			this.bu_synth.Size = new System.Drawing.Size(52, 25);
 			this.bu_synth.TabIndex = 4;
 			this.bu_synth.Text = "voice";
 			this.bu_synth.UseVisualStyleBackColor = true;
@@ -597,12 +597,12 @@ namespace lipsync_editor
 			// 
 			this.bu_edit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_edit.Enabled = false;
-			this.bu_edit.Location = new System.Drawing.Point(871, 34);
+			this.bu_edit.Location = new System.Drawing.Point(905, 34);
 			this.bu_edit.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_edit.Name = "bu_edit";
-			this.bu_edit.Size = new System.Drawing.Size(86, 25);
+			this.bu_edit.Size = new System.Drawing.Size(52, 25);
 			this.bu_edit.TabIndex = 27;
-			this.bu_edit.Text = "Edit ...";
+			this.bu_edit.Text = "edit ...";
 			this.bu_edit.UseVisualStyleBackColor = true;
 			this.bu_edit.Click += new System.EventHandler(this.click_Edit);
 			// 
@@ -624,12 +624,12 @@ namespace lipsync_editor
 			// 
 			this.bu_save.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_save.Enabled = false;
-			this.bu_save.Location = new System.Drawing.Point(470, 34);
+			this.bu_save.Location = new System.Drawing.Point(469, 34);
 			this.bu_save.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_save.Name = "bu_save";
-			this.bu_save.Size = new System.Drawing.Size(86, 25);
+			this.bu_save.Size = new System.Drawing.Size(52, 25);
 			this.bu_save.TabIndex = 35;
-			this.bu_save.Text = "Save ...";
+			this.bu_save.Text = "save ...";
 			this.bu_save.UseVisualStyleBackColor = true;
 			this.bu_save.Click += new System.EventHandler(this.click_Save);
 			// 
@@ -637,12 +637,12 @@ namespace lipsync_editor
 			// 
 			this.bu_load.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this.bu_load.Enabled = false;
-			this.bu_load.Location = new System.Drawing.Point(560, 34);
+			this.bu_load.Location = new System.Drawing.Point(524, 34);
 			this.bu_load.Margin = new System.Windows.Forms.Padding(0);
 			this.bu_load.Name = "bu_load";
-			this.bu_load.Size = new System.Drawing.Size(86, 25);
+			this.bu_load.Size = new System.Drawing.Size(52, 25);
 			this.bu_load.TabIndex = 36;
-			this.bu_load.Text = "Load ...";
+			this.bu_load.Text = "load ...";
 			this.bu_load.UseVisualStyleBackColor = true;
 			this.bu_load.Click += new System.EventHandler(this.click_Load);
 			// 
