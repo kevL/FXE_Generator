@@ -530,8 +530,9 @@ namespace lipsync_editor
 			rb_enh.Checked = rb_enh.Visible =
 			rb_alt.Checked = rb_alt.Visible = false;
 
-			bu_edit.Enabled = false;
-			bu_save.Enabled = false;
+			bu_edit.Enabled =
+			bu_save.Enabled =
+			bu_load.Enabled = false;
 
 			_dt1.Rows.Clear();
 			_dt2.Rows.Clear();
@@ -798,7 +799,7 @@ namespace lipsync_editor
 		}
 
 
-		string _dirPho = String.Empty;
+		string _dirSave = String.Empty;
 
 		/// <summary>
 		/// Saves the currently displayed PHONEMES table to file.
@@ -809,12 +810,11 @@ namespace lipsync_editor
 		{
 			using (var sfd = new SaveFileDialog())
 			{
-//				sfd.Title = "Save as ...";
 				sfd.Filter = "PHO files (*.pho)|*.pho|All files (*.*)|*.*";
 
-				if (Directory.Exists(_dirPho))
+				if (Directory.Exists(_dirSave))
 				{
-					sfd.InitialDirectory = _dirPho;
+					sfd.InitialDirectory = _dirSave;
 				}
 				else
 				{
@@ -828,13 +828,13 @@ namespace lipsync_editor
 
 				if (sfd.ShowDialog(this) == DialogResult.OK)
 				{
-					_dirPho = Path.GetDirectoryName(sfd.FileName);
+					_dirSave = Path.GetDirectoryName(sfd.FileName);
 					WriteTable(sfd.FileName);
 				}
 			}
 		}
 
-		const string DELI = ";";
+		const char DELI = ';';
 
 		void WriteTable(string pfe)
 		{
@@ -846,11 +846,102 @@ namespace lipsync_editor
 				for (int i = 0; i != _dt1.Rows.Count; ++i)
 				{
 					r = _dt1.Rows[i];
-					sw.Write(r[0] + DELI + r[1] + DELI + r[2] + DELI + r[3]);
+					sw.Write(r[0] + DELI.ToString()
+						   + r[1] + DELI
+						   + r[2] + DELI
+						   + r[3]);
 					sw.WriteLine();
 				}
 				sw.Close();
 			}
+		}
+
+		string _dirLoad = String.Empty;
+
+		/// <summary>
+		/// Loads the PHONEMES table with file-data.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void click_Load(object sender, EventArgs e)
+		{
+			using (var ofd = new OpenFileDialog())
+			{
+				ofd.Filter = "PHO files (*.pho)|*.pho|All files (*.*)|*.*";
+
+				if (Directory.Exists(_dirLoad))
+				{
+					ofd.InitialDirectory = _dirLoad;
+				}
+				else
+				{
+					string dir = Path.GetDirectoryName(_pfe);
+					if (Directory.Exists(dir))
+						ofd.InitialDirectory = dir;
+				}
+				// else let .NET handle it.
+
+				if (ofd.ShowDialog(this) == DialogResult.OK)
+				{
+					_dirLoad = Path.GetDirectoryName(ofd.FileName);
+					LoadTable(ofd.FileName);
+				}
+			}
+		}
+
+		void LoadTable(string pfe)
+		{
+			_ars_alt = new List<OrthographicResult>();
+
+			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
+			{
+				var sr = new StreamReader(fs, System.Text.Encoding.ASCII);
+
+				OrthographicResult result = null;
+				string l;
+				while ((l = sr.ReadLine()) != null && l != String.Empty)
+				{
+					// TODO: WARNING Do error checks ->
+
+					string[] a = l.Split(DELI);
+					logfile.Log("a[0]= " + a[0]);
+					logfile.Log("a[1]= " + a[1]);
+					logfile.Log("a[2]= " + a[2]);
+					logfile.Log("a[3]= " + a[3]);
+
+					if (Utility.isWordstart(a[0]))
+					{
+						if (result != null)
+							_ars_alt.Add(result);
+
+						result = new OrthographicResult();
+						result.Orthography = String.Empty;
+						result.Confi       = 0f;
+						result.Level       = String.Empty;
+
+						result.Phons = new List<string>();
+						result.Phons.Add(a[1]);
+
+						result.Start = Decimal.Parse(a[2]);
+						result.Stop  = Decimal.Parse(a[3]);
+
+						result.phStops.Add(Decimal.Parse(a[3]));
+					}
+					else
+					{
+						result.Phons  .Add(              a[1]);
+						result.phStops.Add(Decimal.Parse(a[3]));
+					}
+				}
+
+				if (result != null)
+					_ars_alt.Add(result);
+
+				sr.Close();
+			}
+
+			if (_ars_alt.Count != 0)
+				AlternateData();
 		}
 		#endregion control handlers
 
@@ -968,6 +1059,7 @@ namespace lipsync_editor
 			{
 				bu_edit.Enabled =
 				bu_save.Enabled = (_dt1 != null && _dt1.Rows.Count != 0);
+				bu_load.Enabled = true;
 
 				Cursor = Cursors.Default;
 			}

@@ -34,6 +34,7 @@ namespace lipsync_editor
 		Button bu_createfxe;
 		Button bu_edit;
 		Button bu_save;
+		Button bu_load;
 
 		TextBox tb_wavefile;
 		Button bu_play;
@@ -122,6 +123,7 @@ namespace lipsync_editor
 			this.bu_edit = new System.Windows.Forms.Button();
 			this.rb_alt = new System.Windows.Forms.RadioButton();
 			this.bu_save = new System.Windows.Forms.Button();
+			this.bu_load = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this.grid_phons)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.grid_blocs)).BeginInit();
 			this.ss_bot.SuspendLayout();
@@ -369,10 +371,10 @@ namespace lipsync_editor
 			// la_phons
 			// 
 			this.la_phons.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.la_phons.Location = new System.Drawing.Point(570, 40);
+			this.la_phons.Location = new System.Drawing.Point(670, 40);
 			this.la_phons.Margin = new System.Windows.Forms.Padding(0);
 			this.la_phons.Name = "la_phons";
-			this.la_phons.Size = new System.Drawing.Size(286, 15);
+			this.la_phons.Size = new System.Drawing.Size(86, 15);
 			this.la_phons.TabIndex = 26;
 			this.la_phons.Text = "PHONEMES";
 			this.la_phons.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -631,11 +633,25 @@ namespace lipsync_editor
 			this.bu_save.UseVisualStyleBackColor = true;
 			this.bu_save.Click += new System.EventHandler(this.click_Save);
 			// 
+			// bu_load
+			// 
+			this.bu_load.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.bu_load.Enabled = false;
+			this.bu_load.Location = new System.Drawing.Point(560, 34);
+			this.bu_load.Margin = new System.Windows.Forms.Padding(0);
+			this.bu_load.Name = "bu_load";
+			this.bu_load.Size = new System.Drawing.Size(86, 25);
+			this.bu_load.TabIndex = 36;
+			this.bu_load.Text = "Load ...";
+			this.bu_load.UseVisualStyleBackColor = true;
+			this.bu_load.Click += new System.EventHandler(this.click_Load);
+			// 
 			// FxeGeneratorF
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1256, 506);
+			this.Controls.Add(this.bu_load);
 			this.Controls.Add(this.bu_save);
 			this.Controls.Add(this.rb_alt);
 			this.Controls.Add(this.bu_edit);
