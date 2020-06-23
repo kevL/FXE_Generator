@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Media;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 //#if DEBUG
@@ -816,6 +817,10 @@ namespace lipsync_editor
 				{
 					sfd.InitialDirectory = _dirSave;
 				}
+				else if (Directory.Exists(_dirLoad))
+				{
+					sfd.InitialDirectory = _dirLoad;
+				}
 				else
 				{
 					string dir = Path.GetDirectoryName(_pfe);
@@ -840,7 +845,7 @@ namespace lipsync_editor
 		{
 			using (var fs = new FileStream(pfe, FileMode.Create, FileAccess.Write, FileShare.None))
 			{
-				var sw = new StreamWriter(fs, System.Text.Encoding.ASCII);
+				var sw = new StreamWriter(fs, Encoding.ASCII);
 
 				DataRow r;
 				for (int i = 0; i != _dt1.Rows.Count; ++i)
@@ -873,6 +878,10 @@ namespace lipsync_editor
 				{
 					ofd.InitialDirectory = _dirLoad;
 				}
+				else if (Directory.Exists(_dirSave))
+				{
+					ofd.InitialDirectory = _dirSave;
+				}
 				else
 				{
 					string dir = Path.GetDirectoryName(_pfe);
@@ -895,9 +904,9 @@ namespace lipsync_editor
 
 			using (var fs = new FileStream(pfe, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
-				var sr = new StreamReader(fs, System.Text.Encoding.ASCII);
+				var sr = new StreamReader(fs, Encoding.ASCII);
 
-				OrthographicResult result = null;
+				OrthographicResult ar = null;
 				string l;
 				while ((l = sr.ReadLine()) != null && l != String.Empty)
 				{
@@ -907,31 +916,31 @@ namespace lipsync_editor
 
 					if (Utility.isWordstart(a[0]))
 					{
-						if (result != null)
-							_ars_alt.Add(result);
+						if (ar != null)
+							_ars_alt.Add(ar);
 
-						result = new OrthographicResult();
-						result.Orthography = String.Empty;
-						result.Confi       = 0f;
-						result.Level       = String.Empty;
+						ar = new OrthographicResult();
+						ar.Orthography = String.Empty;
+						ar.Confi       = 0f;
+						ar.Level       = String.Empty;
 
-						result.Phons = new List<string>();
-						result.Phons.Add(a[1]);
+						ar.Phons = new List<string>();
+						ar.Phons.Add(a[1]);
 
-						result.Start = Decimal.Parse(a[2]);
-						result.Stop  = Decimal.Parse(a[3]);
+						ar.Start = Decimal.Parse(a[2]);
+						ar.Stop  = Decimal.Parse(a[3]);
 
-						result.phStops.Add(Decimal.Parse(a[3]));
+						ar.phStops.Add(Decimal.Parse(a[3]));
 					}
 					else
 					{
-						result.Phons  .Add(              a[1]);
-						result.phStops.Add(Decimal.Parse(a[3]));
+						ar.Phons  .Add(              a[1]);
+						ar.phStops.Add(Decimal.Parse(a[3]));
 					}
 				}
 
-				if (result != null)
-					_ars_alt.Add(result);
+				if (ar != null)
+					_ars_alt.Add(ar);
 
 				sr.Close();
 			}
