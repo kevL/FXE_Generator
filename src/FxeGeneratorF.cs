@@ -904,10 +904,6 @@ namespace lipsync_editor
 					// TODO: WARNING Do error checks ->
 
 					string[] a = l.Split(DELI);
-					logfile.Log("a[0]= " + a[0]);
-					logfile.Log("a[1]= " + a[1]);
-					logfile.Log("a[2]= " + a[2]);
-					logfile.Log("a[3]= " + a[3]);
 
 					if (Utility.isWordstart(a[0]))
 					{
