@@ -41,7 +41,7 @@ namespace lipsync_editor
 #endif
 			Vices.Clear();
 
-			Vices.Add(StaticData.SIL, String.Empty);
+			Vices.Add(SIL, String.Empty);
 
 			switch (langid)
 			{
