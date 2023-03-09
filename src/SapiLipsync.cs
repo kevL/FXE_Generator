@@ -86,9 +86,9 @@ namespace lipsync_editor
 		/// <summary>
 		/// The engine confidence on recognition after a default-type pass (ie.
 		/// without typed-text).
-		/// @note If user provides typed-text then a comparison will be done
-		/// against the typed-text's TTS-phonemes instead.
 		/// </summary>
+		/// <remarks>If user provides typed-text then a comparison will be done
+		/// against the typed-text's TTS-phonemes instead.</remarks>
 		internal float Confidence_def
 		{ get; private set; }
 
@@ -183,10 +183,10 @@ namespace lipsync_editor
 		/// <summary>
 		/// Sets the Recognizer and LanguageId when the Recognizers combobox
 		/// selection changes.
-		/// @note The LanguageId is used by both TTS and SpeechRecognition.
 		/// </summary>
 		/// <param name="recognizer"></param>
-		/// <returns>true if the language-id is set successfully</returns>
+		/// <returns><c>true</c> if the language-id is set successfully</returns>
+		/// <remarks>The LanguageId is used by both TTS and SpeechRecognition.</remarks>
 		bool SetRecognizer(Recognizer recognizer)
 		{
 #if DEBUG

@@ -7,9 +7,9 @@ namespace lipsync_editor
 {
 	/// <summary>
 	/// Writer of FXE-files.
-	/// @note I have no idea where 0100010 got this format info - perhaps by
-	/// reverse engineering stock FXE-files.
 	/// </summary>
+	/// <remarks>I have no idea where 0100010 got this format info - perhaps by
+	/// reverse engineering stock FXE-files.</remarks>
 	static class FxeWriter
 	{
 		#region fields (static)

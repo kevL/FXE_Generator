@@ -30,11 +30,11 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// Gets the filelabel w/out path or extension.
-		/// @note This is redundant w/ <see cref="System.IO.Path.GetFileNameWithoutExtension">
-		/// System.IO.Path.GetFileNameWithoutExtension</see>.
 		/// </summary>
 		/// <param name="file"></param>
 		/// <returns></returns>
+		/// <remarks>This is redundant w/
+		/// <c>System.IO.Path.GetFileNameWithoutExtension()</c>.</remarks>
 		internal static string GetFilelabel(string file)
 		{
 			int pos = file.LastIndexOf('\\') + 1;

@@ -129,6 +129,11 @@ namespace lipsync_editor
 
 
 		#region handlers
+		/// <summary>
+		/// Opens <c><see cref="WaverF"/></c>.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		void click_Waver(object sender, EventArgs e)
 		{
 			if (Waver == null)

@@ -220,8 +220,8 @@ namespace lipsync_editor
 //#if DEBUG
 //		/// <summary>
 //		/// log funct.
-//		/// @note Holy batshit what circle of hell did this table spawn ...
 //		/// </summary>
+//		/// <remarks>Holy batshit what circle of hell did this table spawn ...</remarks>
 //		static void LogTrigramTable()
 //		{
 //			Trival trival;

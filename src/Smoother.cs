@@ -6,9 +6,9 @@ namespace lipsync_editor
 {
 	/// <summary>
 	/// A static class that smooths transitions from one viseme to the next.
-	/// @note FXE-data can be thought of as a 2d graph with time increasing
-	/// on its x-axis and morph-weight on its y-axis.
 	/// </summary>
+	/// <remarks>FXE-data can be thought of as a 2d graph with time increasing
+	/// on its x-axis and morph-weight on its y-axis.</remarks>
 	static class Smoother
 	{
 		/// <summary>

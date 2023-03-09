@@ -22,9 +22,10 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// The parsed id. Eg, "MS-1033-80-DESK"
-		/// @note 'Tok.Id' is the full registry path:
-		/// "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK"
 		/// </summary>
+		/// <remarks><c>Id</c> is the full registry
+		/// path:
+		/// <c>HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Recognizers\Tokens\MS-1033-80-DESK</c></remarks>
 		internal string Id
 		{ get; private set; }
 
@@ -37,8 +38,9 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// The languages supported.
-		/// @note "Languages" appears in the subkey "Attributes" in the registry.
 		/// </summary>
+		/// <remarks>"Languages" appears in the subkey "Attributes" in the
+		/// registry.</remarks>
 		internal string Langids
 		{ get; private set; }
 		#endregion properties

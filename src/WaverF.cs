@@ -148,9 +148,9 @@ namespace lipsync_editor
 		/// <summary>
 		/// Parses and pushes 16-bit samples to a short-array that's used for
 		/// screen-display.
-		/// @note The wavefile shall be PCM 44.1kHz 16-bit Mono.
 		/// </summary>
 		/// <param name="wavefile"></param>
+		/// <remarks>The wavefile shall be PCM 44.1kHz 16-bit Mono.</remarks>
 		void Conatiner(string wavefile)
 		{
 			using (var fs = new FileStream(wavefile, FileMode.Open, FileAccess.Read, FileShare.Read))
@@ -239,10 +239,10 @@ namespace lipsync_editor
 
 		/// <summary>
 		/// Handles key-events when a textbox has focus.
-		/// @note The event fires even if a dialog does NOT have focus.
 		/// </summary>
 		/// <param name="keyData"></param>
 		/// <returns></returns>
+		/// <remarks>The event fires even if a dialog does NOT have focus.</remarks>
 		protected override bool ProcessDialogKey(Keys keyData)
 		{
 			if (keyData == Keys.Enter && tb_offset.Focused) // focus the Reset button
@@ -484,14 +484,14 @@ namespace lipsync_editor
 		/// <summary>
 		/// helper for PositionStartcaret(). Checks for a red pixel in a
 		/// specified bitmap-object.
-		/// @note Red-marker shall be used for ortheme-starts and Blue-marker shall
-		/// be used for phoneme-starts. NO OTHER MARKERS SHALL USE FULL RED-
-		/// COMPONENT OR FULL BLUE-COMPONENT.
 		/// </summary>
 		/// <param name="b">the bitmap</param>
 		/// <param name="i">x-position to check</param>
 		/// <param name="j">y-position to check</param>
 		/// <returns></returns>
+		/// <remarks>Red-marker shall be used for ortheme-starts and Blue-marker
+		/// shall be used for phoneme-starts. NO OTHER MARKERS SHALL USE FULL
+		/// RED-COMPONENT OR FULL BLUE-COMPONENT.</remarks>
 		bool TryStartPosition(Bitmap b, int i, int j)
 		{
 			Color color = b.GetPixel(i,j);
@@ -557,15 +557,17 @@ namespace lipsync_editor
 		}
 
 		/// <summary>
-		/// Handles the 'WaveOutEvent.PlaybackStopped'.
-		/// @note The wave-device's output buffer needs to be cleared or else
-		/// the buffer will *usually* just grow larger and larger; however
-		/// 'WaverF' uses the buffer's current position to draw the track-caret
-		/// in the wave-panel so the output-buffer needs to be reset (recreated)
-		/// whenever the 'PlaybackStopped' event fires.
+		/// Handles the
+		/// <c><see cref="WaveOutEvent.PlaybackStopped">WaveOutEvent.PlaybackStopped</see></c>
+		/// event.
 		/// </summary>
 		/// <param name="sender"></param>
 		/// <param name="args"></param>
+		/// <remarks>The wave-device's output buffer needs to be cleared or else
+		/// the buffer will *usually* just grow larger and larger; however
+		/// <c><see cref="WaverF"/></c> uses the buffer's current position to
+		/// draw the track-caret in the wave-panel so the output-buffer needs to
+		/// be reset (recreated) whenever the <c>PlaybackStopped</c> event fires.</remarks>
 		void OnPlaybackStopped(object sender, StoppedEventArgs args)
 		{
 			if (!_close)

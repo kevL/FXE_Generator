@@ -23,10 +23,10 @@ namespace lipsync_editor
 		/// <summary>
 		/// Determines the file to use for the SpeechRecognition filestream
 		/// converting it from BMU/MP3 to WAV if necessary.
-		/// @note The result shall be PCM 44.1kHz 16-bit Mono.
 		/// </summary>
 		/// <param name="pfe">path_file_extension</param>
 		/// <returns>the fullpath to a PCM-wave file else a blank-string</returns>
+		/// <remarks>The result shall be PCM 44.1kHz 16-bit Mono.</remarks>
 		internal static string deterwave(string pfe)
 		{
 			//logfile.Log("AudioConverter.deterAudiopath() pfe= " + pfe);
