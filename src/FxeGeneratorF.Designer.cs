@@ -494,7 +494,7 @@ namespace lipsync_editor
 			this.la_version.Name = "la_version";
 			this.la_version.Size = new System.Drawing.Size(104, 15);
 			this.la_version.TabIndex = 10;
-			this.la_version.Text = "version";
+			this.la_version.Text = "ver";
 			this.la_version.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
 			// 
 			// co_recognizers

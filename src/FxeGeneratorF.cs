@@ -351,25 +351,15 @@ namespace lipsync_editor
 		/// </summary>
 		void printversion()
 		{
-			Version ver = Assembly.GetExecutingAssembly().GetName().Version;
-			string version = "version " + ver.Major
-						   + "."        + ver.Minor
-						   + "."        + ver.Build
-						   + "."        + ver.Revision;
-
-//			if (ver.Build != 0 || ver.Revision != 0)
-//			{
-//				version += "." + ver.Build;
-//
-//				if (ver.Revision != 0)
-//					version += "." + ver.Revision;
-//			}
+			Version version = Assembly.GetExecutingAssembly().GetName().Version;
+			string ver = "ver " + version.Major
+					   + "."    + version.Minor
+					   + "."    + version.Build
+					   + "."    + version.Revision;
 #if DEBUG
-			version += "-d";
-#else
-			version += "-r";
+			ver += " d";
 #endif
-			la_version.Text = version;
+			la_version.Text = ver;
 		}
 		#endregion cTor
 
