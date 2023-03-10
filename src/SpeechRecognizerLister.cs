@@ -17,8 +17,8 @@ namespace lipsync_editor
 		/// recognition engines) to a specified combobox.
 		/// </summary>
 		/// <param name="co"></param>
-		/// <returns>true if a Recognizer was found and added to the list;
-		/// false if user is SoL</returns>
+		/// <returns><c>true</c> if a Recognizer was found and added to the
+		/// list; false if user is SoL</returns>
 		internal static bool AddSpeechRecognizers(ComboBox co)
 		{
 #if DEBUG
@@ -36,20 +36,12 @@ namespace lipsync_editor
 			if (sr_default != null)
 			{
 #if DEBUG
-				logfile.Log();
+				logfile.Log(". operating system default:");
 				logfile.Log("Recognizer.Id= "               + sr_default.Recognizer.Id);
 				logfile.Log("Recognizer.GetDescription()= " + sr_default.Recognizer.GetDescription());
 				logfile.Log();
 #endif
 				ISpeechObjectTokens toks = sr_default.GetRecognizers();
-#if DEBUG
-				foreach (ISpeechObjectToken tok in toks)
-				{
-					logfile.Log(". installed.Id= "               + tok.Id);
-					logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
-				}
-				logfile.Log();
-#endif
 
 				int  id_default = -1;
 				bool id_default_found = false;
@@ -57,18 +49,37 @@ namespace lipsync_editor
 				var recognizers = new List<Recognizer>();
 				foreach (ISpeechObjectToken tok in toks)
 				{
-					if (tok.GetDescription().Contains("Microsoft Speech Recognizer")) // 8.0+ TODO: other SAPI-compliant speech engines incl/ 3rd-party
+#if DEBUG
+					logfile.Log(". installed.Id= "               + tok.Id);
+					logfile.Log(". installed.GetDescription()= " + tok.GetDescription());
+#endif
+					// 8.0+ TODO: other SAPI-compliant speech engines incl/ 3rd-party
+					if (   tok.GetDescription().Contains("Microsoft Speech Recognizer 8.0")  // english-ish OS
+						|| tok.GetDescription().Contains("Microsoft Speech Recogniser 8.0")) // german-ish OS
 					{
+#if DEBUG
+						logfile.Log(". . found a Microsoft Speech Recognizer");
+#endif
 						recognizers.Add(new Recognizer(tok));
 
 						if (!id_default_found)
 						{
 							++id_default;
-
+#if DEBUG
+							logfile.Log(". . id_default= " + id_default);
+#endif
 							if (tok.Id == sr_default.Recognizer.Id)
+							{
+#if DEBUG
+								logfile.Log(". . . (tok.Id == sr_default.Recognizer.Id) default found.");
+#endif
 								id_default_found = true;
+							}
 						}
 					}
+#if DEBUG
+					logfile.Log();
+#endif
 				}
 
 				if (recognizers.Count != 0)
